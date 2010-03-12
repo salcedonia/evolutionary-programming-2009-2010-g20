@@ -166,10 +166,10 @@ public class Ventana extends JFrame {
 		panelOpciones.add(getBodyOpciones(),constraints);
 		
 		constraints.gridx = 0;
-		constraints.gridy = 3;
+		constraints.gridy = 2;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 1;
-		constraints.fill = GridBagConstraints.NONE;
+		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weighty = 0.1;
 		constraints.weightx = 1.0;
 		panelOpciones.add(getBotonesOpciones(),constraints);
@@ -182,26 +182,26 @@ public class Ventana extends JFrame {
 		panelCabeceraOpciones.setLayout(new GridBagLayout());
 		
 		GridBagConstraints constraints = new GridBagConstraints();
-		
+
 		// Label título función
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		constraints.gridwidth = 2;
+		constraints.gridwidth = 1;
 		constraints.gridheight = 1;
 		constraints.fill = GridBagConstraints.NONE;
-		constraints.weighty = 0.0;
+		//constraints.weighty = 0.0;
 		
-		panelOpciones.add(new JLabel("Función"), constraints);
+		panelCabeceraOpciones.add(new JLabel("Función"), constraints);
 		
 		// Label con la función concreta
 		constraints.gridx = 0;
 		constraints.gridy = 1;
-		constraints.gridwidth = 2;
+		constraints.gridwidth = 1;
 		constraints.gridheight = 1;
 		constraints.fill = GridBagConstraints.NONE;
-		constraints.weighty = 0.0;
+		//constraints.weighty = 0.0;
 		
-		panelOpciones.add(new JLabel("Aquí va la función."),constraints);
+		panelCabeceraOpciones.add(new JLabel("Aquí va la función."),constraints);
 	
 		return panelCabeceraOpciones;
 	}
@@ -212,80 +212,82 @@ public class Ventana extends JFrame {
 		
 		// Labels
 		GridBagConstraints constraints = new GridBagConstraints();
-		
+		constraints.weighty = 1.0;
+		constraints.weightx = 1.0;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 1;
-		constraints.fill = GridBagConstraints.NONE;
+		constraints.fill = GridBagConstraints.BOTH;
 		
 		panelBodyOpciones.add(new JLabel("Número de generaciones:"),constraints);
 		
 		constraints.gridx = 0;
 		constraints.gridy = 1;
-		constraints.fill = GridBagConstraints.NONE;
+		constraints.fill = GridBagConstraints.BOTH;
 		panelBodyOpciones.add(new JLabel("Tamaño de la población:"),constraints);
 		
 		constraints.gridx = 0;
 		constraints.gridy = 2;
-		constraints.fill = GridBagConstraints.NONE;
+		constraints.fill = GridBagConstraints.BOTH;
 		panelBodyOpciones.add(new JLabel("Probabilidad de cruce:"),constraints);
 		
 		constraints.gridx = 0;
 		constraints.gridy = 3;
-		constraints.fill = GridBagConstraints.NONE;
+		constraints.fill = GridBagConstraints.BOTH;
 		panelBodyOpciones.add(new JLabel("Probabilidad de mutación:"),constraints);
 		
 		constraints.gridx = 0;
 		constraints.gridy = 4;
-		constraints.fill = GridBagConstraints.NONE;
+		constraints.fill = GridBagConstraints.BOTH;
 		panelBodyOpciones.add(new JLabel("Precisión:"),constraints);
 		
 		constraints.gridx = 0;
 		constraints.gridy = 5;
-		constraints.fill = GridBagConstraints.NONE;
+		constraints.fill = GridBagConstraints.BOTH;
 		panelBodyOpciones.add(new JLabel("Valor de n:"),constraints);
 		
 		constraints.gridx = 0;
 		constraints.gridy = 6;
-		constraints.fill = GridBagConstraints.NONE;
+		constraints.fill = GridBagConstraints.BOTH;
 		panelBodyOpciones.add(new JLabel("Selección por elitismo:"),constraints);
 		
 		// JTextFields
+		constraints.weightx = 1.4;
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 6;
-		constraints.fill = GridBagConstraints.NONE;
+		constraints.gridy = 0;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelBodyOpciones.add(new JTextField(),constraints);
+		
+		constraints.gridx = 1;
+		constraints.gridy = 1;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelBodyOpciones.add(new JTextField(),constraints);
+		
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelBodyOpciones.add(new JTextField(),constraints);
+		
+		constraints.gridx = 1;
+		constraints.gridy = 3;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelBodyOpciones.add(new JTextField(),constraints);
+		
+		constraints.gridx = 1;
+		constraints.gridy = 4;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelBodyOpciones.add(new JTextField(),constraints);
+		
+		constraints.gridx = 1;
+		constraints.gridy = 5;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
 		panelBodyOpciones.add(new JTextField(),constraints);
 		
 		constraints.gridx = 1;
 		constraints.gridy = 6;
-		constraints.fill = GridBagConstraints.NONE;
-		panelBodyOpciones.add(new JTextField(),constraints);
-		
-		constraints.gridx = 1;
-		constraints.gridy = 6;
-		constraints.fill = GridBagConstraints.NONE;
-		panelBodyOpciones.add(new JTextField(),constraints);
-		
-		constraints.gridx = 1;
-		constraints.gridy = 6;
-		constraints.fill = GridBagConstraints.NONE;
-		panelBodyOpciones.add(new JTextField(),constraints);
-		
-		constraints.gridx = 1;
-		constraints.gridy = 6;
-		constraints.fill = GridBagConstraints.NONE;
-		panelBodyOpciones.add(new JTextField(),constraints);
-		
-		constraints.gridx = 1;
-		constraints.gridy = 6;
-		constraints.fill = GridBagConstraints.NONE;
-		panelBodyOpciones.add(new JTextField(),constraints);
-		
-		constraints.gridx = 1;
-		constraints.gridy = 6;
-		constraints.fill = GridBagConstraints.NONE;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
 		panelBodyOpciones.add(new JTextField(),constraints);
 		
 		// Borde del panel
