@@ -2,22 +2,20 @@ package logica;
 
 import gui.Ventana;
 
+/**
+ * Clase principal de la aplicación.
+ * 
+ * @author Grupo20.
+ */
 public class Principal {
-
-	private Ventana v = null;
-	
-	public Principal(Ventana v) {
-		this.v = v;
-	}
-	
-	
+		
 	/**
-	 * @param args
+	 * Método principal de la aplicación.
+	 * 
+	 * @param args Argumentos de entrada a la aplicación.
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Ventana v = new Ventana();
-		Principal p = new Principal(v);
+		
+		new Ventana();
 	}
-
 }
