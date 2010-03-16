@@ -1,0 +1,182 @@
+package cromosoma;
+
+import java.util.Random;
+
+/**
+ * Clase que implementa los metodos comunes de un cromosoma.
+ * 
+ * @author Grupo20.
+ */
+public abstract class Cromosoma {
+
+	/**
+	 * Cadena de bits.
+	 */
+	protected boolean[] _genes;
+
+	/**
+	 * Fenotipo del cromosoma.
+	 */
+	protected double _fenotipo;
+
+	/**
+	 * Función de evaluación fitness (adaptación).
+	 */
+	protected double _aptitud;
+
+	/**
+	 * Puntuación relativa (aptitud/suma).
+	 */
+	
+	protected double _puntuacion;
+	
+	/**
+	 * Puntuación acumulada para la selección.
+	 */
+	protected double _puntAcumulada;
+	
+	/**
+	 * Inicializa aleatoriamente el vector de genes.
+	 */
+	public void inicializaCromosoma() {
+
+		Random generador = new Random();
+		   
+		for (int i = 0; i < _genes.length; i++) {
+			
+			// Generamos un numero aleatorio entre 0 y 1
+			int aleatorio = generador.nextInt(2);
+			
+			switch (aleatorio){
+			
+				case 0: _genes[i] = false; break;
+				case 1: _genes[i] = true; break;
+			}	
+		}
+	}
+
+	/**
+	 * Devuelve el array de genes.
+	 * 
+	 * @return El array de genes.
+	 */
+	public boolean[] getGenes() {
+		
+		return _genes;
+	}
+
+	/**
+	 * Establece el array de genes a valor "genes".
+	 * 
+	 * @param genes Nuevo valor del array de genes a establecer.
+	 */
+	public void setGenes(boolean[] genes) {
+		
+		_genes = genes;
+	}
+
+	/**
+	 * Devuelve el fenotipo del cromosoma.
+	 * 
+	 * @return El fenotipo del cromosoma.
+	 */
+	public double getFenotipo() {
+		
+		return _fenotipo;
+	}
+
+	/**
+	 * Establece el fenotipo del cromosoma a valor "fenotipo".
+	 * 
+	 * @param fenotipo Nuevo valor del fenotipo a establecer.
+	 */
+	public void setFenotipo(double fenotipo) {
+		
+		_fenotipo = fenotipo;
+	}
+
+	/**
+	 * Devuelve la aptitud del cromosoma.
+	 * 
+	 * @return La aptitud del cromosoma.
+	 */
+	public double getAptitud() {
+		
+		return _aptitud;
+	}
+
+	/**
+	 * Establece la aptitud a valor "aptitud".
+	 * 
+	 * @param aptitud Nuevo valor de aptitud a establecer.
+ 	 */
+	public void setAptitud(double aptitud) {
+		
+		_aptitud = aptitud;
+	}
+
+	/**
+	 * Devuelve la puntuación del cromosoma.
+	 * 
+	 * @return La puntuación del cromosoma.
+	 */
+	public double getPuntuacion() {
+		
+		return _puntuacion;
+	}
+
+	/**
+	 * Establece la puntuación del cromosoma a valor "puntuacion".
+	 * 
+	 * @param puntuacion Nuevo valor para establecer en la puntuacion.
+	 */
+	public void setPuntuación(double puntuacion) {
+		
+		_puntuacion = puntuacion;
+	}
+
+	/**
+	 * Devuelve la puntuación acumulada.
+	 * 
+	 * @return La puntuación acumulada.
+	 */
+	public double getPuntAcumulada() {
+		
+		return _puntAcumulada;
+	}
+
+	/**
+	 * Establece la puntuacion acumulada a valor "acumulada".
+	 * 
+	 * @param acumulada Nuevo valor de puntuación acumulada a establecer.
+	 */
+	public void setPuntAcumulada(double acumulada) {
+		
+		_puntAcumulada = acumulada;
+	}
+	
+	// ---------------METODOS ABSTRACTOS----------------//
+	
+	/**
+	 * Evalua la calidad del cromosoma.
+	 * 
+	 * @return La calidad del cromosoma.
+	 */
+	public abstract double evalua();
+	
+	/**
+	 * Calcula el fenotipo del cromosoma.
+	 * 
+	 * @return El fenotipo del cromosoma.
+	 */
+	public abstract double fenotipo();
+	
+	/**
+	 * Calcula la longitud del cromosoma con la tolerancia.
+	 * 
+	 * @param tolerancia Tolerancia del algoritmo.
+	 * 
+	 * @return La longitud del cromosoma.
+	 */
+	public abstract int calcularLongCromosoma(double tolerancia);
+}
