@@ -9,7 +9,7 @@ import cromosoma.CromosomaFuncion5;
 import cromosoma.TipoCromosoma;
 
 /**
- * Clase que implementa los métodos necesarios para el algoritmo genético
+ * Clase que implementa los mï¿½todos necesarios para el algoritmo genï¿½tico
  * simple.
  * 
  * @author Grupo20.
@@ -17,7 +17,7 @@ import cromosoma.TipoCromosoma;
 public class AG {
 
 	/**
-	 * Población a evaluar.
+	 * Poblaciï¿½n a evaluar.
 	 */
 	private Cromosoma[] _poblacion;
 	/**
@@ -62,12 +62,17 @@ public class AG {
 	/**
 	 * Numero de generaciones procesadas.
 	 */
-	private int _numGeneración = 0;
+	private int _numGeneracion = 0;
 
 	/**
 	 * Tipo de cromosoma a crear.
 	 */
 	private TipoCromosoma _tipoCromosoma;
+	
+	/**
+	 * Valor de N.
+	 */
+	private int _valorN;
 
 	/**
 	 * Constructor de la clase AG.
@@ -77,39 +82,41 @@ public class AG {
 	 * @param probCruce
 	 * @param probMutacion
 	 * @param tolerancia
+	 * @param valorN
 	 * @param elitismo
 	 * @param tipoCromosoma
 	 */
-	public AG(int tamPoblacion, int numMaxGeneraciones, double probCruce,
-			double probMutacion, double tolerancia, boolean elitismo,
+	public AG(int numMaxGeneraciones, int tamPoblacion, double probCruce,
+			double probMutacion, double tolerancia, int valorN, boolean elitismo,
 			TipoCromosoma tipoCromosoma) {
 
-		_tamPoblacion = tamPoblacion;
 		_numMaxGeneraciones = numMaxGeneraciones;
+		_tamPoblacion = tamPoblacion;
 		_probCruce = probCruce;
 		_probMutacion = probMutacion;
 		_tolerancia = tolerancia;
+		_valorN = valorN;
 		_elitismo = elitismo;
 		_tipoCromosoma = tipoCromosoma;
 	}
 
 	/**
-	 * Aumenta el número de generaciones procesadas.
+	 * Aumenta el nï¿½mero de generaciones procesadas.
 	 */
-	public void aumentarGeneración() {
+	public void aumentarGeneracion() {
 
-		_numGeneración++;
+		_numGeneracion++;
 	}
 
 	/**
-	 * Realiza la selección de individuos de la población.
+	 * Realiza la selecciï¿½n de individuos de la poblaciï¿½n.
 	 */
 	public void seleccion() {
 
 	}
 
 	/**
-	 * Realiza la reproducción de individuos de la población.
+	 * Realiza la reproducciï¿½n de individuos de la poblaciï¿½n.
 	 */
 	public void reproduccion() {
 		// TODO Auto-generated method stub
@@ -117,7 +124,7 @@ public class AG {
 	}
 
 	/**
-	 * Realiza la mutación de los individuos seleccionados en la población.
+	 * Realiza la mutaciï¿½n de los individuos seleccionados en la poblaciï¿½n.
 	 */
 	public void mutacion() {
 		// TODO Auto-generated method stub
@@ -125,7 +132,7 @@ public class AG {
 	}
 
 	/**
-	 * Asigna la calidad a los individuos de una población.
+	 * Asigna la calidad a los individuos de una poblaciï¿½n.
 	 */
 	public void evaluarPoblacion() {
 		// TODO Auto-generated method stub
@@ -138,18 +145,21 @@ public class AG {
 	 */
 	public boolean terminado() {
 
-		return _numGeneración == _numMaxGeneraciones;
+		return _numGeneracion == _numMaxGeneraciones;
 	}
 
 	/**
-	 * Inicializa la población a evaluar. Crea los cromosomas y los inicializa
+	 * Inicializa la poblaciï¿½n a evaluar. Crea los cromosomas y los inicializa
 	 * aleatoriamente.
 	 */
 	public void inicializa() {
 
+		// Creamos la poblacion del tamaÃ±o especificado
+		_poblacion = new Cromosoma[_tamPoblacion];
+		
 		for (int j = 0; j < _tamPoblacion; j++) {
 
-			// Creamos el tipo de cromosoma según corresponda
+			// Creamos el tipo de cromosoma segï¿½n corresponda
 			switch (_tipoCromosoma) {
 
 			case FUNCION1:
@@ -176,9 +186,9 @@ public class AG {
 	}
 
 	/**
-	 * Devuelve el mejor individuo de una población.
+	 * Devuelve el mejor individuo de una poblaciï¿½n.
 	 * 
-	 * @return El mejor individuo de una población.
+	 * @return El mejor individuo de una poblaciï¿½n.
 	 */
 	public Cromosoma getElMejor() {
 
