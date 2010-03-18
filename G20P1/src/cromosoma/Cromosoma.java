@@ -20,7 +20,7 @@ public abstract class Cromosoma {
 	protected double _fenotipo;
 
 	/**
-	 * Funci�n de evaluaci�n fitness (adaptaci�n).
+	 * Funcion de evaluacion fitness (adaptacion).
 	 */
 	protected double _aptitud;
 
@@ -44,14 +44,13 @@ public abstract class Cromosoma {
 		   
 		for (int i = 0; i < _genes.length; i++) {
 			
-			// Generamos un numero aleatorio entre 0 y 1
-			int aleatorio = generador.nextInt(2);
+			// Generamos un numero aleatorio entre 0.0 y 0.1
+			double aleatorio = generador.nextDouble();
 			
-			switch (aleatorio){
-			
-				case 0: _genes[i] = false; break;
-				case 1: _genes[i] = true; break;
-			}	
+			if(aleatorio < 0.5)
+				_genes[i] = false;
+		    else
+				_genes[i] = true;	
 		}
 	}
 
