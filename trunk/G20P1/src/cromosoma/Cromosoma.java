@@ -20,18 +20,18 @@ public abstract class Cromosoma {
 	protected double _fenotipo;
 
 	/**
-	 * Función de evaluación fitness (adaptación).
+	 * Funciï¿½n de evaluaciï¿½n fitness (adaptaciï¿½n).
 	 */
 	protected double _aptitud;
 
 	/**
-	 * Puntuación relativa (aptitud/suma).
+	 * Puntuaciï¿½n relativa (aptitud/suma).
 	 */
 	
 	protected double _puntuacion;
 	
 	/**
-	 * Puntuación acumulada para la selección.
+	 * Puntuaciï¿½n acumulada para la selecciï¿½n.
 	 */
 	protected double _puntAcumulada;
 	
@@ -116,9 +116,9 @@ public abstract class Cromosoma {
 	}
 
 	/**
-	 * Devuelve la puntuación del cromosoma.
+	 * Devuelve la puntuaciï¿½n del cromosoma.
 	 * 
-	 * @return La puntuación del cromosoma.
+	 * @return La puntuaciï¿½n del cromosoma.
 	 */
 	public double getPuntuacion() {
 		
@@ -126,19 +126,19 @@ public abstract class Cromosoma {
 	}
 
 	/**
-	 * Establece la puntuación del cromosoma a valor "puntuacion".
+	 * Establece la puntuaciï¿½n del cromosoma a valor "puntuacion".
 	 * 
 	 * @param puntuacion Nuevo valor para establecer en la puntuacion.
 	 */
-	public void setPuntuación(double puntuacion) {
+	public void setPuntuacion(double puntuacion) {
 		
 		_puntuacion = puntuacion;
 	}
 
 	/**
-	 * Devuelve la puntuación acumulada.
+	 * Devuelve la puntuaciï¿½n acumulada.
 	 * 
-	 * @return La puntuación acumulada.
+	 * @return La puntuaciï¿½n acumulada.
 	 */
 	public double getPuntAcumulada() {
 		
@@ -148,7 +148,7 @@ public abstract class Cromosoma {
 	/**
 	 * Establece la puntuacion acumulada a valor "acumulada".
 	 * 
-	 * @param acumulada Nuevo valor de puntuación acumulada a establecer.
+	 * @param acumulada Nuevo valor de puntuaciï¿½n acumulada a establecer.
 	 */
 	public void setPuntAcumulada(double acumulada) {
 		
