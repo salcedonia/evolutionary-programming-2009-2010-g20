@@ -161,17 +161,42 @@ public class Ventana extends JFrame {
 	/**
 	 * Indica si se aplica elitismo en el algoritmo o no.
 	 */
-	private boolean _elitismo = true;
+	private boolean _elitismo = false;
 
 	/**
 	 * Panel de pestañas.
 	 */
 	private JTabbedPane _panelPestanas;
+	
+	// VARIABLES PARA EL ALGORITMO
+	/**
+	 * Numero de generaciones.
+	 */
 	private int _numGeneraciones;
+	
+	/**
+	 * Tamaño de la poblacion.
+	 */
 	private int _tamPoblacion;
+	
+	/**
+	 * Probabilidad de cruce.
+	 */
 	private double _probCruce;
-	private double _probMMutacion;
+	
+	/**
+	 * Probabilidad de Mutacion.
+	 */
+	private double _probMutacion;
+	
+	/**
+	 * Precision del algoritmo.
+	 */
 	private double _precision;
+	
+	/**
+	 * Valor de N del algoritmo.
+	 */
 	private int _valorN;
 
 	/**
@@ -198,6 +223,7 @@ public class Ventana extends JFrame {
 	 */
 	private void iniciaInterfaz() {
 
+		// Se crea el panel de pestañas
 		_panelPestanas = new JTabbedPane();
 		_panelPestanas.add("Parametros", creaPanelPrincipal());
 		_panelPestanas.add("Aptitud", creaPanelAptitud());
@@ -433,6 +459,8 @@ public class Ventana extends JFrame {
 		_panelBodyOpciones.add(_txtPrecision, constraints);
 
 		_txtValorN = new JTextField();
+		_txtValorN.setText("1");
+		_txtValorN.setEnabled(false);
 		constraints.gridx = 1;
 		constraints.gridy = 6;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -441,6 +469,7 @@ public class Ventana extends JFrame {
 		String[] elitismoStrings = { "Si", "No" };
 
 		_cmbSeleccionElitismo = new JComboBox(elitismoStrings);
+		_cmbSeleccionElitismo.setSelectedIndex(1);
 		_cmbSeleccionElitismo
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -500,7 +529,7 @@ public class Ventana extends JFrame {
 	private void comenzarAGS() {
 
 		// Creamos el objeto encargado del algoritmo genetico simple
-		_AG = new AG(_numGeneraciones, _tamPoblacion, _probCruce, _probMMutacion, 
+		_AG = new AG(_numGeneraciones, _tamPoblacion, _probCruce, _probMutacion, 
 				_precision, _valorN, _elitismo, _tipoCromosoma);
 
 		// Crea poblaciÛn inicial de cromosomas
@@ -670,7 +699,7 @@ public class Ventana extends JFrame {
 			
 				if(probMutacion >= 0 && probMutacion <= 1){
 					// Guardamos el resultado de la validación
-					_probMMutacion = probMutacion;
+					_probMutacion = probMutacion;
 				}else{
 					JOptionPane.showMessageDialog(this, "!La Probabilidad de Mutacion tiene que ser un numero entero positivo entre 0 y 1!",
 							"Error en los datos", JOptionPane.ERROR_MESSAGE);
