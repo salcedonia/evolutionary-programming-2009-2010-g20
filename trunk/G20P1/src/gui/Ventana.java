@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,6 +18,8 @@ import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+
+import org.math.plot.Plot2DPanel;
 
 import cromosoma.TipoCromosoma;
 
@@ -36,6 +39,13 @@ public class Ventana extends JFrame {
 	private static final int ALTO = 640;
 	private static final int ANCHO = 600;
 	private static final String ICONO = "AGSIcono.gif";
+	
+	// Valores por defecto de las opciones
+	private static final String NUM_POBLACION_DEF = "100";
+	private static final String NUM_GENERACIONES_DEF = "100";
+	private static final String PROB_CRUCE_DEF = "0.7";
+	private static final String PROB_MUTACION_DEF = "0.1";
+	private static final String TOLERANCIA_DEF = "0.0001";
 
 	/**
 	 * Clase que se encarga del AGS.
@@ -50,7 +60,22 @@ public class Ventana extends JFrame {
 	 * Panel de opciones.
 	 */
 	private JPanel _panelOpciones = null;
-
+	
+	/**
+	 * Panel de la gráfica de aptitudes.
+	 */
+	private Plot2DPanel _panelAptitud = null;
+	
+	/**
+	 * Aptitudes para el eje de abscisas del Mejor de cada generación.
+	 */
+	private double[] _yAptitudMejor = null;
+	
+	/**
+	 * Aptitudes para el eje de abscisas de las medias de cada generación.
+	 */
+	private double[] _yAptitudMedia = null;
+	
 	// ---------------INTERFAZ ----------------//
 
 	/**
@@ -234,9 +259,9 @@ public class Ventana extends JFrame {
 	}
 
 	/**
-	 * Crea el panel para mostrar las grÃ¡ficas correspondientes a la aptitud.
+	 * Crea el panel para mostrar las grÃ¡ficas correspondientes a la funciÃ³n.
 	 * 
-	 * @return El panel para mostrar las grÃ¡ficas correspondientes a la aptitud.
+	 * @return El panel para mostrar las grÃ¡ficas correspondientes a la funciÃ³n.
 	 */
 	private Component creaPanelFuncion() {
 
@@ -245,14 +270,15 @@ public class Ventana extends JFrame {
 	}
 
 	/**
-	 * Crea el panel para mostrar las grÃ¡ficas correspondientes a la funciÃ³n.
+	 * Crea el panel para mostrar las grÃ¡ficas correspondientes a la aptitud.
 	 * 
-	 * @return El panel para mostrar las grÃ¡ficas correspondientes a la funciÃ³n.
+	 * @return El panel para mostrar las grÃ¡ficas correspondientes a la aptitud.
 	 */
 	private Component creaPanelAptitud() {
 
-		// TODO Auto-generated method stub
-		return new JPanel();
+		_panelAptitud = new Plot2DPanel();
+		
+		return _panelAptitud;
 	}
 
 	/**
@@ -428,31 +454,31 @@ public class Ventana extends JFrame {
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_cmbSeleccionFuncion, constraints);
 
-		_txtNumGeneraciones = new JTextField();
+		_txtNumGeneraciones = new JTextField(NUM_GENERACIONES_DEF);
 		constraints.gridx = 1;
 		constraints.gridy = 1;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_txtNumGeneraciones, constraints);
 
-		_txtTamPoblacion = new JTextField();
+		_txtTamPoblacion = new JTextField(NUM_POBLACION_DEF);
 		constraints.gridx = 1;
 		constraints.gridy = 2;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_txtTamPoblacion, constraints);
 
-		_txtProbCruce = new JTextField();
+		_txtProbCruce = new JTextField(PROB_CRUCE_DEF);
 		constraints.gridx = 1;
 		constraints.gridy = 3;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_txtProbCruce, constraints);
 
-		_txtProbMutacion = new JTextField();
+		_txtProbMutacion = new JTextField(PROB_MUTACION_DEF);
 		constraints.gridx = 1;
 		constraints.gridy = 4;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_txtProbMutacion, constraints);
 
-		_txtPrecision = new JTextField();
+		_txtPrecision = new JTextField(TOLERANCIA_DEF);
 		constraints.gridx = 1;
 		constraints.gridy = 5;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -534,6 +560,9 @@ public class Ventana extends JFrame {
 
 		// Crea poblaciÃ›n inicial de cromosomas
 		_AG.inicializa();
+		
+		// Inicializa las componentes de las gráficas
+		inicializaGraficas();
 
 		// EvalË™a los individuos y coge el mejor
 		_AG.evaluarPoblacion();
@@ -544,11 +573,56 @@ public class Ventana extends JFrame {
 			_AG.reproduccion();
 			_AG.mutacion();
 			_AG.evaluarPoblacion();
+			guardaDatosGraficas();
 		}
 
+		// Actualizamos las gráficas
+		imprimeDatosGraficas();
+		
 		// Mostramos el mejor individuo
 		if(_AG.getElMejor() != null)
-		   _txtInforme.setText("El mejor valor es "+_AG.getElMejor().toString()+"\n"+"Alcanza un máximo de: "+_AG.getElMejor().f());
+		   _txtInforme.setText("El mejor valor es "+_AG.getElMejor().toString()+"\n "+"Alcanza un máximo de: "+_AG.getElMejor().f());
+	}
+	
+	private void inicializaGraficas() {
+		
+		// Inicializa un nuevo panel
+		
+		
+		// Creación de los vectores para almacenar las x
+		_yAptitudMedia = new double[_numGeneraciones];
+		_yAptitudMejor = new double[_numGeneraciones];
+	}
+	
+	/**
+	 * Almacena para la generación actual los datos a recoger para las gráficas.
+	 */
+	private void guardaDatosGraficas() {
+		
+		// Guarda la aptitud media
+		_yAptitudMedia[_AG.getNumGeneracion()-1] = _AG.getAptitudMedia();
+		
+		// Guarda la aptitud del mejor
+		_yAptitudMejor[_AG.getNumGeneracion()-1] = _AG.getElMejor().getAptitud();
+	}
+	
+	/**
+	 * Imprime los resultados guardados para las gráficas.
+	 */
+	private void imprimeDatosGraficas() {
+		
+		// Imprime en la gráfica de aptitudes las componentes X para
+		// aptitudes media de la población y del mejor de cada generación
+		double[] xGeneracion = new double[_numGeneraciones];
+		
+		for (int i = 0; i < _numGeneraciones; i++) {
+			xGeneracion[i] = i + 1;
+		}
+		
+		_panelAptitud.addLegend("SOUTH");
+		_panelAptitud.addLinePlot("El Mejor", Color.BLUE, xGeneracion, _yAptitudMejor);
+		_panelAptitud.addLinePlot("Media", Color.GREEN, xGeneracion, _yAptitudMedia);
+		
 	}
 
 	/**

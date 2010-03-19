@@ -115,6 +115,10 @@ public class AG {
 		seleccionRuleta(); // Por ahora solo tenemos este método
 	}
 	
+	/**
+	 * Método de seleccion por ruleta. Se seleccionan los cromosomas supervivientes
+	 * para la reproducción.
+	 */
 	private void seleccionRuleta() {
 		
 		// Seleccionados para sobrevivir
@@ -174,6 +178,13 @@ public class AG {
 		}		
 	}
 	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce.
+	 * 
+	 * @param padre Uno de los cromosomas a cruzar.
+	 * @param madre Uno de los cromosomas a cruzar.
+	 * @param punto_cruce El punto de cruce para cruzar los cromosomas.
+	 */
 	private void cruce(Cromosoma padre, Cromosoma madre, int punto_cruce) {
 		
 		int nBit = 0; // contador para el número de bit recorrido
@@ -205,7 +216,8 @@ public class AG {
 				nBit++;
 			}
 		}
-		// se evalúan
+		
+		// se evalúan y sustituyen a los padres
 		padre.setGenes(hijo1);
 		padre.setAptitud(padre.evalua());
 		madre.setGenes(hijo2);
@@ -216,12 +228,15 @@ public class AG {
 	 * Realiza la mutaciï¿½n de los individuos seleccionados en la poblaciï¿½n.
 	 */
 	public void mutacion() {
+		
 		boolean mutado;
 		double prob;
 		Random generador = new Random();
 		
+		// para cada cromosoma de la población
 		for (int i = 0; i < _tamPoblacion; i++) {
 			mutado = false;
+			// para cada gen del cromosoma se prueba la mutación
 			boolean[][] genes = _poblacion[i].getGenes();
 			for (int j = 0; j < genes.length; j++) {
 				for (int k = 0; k < genes[j].length; k++) {
@@ -266,7 +281,7 @@ public class AG {
 		// Si el mejor de esta generación es mejor que el mejor que
 		// tenia antes, se actualiza
 		if ((_elMejor == null) || (aptitud_mejor > _elMejor.getAptitud())) {
-			_elMejor = _poblacion[_posMejor];
+			_elMejor = (Cromosoma) _poblacion[_posMejor].clone();
 		}
 	}
 
@@ -327,7 +342,29 @@ public class AG {
 		return _elMejor;
 	}
 	
-	public void algoritmoGenetico() {
+	/**
+	 * Devuelve el número de la generación actual.
+	 * @return El número de la generación actual.
+	 */
+	public int getNumGeneracion() {
+		return _numGeneracion;
+	}
+	
+	/**
+	 * Calcula la aptitud media de la población.
+	 * 
+	 * @return La aptitud media de la población.
+	 */
+	public double getAptitudMedia() {
 		
+		double media = 0;
+		
+		for (int i = 0; i < _tamPoblacion; i++) {
+			media += _poblacion[i].getAptitud();
+		}
+		
+		media /= _tamPoblacion;
+		
+		return media;
 	}
 }
