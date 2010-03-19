@@ -548,7 +548,7 @@ public class Ventana extends JFrame {
 
 		// Mostramos el mejor individuo
 		if(_AG.getElMejor() != null)
-		   _txtInforme.setText(_AG.getElMejor().toString());
+		   _txtInforme.setText("El mejor valor es "+_AG.getElMejor().toString()+"\n"+"Alcanza un máximo de: "+_AG.getElMejor().f());
 	}
 
 	/**
