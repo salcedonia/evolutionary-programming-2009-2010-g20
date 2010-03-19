@@ -1,5 +1,7 @@
 package logica;
 
+import java.util.Random;
+
 import cromosoma.Cromosoma;
 import cromosoma.CromosomaFuncion1;
 import cromosoma.CromosomaFuncion2;
@@ -35,18 +37,15 @@ public class AG {
 	/**
 	 * Posicion del mejor cromosoma.
 	 */
-	@SuppressWarnings("unused")
 	private int _posMejor;
 
 	/**
 	 * Probabilidad de cruce.
 	 */
-	@SuppressWarnings("unused")
 	private double _probCruce;
 	/**
 	 * Probabilidad de mutacion.
 	 */
-	@SuppressWarnings("unused")
 	private double _probMutacion;
 	/**
 	 * Tolerancia de la representacion.
@@ -72,6 +71,7 @@ public class AG {
 	/**
 	 * Valor de N.
 	 */
+	@SuppressWarnings("unused")
 	private int _valorN;
 
 	/**
@@ -112,30 +112,162 @@ public class AG {
 	 * Realiza la selecciï¿½n de individuos de la poblaciï¿½n.
 	 */
 	public void seleccion() {
-
+		seleccionRuleta(); // Por ahora solo tenemos este método
+	}
+	
+	private void seleccionRuleta() {
+		
+		// Seleccionados para sobrevivir
+		int[] sel_super = new int[_tamPoblacion];
+		double prob; // probabilidad de seleccion
+		int pos_super; // posición del superviviente
+		Random generador = new Random();
+		for (int i = 0; i < _tamPoblacion; i++) {
+			prob = generador.nextDouble();
+			pos_super = 0;
+			while ((prob > _poblacion[pos_super].getPuntAcumulada())
+					&& (pos_super < _tamPoblacion)) 
+				pos_super++;
+			sel_super[i] = pos_super;
+		}
+		
+		// se genera la poblacion intermedia
+		Cromosoma[] nuevaPoblacion = new Cromosoma[_tamPoblacion]; 
+		for (int i = 0; i < _tamPoblacion; i++) {
+			nuevaPoblacion[i] = (Cromosoma) _poblacion[sel_super[i]].clone();
+		}
 	}
 
 	/**
 	 * Realiza la reproducciï¿½n de individuos de la poblaciï¿½n.
 	 */
 	public void reproduccion() {
-		// TODO Auto-generated method stub
+		
+		// Seleccionados para reproducir
+		int[] sel_cruce = new int[_tamPoblacion];
+		// Contador de seleccionados
+		int num_sel_cruce = 0;;
+		int punto_cruce;
+		double prob;
+		Random generador = new Random();
 
+		// Se eligen los individuos a cruzar
+		for (int i = 0; i < _tamPoblacion; i++) {
+			// Se generan tam_pob números aleatorios en [0 1)
+			prob = generador.nextDouble();
+			// Se eligen los individuos de las posiciones i si prob <
+			// prob_cruce
+			if (prob < _probCruce) {
+				sel_cruce[num_sel_cruce] = i;
+				num_sel_cruce++;
+			}
+		}
+		
+		// El número de seleccionados se hace par
+		if ((num_sel_cruce % 2) == 1)
+			num_sel_cruce--;
+		
+		// Se cruzan los individuos elegidos en un punto al azar
+		punto_cruce = (int) generador.nextDouble() * _poblacion[0].getLongitudCromosoma();
+		for (int i = 0; i < num_sel_cruce; i += 2) {
+			cruce(_poblacion[sel_cruce[i]], _poblacion[sel_cruce[i+1]],punto_cruce);
+		}		
+	}
+	
+	private void cruce(Cromosoma padre, Cromosoma madre, int punto_cruce) {
+		
+		int nBit = 0; // contador para el número de bit recorrido
+		
+		// se inicializan los hijos
+		boolean[][] hijo1 = new boolean[padre.getNumGenes()][];
+		boolean[][] hijo2 = new boolean[madre.getNumGenes()][];
+		for (int i = 0; i < padre.getNumGenes(); i++) {
+			hijo1[i] = new boolean[padre.getGenes()[i].length];
+			hijo2[i] = new boolean[madre.getGenes()[i].length];
+		}
+		
+		int i = 0, j = 0;
+
+		// primera parte del intercambio: 1 a 1 y 2 a 2
+		for (i =0 ; i < padre.getNumGenes() && nBit < punto_cruce; i++) {
+			for (j = 0; j < hijo1[i].length && nBit < punto_cruce; j++ ) {
+				hijo1[i][j] = padre.getGenes()[i][j];
+				hijo2[i][j] = madre.getGenes()[i][j];
+				nBit++;
+			}
+		}
+		
+		// segunda parte: 1 a 2 y 2 a 1
+		for ( ; i < padre.getNumGenes(); i++) {
+			for ( ; j < hijo1[i].length; j++ ) {
+				hijo1[i][j] = madre.getGenes()[i][j];
+				hijo2[i][j] = padre.getGenes()[i][j];
+				nBit++;
+			}
+		}
+		// se evalúan
+		padre.setGenes(hijo1);
+		padre.setAptitud(padre.evalua());
+		madre.setGenes(hijo2);
+		madre.setAptitud(madre.evalua());		
 	}
 
 	/**
 	 * Realiza la mutaciï¿½n de los individuos seleccionados en la poblaciï¿½n.
 	 */
 	public void mutacion() {
-		// TODO Auto-generated method stub
-
+		boolean mutado;
+		double prob;
+		Random generador = new Random();
+		
+		for (int i = 0; i < _tamPoblacion; i++) {
+			mutado = false;
+			boolean[][] genes = _poblacion[i].getGenes();
+			for (int j = 0; j < genes.length; j++) {
+				for (int k = 0; k < genes[j].length; k++) {
+					// se genera un numero aleatorio en [0 1)
+					prob = generador.nextDouble();
+					
+					// mutan los genes con prob<prob_mut
+					if (prob<_probMutacion) {
+						genes[j][k] = !( genes[j][k]);
+						mutado = true;
+					}
+				}
+			}
+			if (mutado) 
+				_poblacion[i].setAptitud(_poblacion[i].evalua());
+		}
 	}
 
 	/**
 	 * Asigna la calidad a los individuos de una poblaciï¿½n.
 	 */
 	public void evaluarPoblacion() {
-		// TODO Auto-generated method stub
+		
+		double punt_acu = 0; // puntuación acumulada
+		double aptitud_mejor = 0; // mejor aptitud
+		double sumaptitud = 0; // suma de la aptitud
+		
+		for (int i = 0; i < _tamPoblacion; i++) {
+			sumaptitud = sumaptitud + _poblacion[i].getAptitud();
+			if (_poblacion[i].getAptitud() > aptitud_mejor) {
+				_posMejor = i;
+				aptitud_mejor = _poblacion[i].getAptitud();
+			}
+		}
+		
+		for (int i = 0; i < _tamPoblacion; i++) {
+			_poblacion[i].setPuntuacion(_poblacion[i].getAptitud()/sumaptitud);
+			_poblacion[i].setPuntAcumulada(_poblacion[i].getPuntuacion() + punt_acu);
+			punt_acu = punt_acu + _poblacion[i].getPuntuacion();
+		}
+		
+		// Si el mejor de esta generación es mejor que el mejor que
+		// tenia antes, se actualiza
+		if ((_elMejor == null) || (aptitud_mejor > _elMejor.getAptitud())) {
+			_elMejor = _poblacion[_posMejor];
+		}
 	}
 
 	/**
@@ -193,5 +325,9 @@ public class AG {
 	public Cromosoma getElMejor() {
 
 		return _elMejor;
+	}
+	
+	public void algoritmoGenetico() {
+		
 	}
 }

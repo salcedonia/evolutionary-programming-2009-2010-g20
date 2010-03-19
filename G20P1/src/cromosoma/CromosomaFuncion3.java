@@ -18,15 +18,33 @@ public class CromosomaFuncion3 extends Cromosoma {
 	}
 
 	@Override
-	public double fenotipo() {
+	public int calcularLongGen(int nGen, double tolerancia) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int calcularLongCromosoma(double tolerancia) {
+	public double f() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public double fenotipo(boolean[] gen, int nGen) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Object clone() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

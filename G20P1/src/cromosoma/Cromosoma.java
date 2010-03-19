@@ -10,14 +10,20 @@ import java.util.Random;
 public abstract class Cromosoma {
 
 	/**
-	 * Cadena de bits.
+	 * Genes del cromosoma.
+	 * Un array de booleanos para cada gen.
 	 */
-	protected boolean[] _genes;
+	protected boolean[][] _genes;
+	
+	/**
+	 * Número de genes del problema.
+	 */
+	protected int _numGenes;
 
 	/**
-	 * Fenotipo del cromosoma.
+	 * Decodificación de los genes del cromosoma.
 	 */
-	protected double _fenotipo;
+	protected double[] _fenotipo;
 
 	/**
 	 * Funcion de evaluacion fitness (adaptacion).
@@ -25,7 +31,7 @@ public abstract class Cromosoma {
 	protected double _aptitud;
 
 	/**
-	 * Puntuaciï¿½n relativa (aptitud/suma).
+	 * Puntuación relativa (aptitud/suma).
 	 */
 	
 	protected double _puntuacion;
@@ -36,9 +42,26 @@ public abstract class Cromosoma {
 	protected double _puntAcumulada;
 	
 	/**
-	 * Inicializa aleatoriamente el vector de genes.
+	 * Longitud total en bits del cromosoma.
+	 */
+	protected int _longitudCromosoma;
+	
+	/**
+	 * Inicializa los genes del cromosoma.
 	 */
 	public void inicializaCromosoma() {
+		
+		for (int i = 0; i < _numGenes; i++) {
+			
+			// Inicializamos el gen
+			inicializaGen(i);
+		}
+	}
+	
+	/**
+	 * Inicializa aleatoriamente el vector de genes.
+	 */
+	private void inicializaGen(int nGen) {
 
 		Random generador = new Random();
 		   
@@ -48,9 +71,9 @@ public abstract class Cromosoma {
 			double aleatorio = generador.nextDouble();
 			
 			if(aleatorio < 0.5)
-				_genes[i] = false;
+				_genes[nGen][i] = false;
 		    else
-				_genes[i] = true;	
+				_genes[nGen][i] = true;	
 		}
 	}
 
@@ -59,7 +82,7 @@ public abstract class Cromosoma {
 	 * 
 	 * @return El array de genes.
 	 */
-	public boolean[] getGenes() {
+	public boolean[][] getGenes() {
 		
 		return _genes;
 	}
@@ -69,17 +92,37 @@ public abstract class Cromosoma {
 	 * 
 	 * @param genes Nuevo valor del array de genes a establecer.
 	 */
-	public void setGenes(boolean[] genes) {
+	public void setGenes(boolean[][] genes) {
 		
 		_genes = genes;
 	}
 
 	/**
+	 * Devuelve el número de genes del cromosoma.
+	 * 
+	 * @return El número de genes del cromosoma.
+	 */
+	public int getNumGenes() {
+		
+		return _numGenes;
+	}
+
+	/**
+	 * Establece el número de genes del cromosoma.
+	 * 
+	 * @param fenotipo Nuevo valor del número de genes.
+	 */
+	public void setNumGenes(int numGenes) {
+		
+		_numGenes = numGenes;
+	}
+	
+	/**
 	 * Devuelve el fenotipo del cromosoma.
 	 * 
 	 * @return El fenotipo del cromosoma.
 	 */
-	public double getFenotipo() {
+	public double[] getFenotipo() {
 		
 		return _fenotipo;
 	}
@@ -89,7 +132,7 @@ public abstract class Cromosoma {
 	 * 
 	 * @param fenotipo Nuevo valor del fenotipo a establecer.
 	 */
-	public void setFenotipo(double fenotipo) {
+	public void setFenotipo(double[] fenotipo) {
 		
 		_fenotipo = fenotipo;
 	}
@@ -154,6 +197,35 @@ public abstract class Cromosoma {
 		_puntAcumulada = acumulada;
 	}
 	
+	public void setLongitudCromosoma(int _longitudCromosoma) {
+		this._longitudCromosoma = _longitudCromosoma;
+	}
+
+	public int getLongitudCromosoma() {
+		return _longitudCromosoma;
+	}
+	
+	/**
+	 * Halla el valor decimal de un número binario a partir de un vector de 
+	 * booleanos.
+	 * 
+	 * @param gen Gen a convertir en decimal.
+	 * 
+	 * @return El valor decimal del número binario codificado en el vector de 
+	 * booleanos.
+	 */
+	public double bin_dec(boolean[] gen) {
+		
+		double valorDecimal = 0, potencia_2 = 1;
+		for (int i = 0; i < gen.length; i++) {
+			if (gen[i]) {
+				valorDecimal += potencia_2;
+			}
+			potencia_2 *= 2;
+		}
+		return valorDecimal;
+	}
+	
 	// ---------------METODOS ABSTRACTOS----------------//
 	
 	/**
@@ -164,18 +236,38 @@ public abstract class Cromosoma {
 	public abstract double evalua();
 	
 	/**
-	 * Calcula el fenotipo del cromosoma.
+	 * Calcula el fenotipo de un gen.
 	 * 
-	 * @return El fenotipo del cromosoma.
+	 * @param gen Gen a calcular su fenotipo.
+	 * @param nGen Número del gen para calcular su fenotipo.
+	 * @return El fenotipo del gen.
 	 */
-	public abstract double fenotipo();
+	public abstract double fenotipo(boolean[] gen, int nGen);
 	
 	/**
-	 * Calcula la longitud del cromosoma con la tolerancia.
+	 * Calcula la longitud del gen con la tolerancia.
 	 * 
 	 * @param tolerancia Tolerancia del algoritmo.
 	 * 
-	 * @return La longitud del cromosoma.
+	 * @return La longitud del gen.
 	 */
-	public abstract int calcularLongCromosoma(double tolerancia);
+	public abstract int calcularLongGen(int nGen, double tolerancia);
+
+	/**
+	 * Calcula el valor de la función a partir del fenotipo actual.
+	 * 
+	 * @return El valor de la función usando el fenotipo actual.
+	 */
+	public abstract double f();
+	
+	/**
+	 * Devuelve una copia del objeto que invoca este método.
+	 */
+	public abstract Object clone();
+
+	/**
+	 * Devuelve el string que contiene el fenotipo del cromosoma.
+	 */
+	public abstract String toString();
+	
 }
