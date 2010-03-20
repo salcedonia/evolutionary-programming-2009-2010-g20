@@ -1,8 +1,6 @@
 package gui;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -12,19 +10,15 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-
-import org.math.plot.Plot2DPanel;
-import org.math.plot.plotObjects.BaseLabel;
-
 import cromosoma.TipoCromosoma;
-
 import logica.AG;
 
 /**
@@ -32,7 +26,6 @@ import logica.AG;
  * gr路fica del usuario.
  * 
  * @author Grupo20.
- * 
  */
 public class Ventana extends JFrame {
 
@@ -55,35 +48,30 @@ public class Ventana extends JFrame {
 	private AG _AG;
 
 	/**
+	 * Clase que se encarga de validar los datos introducidos por el usuario.
+	 */
+	private ValidadorDatos _validadorDatos;
+	
+	// ---------------INTERFAZ ----------------//
+	
+	/**
 	 * Panel Principal
 	 */
-	private JPanel _panelPrincipal = null;
+	private JPanel _panelPrincipal;
 	/**
 	 * Panel de opciones.
 	 */
-	private JPanel _panelOpciones = null;
+	private JPanel _panelOpciones;
 	
 	/**
-	 * Panel de la gr醘ica de aptitudes.
+	 * Scroll Panel que incluye a la caja de texo de Informe de datos.
 	 */
-	private Plot2DPanel _panelAptitud = null;
+	private JScrollPane _scrInforme;
 	
-	/**
-	 * Aptitudes para el eje de abscisas del Mejor de cada generaci髇.
-	 */
-	private double[] _yAptitudMejor = null;
-	
-	/**
-	 * Aptitudes para el eje de abscisas de las medias de cada generaci髇.
-	 */
-	private double[] _yAptitudMedia = null;
-	
-	// ---------------INTERFAZ ----------------//
-
 	/**
 	 * Caja de texto de la derecha.
 	 */
-	private JTextField _txtInforme;
+	private JTextArea _txtInforme;
 
 	/**
 	 * Panel de cuerpo del panel de opciones.
@@ -141,6 +129,11 @@ public class Ventana extends JFrame {
 	private JLabel _lblSeleccionElitismo;
 
 	/**
+	 * Etiqueta de Seleccion de elitismo.
+	 */
+	private JLabel _lblSeleccionEscaladoSimple;
+
+	/**
 	 * Campo de texto de numero de generaciones.
 	 */
 	private JTextField _txtNumGeneraciones;
@@ -171,14 +164,34 @@ public class Ventana extends JFrame {
 	private JTextField _txtValorN;
 
 	/**
-	 * Campo de texto de seleccion de elitismo.
+	 * Lista de seleccion de Elitismo.
 	 */
 	private JComboBox _cmbSeleccionElitismo;
 
 	/**
+	 * Lista de seleccion de Escalado Simple.
+	 */
+	private JComboBox _cmbSeleccionEscaladoSimple;
+	
+	/**
 	 * Boton de comienzo del AGS.
 	 */
 	private JButton _btnComenzar;
+	
+	/**
+	 * Panel de la grafica de aptitudes.
+	 */
+	private PanelAptitud _panelAptitud;
+	
+	/**
+	 * Panel de la grafica de funcion.
+	 */
+	private PanelFuncion _panelFuncion;
+	
+	/**
+	 * Panel de pesta帽as.
+	 */
+	private JTabbedPane _panelPestanas;
 
 	/**
 	 * Tipo de cromosoma a crear. Por defecto es la Funci脹n 1.
@@ -189,42 +202,11 @@ public class Ventana extends JFrame {
 	 * Indica si se aplica elitismo en el algoritmo o no.
 	 */
 	private boolean _elitismo = false;
-
-	/**
-	 * Panel de pesta帽as.
-	 */
-	private JTabbedPane _panelPestanas;
-	
-	// VARIABLES PARA EL ALGORITMO
-	/**
-	 * Numero de generaciones.
-	 */
-	private int _numGeneraciones;
 	
 	/**
-	 * Tama帽o de la poblacion.
+	 * Indica si se aplicac Escalado Simple en el algoritmo o no.
 	 */
-	private int _tamPoblacion;
-	
-	/**
-	 * Probabilidad de cruce.
-	 */
-	private double _probCruce;
-	
-	/**
-	 * Probabilidad de Mutacion.
-	 */
-	private double _probMutacion;
-	
-	/**
-	 * Precision del algoritmo.
-	 */
-	private double _precision;
-	
-	/**
-	 * Valor de N del algoritmo.
-	 */
-	private int _valorN;
+	private boolean _escaladoSimple = false;
 
 	/**
 	 * Constructor de la clase Ventana.
@@ -243,6 +225,9 @@ public class Ventana extends JFrame {
 		iniciaInterfaz();
 		setEnabled(true);
 		setVisible(true);
+		
+		// Creamos el validador de datos
+		_validadorDatos = new ValidadorDatos(this);
 	}
 
 	/**
@@ -267,8 +252,9 @@ public class Ventana extends JFrame {
 	 */
 	private Component creaPanelFuncion() {
 
-		// TODO Auto-generated method stub
-		return new JPanel();
+		_panelFuncion = new PanelFuncion();
+		
+		return _panelFuncion;
 	}
 
 	/**
@@ -278,7 +264,7 @@ public class Ventana extends JFrame {
 	 */
 	private Component creaPanelAptitud() {
 
-		_panelAptitud = new Plot2DPanel();
+		_panelAptitud = new PanelAptitud();
 		
 		return _panelAptitud;
 	}
@@ -307,7 +293,10 @@ public class Ventana extends JFrame {
 		_panelPrincipal.add(creaPanelOpciones(), constraints);
 
 		// Creamos el panel de texto que informa del analisis
-		_txtInforme = new JTextField();
+		_txtInforme = new JTextArea(5,40);
+		_txtInforme.setEditable(false);
+		_scrInforme = new JScrollPane(_txtInforme);
+		_scrInforme.setAutoscrolls(true);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.gridwidth = 1;
@@ -315,7 +304,7 @@ public class Ventana extends JFrame {
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weighty = 0.7;
 		constraints.weightx = 0.4;
-		_panelPrincipal.add(_txtInforme, constraints);
+		_panelPrincipal.add(_scrInforme, constraints);
 
 		return _panelPrincipal;
 	}
@@ -422,6 +411,12 @@ public class Ventana extends JFrame {
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblSeleccionElitismo, constraints);
 
+		_lblSeleccionEscaladoSimple = new JLabel("Escalado Simple:");
+		constraints.gridx = 0;
+		constraints.gridy = 8;
+		constraints.fill = GridBagConstraints.BOTH;
+		_panelBodyOpciones.add(_lblSeleccionEscaladoSimple, constraints);
+		
 		// Creamos todos los cuadros de texto correspondientes
 
 		String[] funcionesStrings = { "Funcion1", "Funcion2", "Funcion3",
@@ -518,6 +513,31 @@ public class Ventana extends JFrame {
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_cmbSeleccionElitismo, constraints);
 
+		String[] escaladoSimpleStrings = { "Si", "No" };
+
+		_cmbSeleccionEscaladoSimple = new JComboBox(escaladoSimpleStrings);
+		_cmbSeleccionEscaladoSimple.setSelectedIndex(1);
+		_cmbSeleccionEscaladoSimple
+				.addActionListener(new java.awt.event.ActionListener() {
+
+					public void actionPerformed(java.awt.event.ActionEvent e) {
+
+						JComboBox cb = (JComboBox) e.getSource();
+						String seleccion = (String) cb.getSelectedItem();
+
+						// Guardamos la decision correspondiente
+						if (seleccion.matches("Si"))
+							_escaladoSimple = true;
+						else if (seleccion.matches("No"))
+							_escaladoSimple = false;
+					}
+				});
+
+		constraints.gridx = 1;
+		constraints.gridy = 8;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		_panelBodyOpciones.add(_cmbSeleccionEscaladoSimple, constraints);
+		
 		// Borde del panel
 		_panelBodyOpciones.setBorder(new CompoundBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED), new EmptyBorder(0,
@@ -544,7 +564,7 @@ public class Ventana extends JFrame {
 		_btnComenzar.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 
-				if (parametrosOk())
+				if (_validadorDatos.parametrosOk())
 					comenzarAGS();
 			}
 		});
@@ -557,14 +577,21 @@ public class Ventana extends JFrame {
 	private void comenzarAGS() {
 
 		// Creamos el objeto encargado del algoritmo genetico simple
-		_AG = new AG(_numGeneraciones, _tamPoblacion, _probCruce, _probMutacion, 
-				_precision, _valorN, _elitismo, _tipoCromosoma);
+		_AG = new AG(_validadorDatos.getNumGeneraciones(), 
+				_validadorDatos.getTamPoblacion(), 
+				_validadorDatos.getProbCruce(), 
+				_validadorDatos.getProbMutacion(), 
+				_validadorDatos.getPrecision(),
+				_validadorDatos.getValorN(), 
+				_elitismo, 
+				_escaladoSimple,
+				_tipoCromosoma);
 
 		// Crea poblaci脹n inicial de cromosomas
 		_AG.inicializa();
 		
 		// Inicializa las componentes de las gr醘icas
-		inicializaGraficas();
+		_panelAptitud.inicializaGraficas(_validadorDatos.getNumGeneraciones());
 
 		// Eval藱a los individuos y coge el mejor
 		_AG.evaluarPoblacion();
@@ -575,333 +602,85 @@ public class Ventana extends JFrame {
 			_AG.reproduccion();
 			_AG.mutacion();
 			_AG.evaluarPoblacion();
-			guardaDatosGraficas();
+			_panelAptitud.guardaDatosGraficas(_AG);
 		}
 
-		// Actualizamos las gr醘icas
-		imprimeDatosGraficas();
+		// Actualizamos las graficas
+		_panelAptitud.imprimeDatosGraficas(_validadorDatos.getNumGeneraciones());
+		// TODO: Poner aqui el otro panel
 		
-		// Mostramos el mejor individuo
-		if(_AG.getElMejor() != null)
-		   _txtInforme.setText("El mejor valor es "+_AG.getElMejor().toString()+"\n "+"Alcanza un m醲imo de: "+_AG.getElMejor().f());
-	}
-	
-	/**
-	 * Inicia el panel de las gr醘icas y los vectores para sus funciones.
-	 */
-	private void inicializaGraficas() {
+		// Mostramos el resultado en el cuadro de texto de informe.
+		switch (_tipoCromosoma){
 		
-		// Inicializa un nuevo panel borrando los anteriores resultados
-		_panelAptitud.removeAllPlots();
-		
-		// Fuente general para la gr醘ica
-		_panelAptitud.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,14));
-				
-		// Cambia los nombres a los ejes
-		_panelAptitud.setAxisLabels("N鷐ero de Generaci髇","Aptitud");
-		
-		// Pone una leyenda en la parte baja de la gr醘ica
-		_panelAptitud.addLegend("SOUTH");
-				
-		// T韙ulo
-		BaseLabel titulo = new BaseLabel("Comparativa de Aptitud", Color.BLACK, 0.5, 1.1);
-		titulo.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20)); // fuente para el t韙ulo
-		_panelAptitud.addPlotable(titulo);
-		
-		// Eje de abscisas (N鷐ero de Generaci髇)
-		// Cambios en la posici髇 y el 醤gulo
-		_panelAptitud.getAxis(0).setLightLabelAngle(-Math.PI / 4);
-		_panelAptitud.getAxis(0).setLabelPosition(0.5, -0.15);
-		// fuente para el nombre del eje
-		_panelAptitud.getAxis(0).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
-		// fuente para la numeraci髇 del eje
-		_panelAptitud.getAxis(0).setLightLabelFont(new Font(Font.SANS_SERIF,Font.BOLD,14));
- 
-		// Eje de ordenadas (Aptitud)
-		// Cambios en la posici髇 y el 醤gulo
-		_panelAptitud.getAxis(1).setLightLabelAngle(-Math.PI / 4);
-		_panelAptitud.getAxis(1).setLabelPosition(-0.15, 0.5);
-		_panelAptitud.getAxis(1).setLabelAngle(-Math.PI / 2);
-		// fuente para el nombre del eje
-		_panelAptitud.getAxis(1).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
-		// fuente para la numeraci髇 del eje
-		_panelAptitud.getAxis(1).setLightLabelFont(new Font(Font.SANS_SERIF,Font.BOLD,14));
-
-		// Creaci髇 de los vectores para almacenar las y
-		_yAptitudMedia = new double[_numGeneraciones];
-		_yAptitudMejor = new double[_numGeneraciones];
-	}
-	
-	/**
-	 * Almacena para la generaci髇 actual los datos a recoger para las gr醘icas.
-	 */
-	private void guardaDatosGraficas() {
-		
-		// Guarda la aptitud media
-		_yAptitudMedia[_AG.getNumGeneracion()-1] = _AG.getAptitudMedia();
-		
-		// Guarda la aptitud del mejor
-		_yAptitudMejor[_AG.getNumGeneracion()-1] = _AG.getElMejor().getAptitud();
-	}
-	
-	/**
-	 * Imprime los resultados guardados para las gr醘icas.
-	 */
-	private void imprimeDatosGraficas() {
-		
-		// Imprime en la gr醘ica de aptitudes las componentes X para
-		// aptitudes media de la poblaci髇 y del mejor de cada generaci髇
-		double[] xGeneracion = new double[_numGeneraciones];
-		
-		for (int i = 0; i < _numGeneraciones; i++) {
-			xGeneracion[i] = i + 1;
+			case FUNCION1: 
+				// Mostramos el mejor individuo
+				_txtInforme.setText("El Mejor Valor es "+_AG.getElMejor().toString()+"\n");
+				_txtInforme.append("Alcanza un Maximo de: "+_AG.getElMejor().f());
+				break;
+			case FUNCION2: break;
+			case FUNCION3: break;
+			case FUNCION4: break;
+			case FUNCION5: break;
 		}
+	}
+	
+	/**
+	 * Devuelve el campo de texto de Numero de Generaciones.
+	 * 
+	 * @return El campo de texto de Numero de Generaciones.
+	 */
+	public JTextField getTxtNumGeneraciones() {
 		
-		_panelAptitud.addLinePlot("El Mejor", Color.BLUE, xGeneracion, _yAptitudMejor);
-		_panelAptitud.addLinePlot("Media", Color.GREEN, xGeneracion, _yAptitudMedia);
+		return _txtNumGeneraciones;
+	}
+	
+	/**
+	 * Devuelve el campo de texto de Tamanio de Poblacion.
+	 * 
+	 * @return El campo de texto de Tamanio de Poblacion.
+	 */
+	public JTextField getTxtTamPoblacion() {
 		
+		return _txtTamPoblacion;
 	}
 
 	/**
-	 * Comprueba que todos los valores introducidos por el usuario son validos
-	 * para proceder a la evaluaci脹n de la funci脹n correspondiente.
+	 * Devuelve el campo de texto de Probabilidad de Cruce.
 	 * 
-	 * @return Verdadero si todos los par路metros son v路lidos y falso en caso
-	 *         contrario.
+	 * @return El campo de texto de Probabilidad de Cruce.
 	 */
-	private boolean parametrosOk() {
-
-		return numGeneracionesOk() && tamPoblacionOk() && probCruceOk() && probMutacionOk() && precisionOk() && valorNOk();
+	public JTextField getTxtProbCruce() {
+		
+		return _txtProbCruce;
 	}
 
 	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de numero de Generaciones. Cuando
-	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable entera correspondiente.
+	 * Devuelve el campo de texto de Probabilidad de Mutacion.
 	 * 
-	 * @return Verdadero si el dato introducido es correcto.
+	 * @return El campo de texto de Probabilidad de Mutacion.
 	 */
-	private boolean numGeneracionesOk() {
+	public JTextField getTxtProbMutacion() {
 		
-		int numGeneraciones;
-		
-		try{
-			
-			if(_txtNumGeneraciones.getText().matches("")){
-				JOptionPane.showMessageDialog(this, "!Debe introducir el Numero de Generaciones!",
-	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}else{
-				numGeneraciones = Integer.parseInt(_txtNumGeneraciones.getText());
-			
-				if(numGeneraciones < 0){
-					JOptionPane.showMessageDialog(this, "!El Numero de Generaciones tiene que ser un numero entero positivo!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}else
-					// Guardamos el resultado de la validaci贸n
-					_numGeneraciones = numGeneraciones;
-			}
-		}catch(NumberFormatException e){
-			
-			JOptionPane.showMessageDialog(this, "!Numero de Generaciones tiene que ser un numero entero!",
-                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-			
-			return false;
-		}
-		
-		return true;
+		return _txtProbMutacion;
 	}
 	
 	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de Tama帽o de Poblacion. Cuando
-	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable entera correspondiente.
+	 * Devuelve el campo de texto de Precision.
 	 * 
-	 * @return Verdadero si el dato introducido es correcto.
+	 * @return El campo de texto de Precision.
 	 */
-	private boolean tamPoblacionOk() {
+	public JTextField getTxtPrecision() {
 		
-		int tamPoblacion;
-		
-		try{
-			
-			if(_txtTamPoblacion.getText().matches("")){
-				JOptionPane.showMessageDialog(this, "!Debe introducir el Tama帽o de la poblacion!",
-	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}else{
-				tamPoblacion = Integer.parseInt(_txtTamPoblacion.getText());
-			
-				if(tamPoblacion < 0){
-					JOptionPane.showMessageDialog(this, "!El Tama帽o de la Poblacion tiene que ser un numero entero positivo!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}else
-					// Guardamos el resultado de la validaci贸n
-					_tamPoblacion = tamPoblacion;
-			}
-		}catch(NumberFormatException e){
-			
-			JOptionPane.showMessageDialog(this, "!El Tama帽o de la Poblacion tiene que ser un numero entero!",
-                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-			
-			return false;
-		}
-		
-		return true;
+		return _txtPrecision;
 	}
-	
+
 	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de Probablidad de Cruce. Cuando
-	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable real correspondiente.
+	 * Devuelve el campo de texto de Valor de N.
 	 * 
-	 * @return Verdadero si el dato introducido es correcto.
+	 * @return El campo de texto de Valor de N.
 	 */
-	private boolean probCruceOk() {
+	public JTextField getTxtValorN() {
 		
-		double probCruce;
-		
-		try{
-			
-			if(_txtProbCruce.getText().matches("")){
-				JOptionPane.showMessageDialog(this, "!Debe introducir la Probabilidad de Cruce!",
-	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}else{
-				probCruce = Double.parseDouble(_txtProbCruce.getText());
-			
-				if(probCruce >= 0 && probCruce <= 1){
-					// Guardamos el resultado de la validaci贸n
-					_probCruce = probCruce;
-				}else{
-					JOptionPane.showMessageDialog(this, "!La Probabilidad de Cruce tiene que ser un numero entero positivo entre 0 y 1!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-			}
-		}catch(NumberFormatException e){
-			
-			JOptionPane.showMessageDialog(this, "!La Probabilidad de Cruce tiene que ser un numero entero!",
-                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-			
-			return false;
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de Probablidad de Mutacion. Cuando
-	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable real correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	private boolean probMutacionOk() {
-		
-		double probMutacion;
-		
-		try{
-			
-			if(_txtProbMutacion.getText().matches("")){
-				JOptionPane.showMessageDialog(this, "!Debe introducir la Probabilidad de Mutacion!",
-	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}else{
-				probMutacion = Double.parseDouble(_txtProbMutacion.getText());
-			
-				if(probMutacion >= 0 && probMutacion <= 1){
-					// Guardamos el resultado de la validaci贸n
-					_probMutacion = probMutacion;
-				}else{
-					JOptionPane.showMessageDialog(this, "!La Probabilidad de Mutacion tiene que ser un numero entero positivo entre 0 y 1!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-			}
-		}catch(NumberFormatException e){
-			
-			JOptionPane.showMessageDialog(this, "!La Probabilidad de Mutacion tiene que ser un numero entero!",
-                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-			
-			return false;
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de Precision. Cuando
-	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable real correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	private boolean precisionOk() {
-		
-		double precision;
-		
-		try{
-			
-			if(_txtPrecision.getText().matches("")){
-				JOptionPane.showMessageDialog(this, "!Debe introducir la Precision!",
-	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}else{
-				precision = Double.parseDouble(_txtPrecision.getText());
-			
-				if(precision >= 0 && precision <= 1){
-					// Guardamos el resultado de la validaci贸n
-					_precision = precision;
-				}else{
-					JOptionPane.showMessageDialog(this, "!La Precision tiene que ser un numero entero positivo entre 0 y 1!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-			}
-		}catch(NumberFormatException e){
-			
-			JOptionPane.showMessageDialog(this, "!La Precision tiene que ser un numero entero!",
-                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-			
-			return false;
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de Valor de N. Cuando
-	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable entera correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	private boolean valorNOk() {
-		
-		int valorN;
-		
-		try{
-			
-			if(_txtValorN.getText().matches("")){
-				JOptionPane.showMessageDialog(this, "!Debe introducir el Valor de N!",
-	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}else{
-				valorN = Integer.parseInt(_txtTamPoblacion.getText());
-			
-				if(valorN < 0){
-					JOptionPane.showMessageDialog(this, "!El Valor de N tiene que ser un numero entero positivo!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}else
-					// Guardamos el resultado de la validaci贸n
-					_valorN = valorN;
-			}
-		}catch(NumberFormatException e){
-			
-			JOptionPane.showMessageDialog(this, "!El Valor de N tiene que ser un numero entero!",
-                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-			
-			return false;
-		}
-		
-		return true;
+		return _txtValorN;
 	}
 }
