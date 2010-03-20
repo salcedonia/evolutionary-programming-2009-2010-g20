@@ -38,6 +38,11 @@ public class AG {
 	 * Posicion del mejor cromosoma.
 	 */
 	private int _posMejor;
+	
+	/**
+	 * Especificación del tipo de problema.
+	 */
+	private TipoProblema _tipoProblema;
 
 	/**
 	 * Probabilidad de cruce.
@@ -95,7 +100,7 @@ public class AG {
 	 */
 	public AG(int numMaxGeneraciones, int tamPoblacion, double probCruce,
 			double probMutacion, double tolerancia, int valorN, boolean elitismo,
-			boolean escaladoSimple, TipoCromosoma tipoCromosoma) {
+			boolean escaladoSimple, TipoCromosoma tipoCromosoma, TipoProblema tipoProblema) {
 
 		_numMaxGeneraciones = numMaxGeneraciones;
 		_tamPoblacion = tamPoblacion;
@@ -106,6 +111,7 @@ public class AG {
 		_elitismo = elitismo;
 		_escaladoSimple = escaladoSimple;
 		_tipoCromosoma = tipoCromosoma;
+		_tipoProblema = tipoProblema;
 	}
 
 	/**
@@ -152,6 +158,8 @@ public class AG {
 		// Ahora nuestra poblacion intermedia es nuestra poblacion.
 		_poblacion = nuevaPoblacion;
 	}
+	
+	
 
 	/**
 	 * Realiza la reproducciï¿½n de individuos de la poblaciï¿½n.
@@ -267,32 +275,109 @@ public class AG {
 	}
 
 	/**
-	 * Asigna la calidad a los individuos de una poblaciï¿½n.
+	 * Asigna la calidad a los individuos de una poblaciï¿½n. (adaptación, aptitud y el Mejor)
 	 */
 	public void evaluarPoblacion() {
 		
 		double punt_acu = 0; // puntuación acumulada
 		double aptitud_mejor = 0; // mejor aptitud
-		double sumaptitud = 0; // suma de la aptitud
+		double sumadaptacion = 0; // suma de la adaptacion
 		
+		// Actualizamos la adaptación de cada cromosoma según el tipo de problema
+		switch (_tipoProblema) {
+
+		case MINIMIZACION:
+			revisaAdaptacionMinimiza();
+			break;
+		case MAXIMIZACION:
+			revisaAdaptacionMaximiza();
+			break;
+		}
+		
+		// Obtenemos el cromosoma con mejor aptitud y la suma de adaptacion
 		for (int i = 0; i < _tamPoblacion; i++) {
-			sumaptitud = sumaptitud + _poblacion[i].getAptitud();
-			if (_poblacion[i].getAptitud() > aptitud_mejor) {
-				_posMejor = i;
-				aptitud_mejor = _poblacion[i].getAptitud();
+			sumadaptacion = sumadaptacion + _poblacion[i].getAdaptacion();
+			
+			switch (_tipoProblema) {
+
+			case MINIMIZACION:
+				if (_poblacion[i].getAptitud() < aptitud_mejor) {
+					_posMejor = i;
+					aptitud_mejor = _poblacion[i].getAptitud();
+				}
+				break;
+			case MAXIMIZACION:
+				if (_poblacion[i].getAptitud() > aptitud_mejor) {
+					_posMejor = i;
+					aptitud_mejor = _poblacion[i].getAptitud();
+				}
+				break;
 			}
 		}
 		
+		// Actualizamos los valores de puntuación
 		for (int i = 0; i < _tamPoblacion; i++) {
-			_poblacion[i].setPuntuacion(_poblacion[i].getAptitud()/sumaptitud);
+			_poblacion[i].setPuntuacion(_poblacion[i].getAdaptacion()/sumadaptacion);
 			_poblacion[i].setPuntAcumulada(_poblacion[i].getPuntuacion() + punt_acu);
 			punt_acu = punt_acu + _poblacion[i].getPuntuacion();
 		}
 		
 		// Si el mejor de esta generación es mejor que el mejor que
 		// tenia antes, se actualiza
-		if ((_elMejor == null) || (aptitud_mejor > _elMejor.getAptitud())) {
-			_elMejor = (Cromosoma) _poblacion[_posMejor].clone();
+		switch (_tipoProblema) {
+
+		case MINIMIZACION:
+			if ((_elMejor == null) || (aptitud_mejor < _elMejor.getAptitud())) {
+				_elMejor = (Cromosoma) _poblacion[_posMejor].clone();
+			}
+			break;
+		case MAXIMIZACION:
+			if ((_elMejor == null) || (aptitud_mejor > _elMejor.getAptitud())) {
+				_elMejor = (Cromosoma) _poblacion[_posMejor].clone();
+			}
+			break;
+		}
+		
+	}
+	
+	/**
+	 * Ajusta el valor de adaptación de cada cromosoma de la población para
+	 * el caso de minimización.
+	 */
+	private void revisaAdaptacionMinimiza() {
+		
+		double cmax = -Double.MAX_VALUE;
+		// un valor por debajo de cualquiera que pueda
+		// tomar la función objetivo
+		for (int i = 0; i < _tamPoblacion; i++) {
+			if (_poblacion[i].getAptitud() > cmax) 
+				cmax = _poblacion[i].getAptitud();
+		}
+		cmax = cmax * 1.05; // margen para evitar sumadaptacion = 0
+							// si converge la población
+		
+		// Hacemos el ajuste de la adaptación según la fórmula: f(x) = cmax - g(x)
+		for (int i = 0; i < _tamPoblacion; i++) {
+			_poblacion[i].setAdaptacion(cmax - _poblacion[i].getAptitud());
+		}
+	}
+	
+	/**
+	 * Ajusta el valor de adaptación de cada cromosoma de la población para
+	 * el caso de maximización.
+	 */
+	private void revisaAdaptacionMaximiza() {
+		
+		double fmin = Double.MAX_VALUE; 
+		// calculamos en fmin el peor valor absoluto de las aptitudes
+		for (int i = 0; i < _tamPoblacion; i++) {
+			if (Math.abs(_poblacion[i].getAptitud()) < fmin) 
+				fmin = _poblacion[i].getAptitud();
+		}
+		
+		// Hacemos el ajuste a la adaptación según la fórmula f(x) = g(x) + Fmin
+		for (int i = 0; i < _tamPoblacion; i++) {
+			_poblacion[i].setAdaptacion(fmin + _poblacion[i].getAptitud());
 		}
 	}
 

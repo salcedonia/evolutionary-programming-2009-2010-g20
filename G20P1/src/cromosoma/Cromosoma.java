@@ -26,9 +26,14 @@ public abstract class Cromosoma {
 	protected double[] _fenotipo;
 
 	/**
-	 * Funcion de evaluacion fitness (adaptacion).
+	 * Valor de la función de evaluación.
 	 */
 	protected double _aptitud;
+	
+	/**
+	 * Valor de la función de adaptación.
+	 */
+	protected double _adaptacion;
 
 	/**
 	 * Puntuación relativa (aptitud/suma).
@@ -156,6 +161,26 @@ public abstract class Cromosoma {
 		
 		_aptitud = aptitud;
 	}
+	
+	/**
+	 * Devuelve la adaptación del cromosoma.
+	 * 
+	 * @return La adaptación del cromosoma.
+	 */
+	public double getAdaptacion() {
+		
+		return _adaptacion;
+	}
+
+	/**
+	 * Establece la adaptación a valor "adaptación".
+	 * 
+	 * @param aptitud Nuevo valor de adaptación a establecer.
+ 	 */
+	public void setAdaptacion(double adaptacion) {
+		
+		_adaptacion = adaptacion;
+	}
 
 	/**
 	 * Devuelve la puntuaciï¿½n del cromosoma.
@@ -252,13 +277,15 @@ public abstract class Cromosoma {
 	 * @return La longitud del gen.
 	 */
 	public abstract int calcularLongGen(int nGen, double tolerancia);
-
+	
 	/**
-	 * Calcula el valor de la función a partir del fenotipo actual.
+	 * Calcula el valor de la función a partir del fenotipo actual. 
+	 * (función de evaluación).
 	 * 
 	 * @return El valor de la función usando el fenotipo actual.
 	 */
 	public abstract double f();
+	
 	
 	/**
 	 * Devuelve una copia del objeto que invoca este método.
