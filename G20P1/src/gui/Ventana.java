@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -20,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.math.plot.Plot2DPanel;
+import org.math.plot.plotObjects.BaseLabel;
 
 import cromosoma.TipoCromosoma;
 
@@ -584,12 +586,48 @@ public class Ventana extends JFrame {
 		   _txtInforme.setText("El mejor valor es "+_AG.getElMejor().toString()+"\n "+"Alcanza un máximo de: "+_AG.getElMejor().f());
 	}
 	
+	/**
+	 * Inicia el panel de las gráficas y los vectores para sus funciones.
+	 */
 	private void inicializaGraficas() {
 		
-		// Inicializa un nuevo panel
+		// Inicializa un nuevo panel borrando los anteriores resultados
+		_panelAptitud.removeAllPlots();
 		
+		// Fuente general para la gráfica
+		_panelAptitud.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,14));
+				
+		// Cambia los nombres a los ejes
+		_panelAptitud.setAxisLabels("Número de Generación","Aptitud");
 		
-		// Creación de los vectores para almacenar las x
+		// Pone una leyenda en la parte baja de la gráfica
+		_panelAptitud.addLegend("SOUTH");
+				
+		// Título
+		BaseLabel titulo = new BaseLabel("Comparativa de Aptitud", Color.BLACK, 0.5, 1.1);
+		titulo.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20)); // fuente para el título
+		_panelAptitud.addPlotable(titulo);
+		
+		// Eje de abscisas (Número de Generación)
+		// Cambios en la posición y el ángulo
+		_panelAptitud.getAxis(0).setLightLabelAngle(-Math.PI / 4);
+		_panelAptitud.getAxis(0).setLabelPosition(0.5, -0.15);
+		// fuente para el nombre del eje
+		_panelAptitud.getAxis(0).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
+		// fuente para la numeración del eje
+		_panelAptitud.getAxis(0).setLightLabelFont(new Font(Font.SANS_SERIF,Font.BOLD,14));
+ 
+		// Eje de ordenadas (Aptitud)
+		// Cambios en la posición y el ángulo
+		_panelAptitud.getAxis(1).setLightLabelAngle(-Math.PI / 4);
+		_panelAptitud.getAxis(1).setLabelPosition(-0.15, 0.5);
+		_panelAptitud.getAxis(1).setLabelAngle(-Math.PI / 2);
+		// fuente para el nombre del eje
+		_panelAptitud.getAxis(1).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
+		// fuente para la numeración del eje
+		_panelAptitud.getAxis(1).setLightLabelFont(new Font(Font.SANS_SERIF,Font.BOLD,14));
+
+		// Creación de los vectores para almacenar las y
 		_yAptitudMedia = new double[_numGeneraciones];
 		_yAptitudMejor = new double[_numGeneraciones];
 	}
@@ -619,7 +657,6 @@ public class Ventana extends JFrame {
 			xGeneracion[i] = i + 1;
 		}
 		
-		_panelAptitud.addLegend("SOUTH");
 		_panelAptitud.addLinePlot("El Mejor", Color.BLUE, xGeneracion, _yAptitudMejor);
 		_panelAptitud.addLinePlot("Media", Color.GREEN, xGeneracion, _yAptitudMedia);
 		
