@@ -59,6 +59,12 @@ public class AG {
 	private boolean _elitismo;
 
 	/**
+	 * Indica si se usa Escalado Simple o no.
+	 */
+	@SuppressWarnings("unused")
+	private boolean _escaladoSimple;
+	
+	/**
 	 * Numero de generaciones procesadas.
 	 */
 	private int _numGeneracion = 0;
@@ -77,18 +83,19 @@ public class AG {
 	/**
 	 * Constructor de la clase AG.
 	 * 
-	 * @param tamPoblacion
-	 * @param numMaxGeneraciones
-	 * @param probCruce
-	 * @param probMutacion
-	 * @param tolerancia
-	 * @param valorN
-	 * @param elitismo
-	 * @param tipoCromosoma
+	 * @param tamPoblacion Tamanio de la poblacion.
+	 * @param numMaxGeneraciones Numero maximo de generaciones.
+	 * @param probCruce Probabilidad de Cruce.
+	 * @param probMutacion Probabilidad de Mutacion.
+	 * @param tolerancia Tolerancia del algoritmo.
+	 * @param valorN Valor de N.
+	 * @param elitismo Uso de elitismo en el algoritmo.
+	 * @param escaladoSimple Uso de escalado simple en el algoritmo.
+	 * @param tipoCromosoma Tipo de cromosoma empleado.
 	 */
 	public AG(int numMaxGeneraciones, int tamPoblacion, double probCruce,
 			double probMutacion, double tolerancia, int valorN, boolean elitismo,
-			TipoCromosoma tipoCromosoma) {
+			boolean escaladoSimple, TipoCromosoma tipoCromosoma) {
 
 		_numMaxGeneraciones = numMaxGeneraciones;
 		_tamPoblacion = tamPoblacion;
@@ -97,6 +104,7 @@ public class AG {
 		_tolerancia = tolerancia;
 		_valorN = valorN;
 		_elitismo = elitismo;
+		_escaladoSimple = escaladoSimple;
 		_tipoCromosoma = tipoCromosoma;
 	}
 
@@ -140,6 +148,9 @@ public class AG {
 		for (int i = 0; i < _tamPoblacion; i++) {
 			nuevaPoblacion[i] = (Cromosoma) _poblacion[sel_super[i]].clone();
 		}
+		
+		// Ahora nuestra poblacion intermedia es nuestra poblacion.
+		_poblacion = nuevaPoblacion;
 	}
 
 	/**
@@ -347,6 +358,7 @@ public class AG {
 	 * @return El número de la generación actual.
 	 */
 	public int getNumGeneracion() {
+		
 		return _numGeneracion;
 	}
 	
