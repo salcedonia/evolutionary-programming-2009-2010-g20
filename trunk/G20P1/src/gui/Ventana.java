@@ -18,8 +18,15 @@ import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+
+import cromosoma.CromosomaFuncion1;
+import cromosoma.CromosomaFuncion2;
+import cromosoma.CromosomaFuncion3;
+import cromosoma.CromosomaFuncion4;
+import cromosoma.CromosomaFuncion5;
 import cromosoma.TipoCromosoma;
 import logica.AG;
+import logica.TipoProblema;
 
 /**
  * Clase que implementa los mÃˆtodos necesarios para la gestiÃ›n de la ventana
@@ -197,6 +204,11 @@ public class Ventana extends JFrame {
 	 * Tipo de cromosoma a crear. Por defecto es la FunciÃ›n 1.
 	 */
 	private TipoCromosoma _tipoCromosoma = TipoCromosoma.FUNCION1;
+	
+	/**
+	 * Tipo de problema a resolver.
+	 */
+	private TipoProblema _tipoProblema = TipoProblema.MAXIMIZACION;
 
 	/**
 	 * Indica si se aplica elitismo en el algoritmo o no.
@@ -575,6 +587,9 @@ public class Ventana extends JFrame {
 	 * Configura todo lo necesario para la evaluacion del AGS.
 	 */
 	private void comenzarAGS() {
+		
+		// Inicializamos el tipo de problema a resolver
+		setTipoProblema();
 
 		// Creamos el objeto encargado del algoritmo genetico simple
 		_AG = new AG(_validadorDatos.getNumGeneraciones(), 
@@ -585,7 +600,8 @@ public class Ventana extends JFrame {
 				_validadorDatos.getValorN(), 
 				_elitismo, 
 				_escaladoSimple,
-				_tipoCromosoma);
+				_tipoCromosoma,
+				_tipoProblema);
 
 		// Crea poblaciÃ›n inicial de cromosomas
 		_AG.inicializa();
@@ -617,11 +633,35 @@ public class Ventana extends JFrame {
 				_txtInforme.setText("El Mejor Valor es "+_AG.getElMejor().toString()+"\n");
 				_txtInforme.append("Alcanza un Maximo de: "+_AG.getElMejor().f());
 				break;
-			case FUNCION2: break;
+			case FUNCION2: 
+				_txtInforme.setText("Los Mejores Valores son "+_AG.getElMejor().toString()+"\n");
+				_txtInforme.append("Alcanza un Maximo de: "+_AG.getElMejor().f());
+				break;
 			case FUNCION3: break;
 			case FUNCION4: break;
 			case FUNCION5: break;
 		}
+	}
+	
+	/**
+	 * Devuelve el tipo de problema según la función seleccionada actualmente.
+	 */
+	private void setTipoProblema() {
+		
+		// Asignación del tipo de problema
+		switch (_tipoCromosoma) {
+
+		case FUNCION1:
+		case FUNCION2:
+			_tipoProblema = TipoProblema.MAXIMIZACION;
+			break;
+		case FUNCION3:
+		case FUNCION4:
+		case FUNCION5:
+			_tipoProblema = TipoProblema.MINIMIZACION;
+			break;
+		}
+		
 	}
 	
 	/**
