@@ -18,12 +18,6 @@ import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-
-import cromosoma.CromosomaFuncion1;
-import cromosoma.CromosomaFuncion2;
-import cromosoma.CromosomaFuncion3;
-import cromosoma.CromosomaFuncion4;
-import cromosoma.CromosomaFuncion5;
 import cromosoma.TipoCromosoma;
 import logica.AG;
 import logica.TipoProblema;
@@ -41,7 +35,7 @@ public class Ventana extends JFrame {
 	private static final int ALTO = 640;
 	private static final int ANCHO = 600;
 	private static final String ICONO = "AGSIcono.gif";
-	
+
 	// Valores por defecto de las opciones
 	private static final String NUM_POBLACION_DEF = "100";
 	private static final String NUM_GENERACIONES_DEF = "100";
@@ -58,9 +52,9 @@ public class Ventana extends JFrame {
 	 * Clase que se encarga de validar los datos introducidos por el usuario.
 	 */
 	private ValidadorDatos _validadorDatos;
-	
+
 	// ---------------INTERFAZ ----------------//
-	
+
 	/**
 	 * Panel Principal
 	 */
@@ -69,12 +63,12 @@ public class Ventana extends JFrame {
 	 * Panel de opciones.
 	 */
 	private JPanel _panelOpciones;
-	
+
 	/**
 	 * Scroll Panel que incluye a la caja de texo de Informe de datos.
 	 */
 	private JScrollPane _scrInforme;
-	
+
 	/**
 	 * Caja de texto de la derecha.
 	 */
@@ -179,22 +173,22 @@ public class Ventana extends JFrame {
 	 * Lista de seleccion de Escalado Simple.
 	 */
 	private JComboBox _cmbSeleccionEscaladoSimple;
-	
+
 	/**
 	 * Boton de comienzo del AGS.
 	 */
 	private JButton _btnComenzar;
-	
+
 	/**
 	 * Panel de la grafica de aptitudes.
 	 */
 	private PanelAptitud _panelAptitud;
-	
+
 	/**
 	 * Panel de la grafica de funcion.
 	 */
 	private PanelFuncion _panelFuncion;
-	
+
 	/**
 	 * Panel de pestañas.
 	 */
@@ -204,7 +198,7 @@ public class Ventana extends JFrame {
 	 * Tipo de cromosoma a crear. Por defecto es la FunciÛn 1.
 	 */
 	private TipoCromosoma _tipoCromosoma = TipoCromosoma.FUNCION1;
-	
+
 	/**
 	 * Tipo de problema a resolver.
 	 */
@@ -214,7 +208,7 @@ public class Ventana extends JFrame {
 	 * Indica si se aplica elitismo en el algoritmo o no.
 	 */
 	private boolean _elitismo = false;
-	
+
 	/**
 	 * Indica si se aplicac Escalado Simple en el algoritmo o no.
 	 */
@@ -237,7 +231,7 @@ public class Ventana extends JFrame {
 		iniciaInterfaz();
 		setEnabled(true);
 		setVisible(true);
-		
+
 		// Creamos el validador de datos
 		_validadorDatos = new ValidadorDatos(this);
 	}
@@ -260,24 +254,26 @@ public class Ventana extends JFrame {
 	/**
 	 * Crea el panel para mostrar las gráficas correspondientes a la función.
 	 * 
-	 * @return El panel para mostrar las gráficas correspondientes a la función.
+	 * @return El panel para mostrar las gráficas correspondientes a la
+	 *         función.
 	 */
 	private Component creaPanelFuncion() {
 
 		_panelFuncion = new PanelFuncion();
-		
+
 		return _panelFuncion;
 	}
 
 	/**
 	 * Crea el panel para mostrar las gráficas correspondientes a la aptitud.
 	 * 
-	 * @return El panel para mostrar las gráficas correspondientes a la aptitud.
+	 * @return El panel para mostrar las gráficas correspondientes a la
+	 *         aptitud.
 	 */
 	private Component creaPanelAptitud() {
 
 		_panelAptitud = new PanelAptitud();
-		
+
 		return _panelAptitud;
 	}
 
@@ -305,7 +301,7 @@ public class Ventana extends JFrame {
 		_panelPrincipal.add(creaPanelOpciones(), constraints);
 
 		// Creamos el panel de texto que informa del analisis
-		_txtInforme = new JTextArea(5,40);
+		_txtInforme = new JTextArea(5, 40);
 		_txtInforme.setEditable(false);
 		_scrInforme = new JScrollPane(_txtInforme);
 		_scrInforme.setAutoscrolls(true);
@@ -428,7 +424,7 @@ public class Ventana extends JFrame {
 		constraints.gridy = 8;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblSeleccionEscaladoSimple, constraints);
-		
+
 		// Creamos todos los cuadros de texto correspondientes
 
 		String[] funcionesStrings = { "Funcion1", "Funcion2", "Funcion3",
@@ -443,16 +439,26 @@ public class Ventana extends JFrame {
 						String seleccion = (String) cb.getSelectedItem();
 
 						// Guardamos la decision correspondiente
-						if (seleccion.matches("Funcion1"))
+						if (seleccion.matches("Funcion1")) {
 							_tipoCromosoma = TipoCromosoma.FUNCION1;
-						if (seleccion.matches("Funcion2"))
+							_txtValorN.setEnabled(false);
+						}
+						if (seleccion.matches("Funcion2")) {
 							_tipoCromosoma = TipoCromosoma.FUNCION2;
-						if (seleccion.matches("Funcion3"))
+							_txtValorN.setEnabled(false);
+						}
+						if (seleccion.matches("Funcion3")) {
 							_tipoCromosoma = TipoCromosoma.FUNCION3;
-						if (seleccion.matches("Funcion4"))
+							_txtValorN.setEnabled(false);
+						}
+						if (seleccion.matches("Funcion4")) {
 							_tipoCromosoma = TipoCromosoma.FUNCION4;
-						if (seleccion.matches("Funcion5"))
+							_txtValorN.setEnabled(false);
+						}
+						if (seleccion.matches("Funcion5")) {
 							_tipoCromosoma = TipoCromosoma.FUNCION5;
+							_txtValorN.setEnabled(true);
+						}
 					}
 				});
 
@@ -549,7 +555,7 @@ public class Ventana extends JFrame {
 		constraints.gridy = 8;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_cmbSeleccionEscaladoSimple, constraints);
-		
+
 		// Borde del panel
 		_panelBodyOpciones.setBorder(new CompoundBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED), new EmptyBorder(0,
@@ -587,25 +593,20 @@ public class Ventana extends JFrame {
 	 * Configura todo lo necesario para la evaluacion del AGS.
 	 */
 	private void comenzarAGS() {
-		
+
 		// Inicializamos el tipo de problema a resolver
 		setTipoProblema();
 
 		// Creamos el objeto encargado del algoritmo genetico simple
-		_AG = new AG(_validadorDatos.getNumGeneraciones(), 
-				_validadorDatos.getTamPoblacion(), 
-				_validadorDatos.getProbCruce(), 
-				_validadorDatos.getProbMutacion(), 
-				_validadorDatos.getPrecision(),
-				_validadorDatos.getValorN(), 
-				_elitismo, 
-				_escaladoSimple,
-				_tipoCromosoma,
-				_tipoProblema);
+		_AG = new AG(_validadorDatos.getNumGeneraciones(), _validadorDatos
+				.getTamPoblacion(), _validadorDatos.getProbCruce(),
+				_validadorDatos.getProbMutacion(), _validadorDatos
+						.getPrecision(), _validadorDatos.getValorN(),
+				_elitismo, _escaladoSimple, _tipoCromosoma, _tipoProblema);
 
 		// Crea poblaciÛn inicial de cromosomas
 		_AG.inicializa();
-		
+
 		// Inicializa las componentes de las gr�ficas
 		_panelAptitud.inicializaGraficas(_validadorDatos.getNumGeneraciones());
 
@@ -622,32 +623,48 @@ public class Ventana extends JFrame {
 		}
 
 		// Actualizamos las graficas
-		_panelAptitud.imprimeDatosGraficas(_validadorDatos.getNumGeneraciones());
+		_panelAptitud
+				.imprimeDatosGraficas(_validadorDatos.getNumGeneraciones());
 		// TODO: Poner aqui el otro panel
-		
+
 		// Mostramos el resultado en el cuadro de texto de informe.
-		switch (_tipoCromosoma){
-		
-			case FUNCION1: 
-				// Mostramos el mejor individuo
-				_txtInforme.setText("El Mejor Valor es "+_AG.getElMejor().toString()+"\n");
-				_txtInforme.append("Alcanza un Maximo de: "+_AG.getElMejor().f());
-				break;
-			case FUNCION2: 
-				_txtInforme.setText("Los Mejores Valores son "+_AG.getElMejor().toString()+"\n");
-				_txtInforme.append("Alcanza un Maximo de: "+_AG.getElMejor().f());
-				break;
-			case FUNCION3: break;
-			case FUNCION4: break;
-			case FUNCION5: break;
+		switch (_tipoCromosoma) {
+
+		case FUNCION1:
+			// Mostramos el mejor individuo
+			_txtInforme.setText("El Mejor Valor es "
+					+ _AG.getElMejor().toString() + "\n");
+			_txtInforme.append("Alcanza un Maximo de: " + _AG.getElMejor().f());
+			break;
+		case FUNCION2:
+			_txtInforme.setText("Los Mejores Valores son "
+					+ _AG.getElMejor().toString() + "\n");
+			_txtInforme.append("Alcanza un Maximo de: " + _AG.getElMejor().f());
+			break;
+		case FUNCION3:
+			_txtInforme.setText("El Mejor Valor es "
+					+ _AG.getElMejor().toString() + "\n");
+			_txtInforme.append("Alcanza un Minimo de: " + _AG.getElMejor().f());
+			break;
+		case FUNCION4:
+			_txtInforme.setText("Los Mejores Valores son "
+					+ _AG.getElMejor().toString() + "\n");
+			_txtInforme.append("Alcanza un Minimo de: " + _AG.getElMejor().f());
+			break;
+		case FUNCION5:
+			_txtInforme.setText("Los Mejores Valores son: \n"
+					+ _AG.getElMejor().toString() + "\n");
+			_txtInforme.append("Alcanza un Minimo de: "
+					+ _AG.getElMejor().f());
+			break;
 		}
 	}
-	
+
 	/**
 	 * Devuelve el tipo de problema seg�n la funci�n seleccionada actualmente.
 	 */
 	private void setTipoProblema() {
-		
+
 		// Asignaci�n del tipo de problema
 		switch (_tipoCromosoma) {
 
@@ -661,26 +678,26 @@ public class Ventana extends JFrame {
 			_tipoProblema = TipoProblema.MINIMIZACION;
 			break;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Devuelve el campo de texto de Numero de Generaciones.
 	 * 
 	 * @return El campo de texto de Numero de Generaciones.
 	 */
 	public JTextField getTxtNumGeneraciones() {
-		
+
 		return _txtNumGeneraciones;
 	}
-	
+
 	/**
 	 * Devuelve el campo de texto de Tamanio de Poblacion.
 	 * 
 	 * @return El campo de texto de Tamanio de Poblacion.
 	 */
 	public JTextField getTxtTamPoblacion() {
-		
+
 		return _txtTamPoblacion;
 	}
 
@@ -690,7 +707,7 @@ public class Ventana extends JFrame {
 	 * @return El campo de texto de Probabilidad de Cruce.
 	 */
 	public JTextField getTxtProbCruce() {
-		
+
 		return _txtProbCruce;
 	}
 
@@ -700,17 +717,17 @@ public class Ventana extends JFrame {
 	 * @return El campo de texto de Probabilidad de Mutacion.
 	 */
 	public JTextField getTxtProbMutacion() {
-		
+
 		return _txtProbMutacion;
 	}
-	
+
 	/**
 	 * Devuelve el campo de texto de Precision.
 	 * 
 	 * @return El campo de texto de Precision.
 	 */
 	public JTextField getTxtPrecision() {
-		
+
 		return _txtPrecision;
 	}
 
@@ -720,7 +737,7 @@ public class Ventana extends JFrame {
 	 * @return El campo de texto de Valor de N.
 	 */
 	public JTextField getTxtValorN() {
-		
+
 		return _txtValorN;
 	}
 }
