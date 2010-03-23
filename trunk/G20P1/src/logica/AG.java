@@ -418,7 +418,7 @@ public class AG {
 				_poblacion[j] = new CromosomaFuncion4(_tolerancia);
 				break;
 			case FUNCION5:
-				_poblacion[j] = new CromosomaFuncion5(_tolerancia);
+				_poblacion[j] = new CromosomaFuncion5(_tolerancia, _valorN);
 				break;
 			}
 
