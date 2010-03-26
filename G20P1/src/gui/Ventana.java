@@ -42,6 +42,7 @@ public class Ventana extends JFrame {
 	private static final String PROB_CRUCE_DEF = "0.7";
 	private static final String PROB_MUTACION_DEF = "0.1";
 	private static final String TOLERANCIA_DEF = "0.0001";
+	private static final String NUM_ELITE_DEF = "0.01";
 
 	/**
 	 * Clase que se encarga del AGS.
@@ -128,6 +129,11 @@ public class Ventana extends JFrame {
 	 * Etiqueta de Seleccion de elitismo.
 	 */
 	private JLabel _lblSeleccionElitismo;
+	
+	/**
+	 * Etiqueta de tamaño de la élite.
+	 */
+	private JLabel _lblTamElite;
 
 	/**
 	 * Etiqueta de Seleccion de elitismo.
@@ -168,6 +174,11 @@ public class Ventana extends JFrame {
 	 * Lista de seleccion de Elitismo.
 	 */
 	private JComboBox _cmbSeleccionElitismo;
+	
+	/**
+	 * Campo de texto para el % de tamaño de la élite.
+	 */
+	private JTextField _txtPorcentageElite;
 
 	/**
 	 * Lista de seleccion de Escalado Simple.
@@ -418,10 +429,16 @@ public class Ventana extends JFrame {
 		constraints.gridy = 7;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblSeleccionElitismo, constraints);
+		
+		_lblTamElite = new JLabel("Tamaño de la Élite:");
+		constraints.gridx = 0;
+		constraints.gridy = 8;
+		constraints.fill = GridBagConstraints.BOTH;
+		_panelBodyOpciones.add(_lblTamElite, constraints);
 
 		_lblSeleccionEscaladoSimple = new JLabel("Escalado Simple:");
 		constraints.gridx = 0;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblSeleccionEscaladoSimple, constraints);
 
@@ -523,6 +540,7 @@ public class Ventana extends JFrame {
 							_elitismo = true;
 						else if (seleccion.matches("No"))
 							_elitismo = false;
+						_txtPorcentageElite.setEnabled(_elitismo);
 					}
 				});
 
@@ -530,6 +548,12 @@ public class Ventana extends JFrame {
 		constraints.gridy = 7;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_cmbSeleccionElitismo, constraints);
+		
+		_txtPorcentageElite = new JTextField(NUM_ELITE_DEF);
+		_txtPorcentageElite.setEnabled(false);
+		constraints.gridx = 1;
+		constraints.gridy = 8;
+		_panelBodyOpciones.add(_txtPorcentageElite, constraints);
 
 		String[] escaladoSimpleStrings = { "Si", "No" };
 
@@ -552,7 +576,7 @@ public class Ventana extends JFrame {
 				});
 
 		constraints.gridx = 1;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_cmbSeleccionEscaladoSimple, constraints);
 
@@ -602,7 +626,8 @@ public class Ventana extends JFrame {
 				.getTamPoblacion(), _validadorDatos.getProbCruce(),
 				_validadorDatos.getProbMutacion(), _validadorDatos
 						.getPrecision(), _validadorDatos.getValorN(),
-				_elitismo, _escaladoSimple, _tipoCromosoma, _tipoProblema);
+				_elitismo, _escaladoSimple, _tipoCromosoma, _tipoProblema,
+				_validadorDatos.getPorcentageElite());
 
 		// Crea poblaciÃ›n inicial de cromosomas
 		_AG.inicializa();
@@ -615,11 +640,21 @@ public class Ventana extends JFrame {
 
 		while (!_AG.terminado()) {
 			_AG.aumentarGeneracion();
+			
+			// No hace nada si no la opción elitismo está inactiva
+			_AG.separaElite(); 
+			
 			_AG.seleccion();
 			_AG.reproduccion();
 			_AG.mutacion();
+			
+			// No hace nada si no la opción elitismo está inactiva
+			_AG.incluyeElite();
+			
 			_AG.evaluarPoblacion();
 			_panelAptitud.guardaDatosGraficas(_AG);
+			
+			
 		}
 
 		// Actualizamos las graficas
@@ -739,5 +774,15 @@ public class Ventana extends JFrame {
 	public JTextField getTxtValorN() {
 
 		return _txtValorN;
+	}
+	
+	/**
+	 * Devuelve el campo de texto del porcentage de élite.
+	 * 
+	 * @return El campo de texto del porcentage de élite.
+	 */
+	public JTextField getTxtPorcentageElite() {
+
+		return _txtPorcentageElite;
 	}
 }

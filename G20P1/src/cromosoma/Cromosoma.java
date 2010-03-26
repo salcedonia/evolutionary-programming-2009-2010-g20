@@ -7,7 +7,7 @@ import java.util.Random;
  * 
  * @author Grupo20.
  */
-public abstract class Cromosoma {
+public abstract class Cromosoma implements Comparable<Object> {
 
 	/**
 	 * Genes del cromosoma.
@@ -249,6 +249,33 @@ public abstract class Cromosoma {
 			potencia_2 *= 2;
 		}
 		return valorDecimal;
+	}
+	
+	/**
+	 * Indica en base a qué atributos se compara el cromosoma.
+	 * 
+	 * @param obj El cromosoma a comparar con el this.
+	 * @return +1 si this > objeto, -1 si this < objeto, 0 si son iguales.
+	 */
+	@Override
+	public int compareTo(Object obj) {
+		
+		Cromosoma cromosoma = (Cromosoma) obj;
+		
+		if (this == cromosoma) return 0;
+		
+		if (this._aptitud < cromosoma._aptitud) return -1;
+		else if (this._aptitud > cromosoma._aptitud) return 1;
+		else return 1;
+		
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		Cromosoma crom = (Cromosoma) obj;
+		
+		return crom == this;
 	}
 	
 	// ---------------METODOS ABSTRACTOS----------------//

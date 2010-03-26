@@ -46,6 +46,11 @@ public class ValidadorDatos {
 	private int _valorN;
 	
 	/**
+	 * Porcentage de la élite respecto a la población.
+	 */
+	private double _porcentageElite;
+	
+	/**
 	 * Constructor de la clase Validador de Datos.
 	 * 
 	 * @param ventana Ventana grafica de la aplicacion.
@@ -65,7 +70,8 @@ public class ValidadorDatos {
 	 */
 	public boolean parametrosOk() {
 
-		return numGeneracionesOk() && tamPoblacionOk() && probCruceOk() && probMutacionOk() && precisionOk() && valorNOk();
+		return numGeneracionesOk() && tamPoblacionOk() && probCruceOk() && probMutacionOk() 
+				&& precisionOk() && valorNOk() && porcentageEliteOk();
 	}
 
 	/**
@@ -298,6 +304,38 @@ public class ValidadorDatos {
 		
 		return true;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean porcentageEliteOk() {
+		
+		double porcentageElite;
+		
+		try {
+			if(_ventana.getTxtPorcentageElite().getText().matches("")){
+				JOptionPane.showMessageDialog(_ventana, "¡Debe introducir el % para el tamaño de la élite!",
+	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}else{
+				porcentageElite = Double.parseDouble(_ventana.getTxtPorcentageElite().getText());
+			
+				if ((porcentageElite < 0) || (porcentageElite > 1)) {
+					JOptionPane.showMessageDialog(_ventana, "!El porcentage de la élite tiene que ser un numero entre 0 y 1!",
+							"Error en los datos", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}else
+					// Guardamos el resultado de la validaciÃ³n
+					_porcentageElite = porcentageElite;
+			}
+		}
+		catch (NumberFormatException e) {
+			
+		}
+		
+		return true;
+	}
 
 	public int getNumGeneraciones() {
 		return _numGeneraciones;
@@ -345,5 +383,13 @@ public class ValidadorDatos {
 
 	public void setValorN(int valorN) {
 		_valorN = valorN;
+	}
+	
+	public double getPorcentageElite() {
+		return _porcentageElite;
+	}
+
+	public void setPorcentageElite(double porcentageElite) {
+		_porcentageElite = porcentageElite;
 	}
 }
