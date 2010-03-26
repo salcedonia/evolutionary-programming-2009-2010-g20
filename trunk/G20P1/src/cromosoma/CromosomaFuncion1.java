@@ -84,6 +84,7 @@ public class CromosomaFuncion1 extends Cromosoma{
 		CromosomaFuncion1 copia = new CromosomaFuncion1();
 		
 		copia._numGenes = this._numGenes;
+		copia._adaptacion = this._adaptacion;
 		
 		// Copia de atributos de esta clase
 		copia._xMax = new double[_numGenes];
@@ -120,4 +121,7 @@ public class CromosomaFuncion1 extends Cromosoma{
 		String txtFenotipo = "X: "+_fenotipo[0];
 		return txtFenotipo;
 	}
+
+
+
 }

@@ -1,6 +1,9 @@
 package logica;
 
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Random;
+import utils.ListaOrdenada;
 
 import cromosoma.Cromosoma;
 import cromosoma.CromosomaFuncion1;
@@ -60,8 +63,17 @@ public class AG {
 	/**
 	 * Indica si se usa elitismo o no.
 	 */
-	@SuppressWarnings("unused")
 	private boolean _elitismo;
+	
+	/**
+	 * Tamaño para la élite.
+	 */
+	private int _tamElite;
+	
+	/**
+	 * Árbol con los cromosomas pertenecientes a la élite.
+	 */
+	private ListaOrdenada<Cromosoma> _elite;
 
 	/**
 	 * Indica si se usa Escalado Simple o no.
@@ -82,7 +94,6 @@ public class AG {
 	/**
 	 * Valor de N.
 	 */
-	@SuppressWarnings("unused")
 	private int _valorN;
 
 	/**
@@ -100,7 +111,8 @@ public class AG {
 	 */
 	public AG(int numMaxGeneraciones, int tamPoblacion, double probCruce,
 			double probMutacion, double tolerancia, int valorN, boolean elitismo,
-			boolean escaladoSimple, TipoCromosoma tipoCromosoma, TipoProblema tipoProblema) {
+			boolean escaladoSimple, TipoCromosoma tipoCromosoma,
+			TipoProblema tipoProblema, double tamElite) {
 
 		_numMaxGeneraciones = numMaxGeneraciones;
 		_tamPoblacion = tamPoblacion;
@@ -112,6 +124,12 @@ public class AG {
 		_escaladoSimple = escaladoSimple;
 		_tipoCromosoma = tipoCromosoma;
 		_tipoProblema = tipoProblema;
+		
+		// Calcula el número de cromosomas de la élite
+		if (_elitismo) {
+			_tamElite = (int) (tamElite * _tamPoblacion);
+		}
+		else _tamElite = 0;
 	}
 
 	/**
@@ -143,6 +161,7 @@ public class AG {
 		for (int i = 0; i < _tamPoblacion; i++) {
 			prob = generador.nextDouble();
 			pos_super = 0;
+			
 			while ((prob > _poblacion[pos_super].getPuntAcumulada())
 					&& (pos_super < _tamPoblacion)) 
 				pos_super++;
@@ -464,4 +483,114 @@ public class AG {
 		
 		return media;
 	}
+	
+	/**
+	 * Coge los cromosomas que va a formar parte de la élite.
+	 * @return Array con los cromosomas de la élite.
+	 */
+	public void separaElite() {
+		
+		// Solo se realizan cambios si está activo el flag de elitismo
+		if (_elitismo) {
+			
+			// Comparador para el orden de los cromosomas en la lista ordenada
+			// de la élite
+			Comparator<Cromosoma> miComparador = new Comparator<Cromosoma>() {
+				public int compare(Cromosoma n1, Cromosoma n2) {
+					return (n1.compareTo(n2));
+				}
+			};
+			
+			_elite = new ListaOrdenada<Cromosoma>(miComparador);
+			
+			// Introduce los primeros tamElite cromosomas de la población
+			// en la lista ordenada
+			for (int i = 0; i < _tamElite; i++)
+				_elite.add((Cromosoma)_poblacion[i].clone());
+			
+			// Para cada cromosoma restante de la poblacion, se introduce en
+			// la élite si es mejor que el peor de la élite
+			for (int i = _tamElite; i < _tamPoblacion; i++) {
+				
+				switch (_tipoProblema) {
+
+				case MINIMIZACION:
+					if (_poblacion[i].getAptitud() < _elite.getMax().getAptitud()) {
+						_elite.removeMax();
+						_elite.add((Cromosoma)_poblacion[i].clone());
+					}
+					break;
+				case MAXIMIZACION:
+					if (_poblacion[i].getAptitud() > _elite.getMin().getAptitud()) {
+						_elite.removeMin();
+						_elite.add((Cromosoma)_poblacion[i].clone());
+					}
+					break;
+				}
+			}
+		}		
+	}
+	
+	/**
+	 * Incluye los cromosomas de la élite en la población, sustituyendo
+	 * a los peores.
+	 */
+	public void incluyeElite() {
+		
+		// Solo se realizan cambios si está activo el flag de elitismo
+		if (_elitismo) {
+			
+			// Comparador para los Integer de las posiciones de los cromosomas
+			// de la población en la lista ordenada de peores cromosomas
+			Comparator<Integer> miComparador = new Comparator<Integer>() {
+				public int compare(Integer n1, Integer n2) {
+					return (_poblacion[n1].compareTo(_poblacion[n2]));
+				}
+			};
+			
+			// Variable local para almacenar las posiciones de los peores
+			// cromosomas de la población
+			ListaOrdenada<Integer> peores = new ListaOrdenada<Integer>(miComparador);
+			
+			// Introduce los primeros tamElite cromosomas de la población
+			// en la lista de peores cromosomas
+			for (int i = 0; i < _tamElite; i++)
+				peores.add(i);
+			
+			// Para cada cromosoma restante de la poblacion, si el cromosoma 
+			// i es peor que el mejor cromosoma de la 
+			// lista de peores se intercambian
+			for (int i = _tamElite; i < _tamPoblacion; i++) {
+				
+				
+				switch (_tipoProblema) {
+
+				case MINIMIZACION:
+					if (_poblacion[i].getAptitud() > _poblacion[peores.getMin()].getAptitud()) {
+						peores.removeMin();
+						peores.add(i);
+					}
+					break;
+				case MAXIMIZACION:
+					if (_poblacion[i].getAptitud() < _poblacion[peores.getMax()].getAptitud()) {
+						peores.removeMax();
+						peores.add(i);
+					}
+					break;
+				}
+			}
+			
+			// Reemplazo de los peores cromosomas de la población por los 
+			// cromosomas de la élite
+			Iterator<Integer> itSelElite = peores.iterator();
+			Iterator<Cromosoma> itElite = _elite.iterator();
+			while (itSelElite.hasNext()) {
+				Integer posCromosoma = (Integer) itSelElite.next();
+				Cromosoma cromosoma = (Cromosoma) itElite.next();
+				_poblacion[posCromosoma] = (Cromosoma) cromosoma.clone();
+			}
+		}
+		
+	}
+	
 }

@@ -92,6 +92,7 @@ public class CromosomaFuncion4 extends Cromosoma {
 		CromosomaFuncion4 copia = new CromosomaFuncion4();
 		
 		copia._numGenes = this._numGenes;
+		copia._adaptacion = this._adaptacion;
 		
 		// Copia de atributos de esta clase
 		copia._xMax = new double[_numGenes];
