@@ -1,0 +1,7 @@
+package gui;
+
+public enum TipoVariacion {
+	
+	NINGUNA, NUM_GENERACION, NUM_POBLACION, PROB_CRUCE, PROB_MUTACION,
+	PRECISION, VALOR_N, ELITISMO
+}

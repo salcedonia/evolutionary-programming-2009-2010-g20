@@ -51,6 +51,16 @@ public class ValidadorDatos {
 	private double _porcentageElite;
 	
 	/**
+	 * Paso al que avanza la variación de parámetros.
+	 */
+	private double _pasoVariacion;
+	
+	/**
+	 * Límite para la variación de parámetros.
+	 */
+	private double _limiteVariacion;
+	
+	/**
 	 * Constructor de la clase Validador de Datos.
 	 * 
 	 * @param ventana Ventana grafica de la aplicacion.
@@ -71,7 +81,8 @@ public class ValidadorDatos {
 	public boolean parametrosOk() {
 
 		return numGeneracionesOk() && tamPoblacionOk() && probCruceOk() && probMutacionOk() 
-				&& precisionOk() && valorNOk() && porcentageEliteOk();
+				&& precisionOk() && valorNOk() && porcentageEliteOk() && pasoVariacionOk()
+				&& limiteVariacionOk();
 	}
 
 	/**
@@ -306,8 +317,10 @@ public class ValidadorDatos {
 	}
 	
 	/**
+	 * Evalua la validez de los datos introducidos en el campo de texto del
+	 * porcentage de élite.
 	 * 
-	 * @return
+	 * @return Verdadero si el dato introducido es correcto.
 	 */
 	public boolean porcentageEliteOk() {
 		
@@ -331,7 +344,84 @@ public class ValidadorDatos {
 			}
 		}
 		catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(_ventana, "!El % de la élite tiene que ser un numero real!",
+                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
 			
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Evalua la validez de los datos introducidos en el campo de texto de
+	 * paso de variación de parámetros.
+	 * 
+	 * @return Verdadero si el dato introducido es correcto.
+	 */
+	public boolean pasoVariacionOk() {
+		
+		double pasoVariacion;
+		
+		try {
+			if(_ventana.getTxtPasoVariacion().getText().matches("")){
+				JOptionPane.showMessageDialog(_ventana, "¡Debe introducir el paso de la variación de parámetros!",
+	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}else{
+				pasoVariacion = Double.parseDouble(_ventana.getTxtPasoVariacion().getText());
+			
+				if (pasoVariacion <= 0) {
+					JOptionPane.showMessageDialog(_ventana, "!El paso de la variación tiene que ser un numero positivo!",
+							"Error en los datos", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}else
+					// Guardamos el resultado de la validaciÃ³n
+					_pasoVariacion = pasoVariacion;
+			}
+		}
+		catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(_ventana, "!El paso de la variación de parámetros tiene que ser un número real!",
+                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Evalua la validez de los datos introducidos en el campo de texto de
+	 * límite de variación de parámetros.
+	 * 
+	 * @return Verdadero si el dato introducido es correcto.
+	 */
+	public boolean limiteVariacionOk() {
+		
+		double limiteVariacion;
+		
+		try {
+			if(_ventana.getTxtLimiteVariacion().getText().matches("")){
+				JOptionPane.showMessageDialog(_ventana, "¡Debe introducir el límite para la variación de parámetros!",
+	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}else{
+				limiteVariacion = Double.parseDouble(_ventana.getTxtLimiteVariacion().getText());
+			
+				if (limiteVariacion < 0) {
+					JOptionPane.showMessageDialog(_ventana, "!El límite de la variación de parámetros tiene que ser un numero positivo!",
+							"Error en los datos", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}else
+					// Guardamos el resultado de la validaciÃ³n
+					_limiteVariacion = limiteVariacion;
+			}
+		}
+		catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(_ventana, "!El límite de la variación de parámetros tiene que ser un numero real!",
+                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
 		}
 		
 		return true;
@@ -391,5 +481,21 @@ public class ValidadorDatos {
 
 	public void setPorcentageElite(double porcentageElite) {
 		_porcentageElite = porcentageElite;
+	}
+	
+	public double getPasoVariacion() {
+		return _pasoVariacion;
+	}
+
+	public void setPasoVariacion(int pasoVariacion) {
+		_pasoVariacion = pasoVariacion;
+	}
+	
+	public double getLimiteVariacion() {
+		return _limiteVariacion;
+	}
+
+	public void setLimiteVariacion(double limiteVariacion) {
+		_limiteVariacion = limiteVariacion;
 	}
 }
