@@ -121,7 +121,7 @@ public class CromosomaFuncion2 extends Cromosoma {
 
 	@Override
 	public String toString() {
-		String txtFenotipo = "X: "+_fenotipo[0]+"\nY: "+_fenotipo[1];
+		String txtFenotipo = "\n   - X: "+_fenotipo[0]+"\n   - Y: "+_fenotipo[1];
 		return txtFenotipo;
 	}
 }

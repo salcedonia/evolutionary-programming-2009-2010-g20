@@ -1,9 +1,9 @@
 package gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -11,6 +11,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -28,7 +29,7 @@ import logica.TipoProblema;
  * 
  * @author Grupo20.
  */
-public class Ventana extends JFrame {
+public class Ventana extends JFrame{
 
 	// CONSTANTES
 	private static final long serialVersionUID = 1L;
@@ -236,6 +237,11 @@ public class Ventana extends JFrame {
 	private JTabbedPane _panelPestanas;
 
 	/**
+	 * Barra de Progreso.
+	 */
+	private JProgressBar _barraProgreso;
+	
+	/**
 	 * Tipo de cromosoma a crear. Por defecto es la Funcion 1.
 	 */
 	private TipoCromosoma _tipoCromosoma = TipoCromosoma.FUNCION1;
@@ -281,7 +287,7 @@ public class Ventana extends JFrame {
 		// Creamos el validador de datos
 		_validadorDatos = new ValidadorDatos(this);
 	}
-
+    
 	/**
 	 * Crea los elementos de la ventana.
 	 */
@@ -703,7 +709,36 @@ public class Ventana extends JFrame {
 		_panelBotonesOpciones = new JPanel();
 		_panelBotonesOpciones.setLayout(new GridBagLayout());
 
+		// 
 		GridBagConstraints constraints = new GridBagConstraints();
+
+		_btnComenzar = new JButton("Comenzar");
+		_btnComenzar.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+
+				if (_validadorDatos.parametrosOk(_tipoVariacion)){
+				
+					// Hacemos la ejecucion del algoritmo en otro hilo de ejecucion 
+					// Para que no se congele la interfaz
+					Thread t = new Thread(new Runnable() {
+					      public void run() {
+								// Inicializamos la barra de progreso de nuevo
+								_barraProgreso.setValue(0);
+								
+								// Desactivamos el boton mientras el analisis
+								_btnComenzar.setEnabled(false);
+								
+								_barraProgreso.setMaximum(_validadorDatos.getNumGeneraciones());
+								
+								// Comenzamos el algortimo
+								comenzarAGS();
+					      }
+					    });
+					t.start();					
+				}
+			}
+		});
+
 		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
@@ -711,15 +746,22 @@ public class Ventana extends JFrame {
 		constraints.gridheight = 1;
 		constraints.fill = GridBagConstraints.NONE;
 
-		_btnComenzar = new JButton("Comenzar");
-		_btnComenzar.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent e) {
-
-				if (_validadorDatos.parametrosOk(_tipoVariacion))
-					comenzarAGS();
-			}
-		});
 		_panelBotonesOpciones.add(_btnComenzar, constraints);
+		
+		// Barra de Progreso
+		_barraProgreso = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
+        _barraProgreso.setValue(0);
+        _barraProgreso.setStringPainted(true);
+        _barraProgreso.setPreferredSize(new Dimension(350,20));
+        
+		constraints.anchor = GridBagConstraints.CENTER;
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		constraints.gridwidth = 1;
+		constraints.gridheight = 1;
+		constraints.fill = GridBagConstraints.NONE;
+
+		_panelBotonesOpciones.add(_barraProgreso, constraints);		
 	}
 
 	/**
@@ -761,10 +803,14 @@ public class Ventana extends JFrame {
 
 		// Evalua los individuos y coge el mejor
 		_AG.evaluarPoblacion();
-
+		
 		while (!_AG.terminado()) {
+			
 			_AG.aumentarGeneracion();
 			
+			// Actualizamos el progreso de la barra
+			_barraProgreso.setValue(_AG.getNumGeneracion());
+				
 			// No hace nada si no la opcion elitismo esta inactiva
 			_AG.separaElite(); 
 			
@@ -776,7 +822,9 @@ public class Ventana extends JFrame {
 			_AG.incluyeElite();
 			
 			_AG.evaluarPoblacion();
-			_panelAptitud.guardaDatosGraficas(_AG);			
+			
+			// Guardamos los datos de las graficas
+			_panelAptitud.guardaDatosGraficas(_AG);
 		}
 
 		// Actualizamos las graficas
@@ -784,6 +832,9 @@ public class Ventana extends JFrame {
 
 		// Mostramos el resultado en el cuadro de texto de informe.
 		imprimeResultadoConsola();
+
+		// Volvemos a activar el boton
+		_btnComenzar.setEnabled(true);
 	}
 
 	/**
@@ -907,6 +958,9 @@ public class Ventana extends JFrame {
 
 			while (!_AG.terminado()) {
 				_AG.aumentarGeneracion();
+			
+				// Actualizamos el progreso de la barra
+				_barraProgreso.setValue(_AG.getNumGeneracion());
 				
 				// No hace nada si no la opcion elitismo esta inactiva
 				_AG.separaElite(); 
@@ -966,27 +1020,27 @@ public class Ventana extends JFrame {
 
 		case FUNCION1:
 			// Mostramos el mejor individuo
-			_txtInforme.append("El Mejor Valor es "
-					+ _AG.getElMejor().toString() + "\n");
+			_txtInforme.append("El Mejor Valor es:\n"
+					+ _AG.getElMejor().toString() + "\n\n");
 			_txtInforme.append("Alcanza un Maximo de: " + _AG.getElMejor().f());
 			break;
 		case FUNCION2:
-			_txtInforme.append("Los Mejores Valores son "
-					+ _AG.getElMejor().toString() + "\n");
+			_txtInforme.append("Los Mejores Valores son:\n"
+					+ _AG.getElMejor().toString() + "\n\n");
 			_txtInforme.append("Alcanza un Maximo de: " + _AG.getElMejor().f());
 			break;
 		case FUNCION3:
-			_txtInforme.append("El Mejor Valor es "
-					+ _AG.getElMejor().toString() + "\n");
+			_txtInforme.append("El Mejor Valor es:\n"
+					+ _AG.getElMejor().toString() + "\n\n");
 			_txtInforme.append("Alcanza un Minimo de: " + _AG.getElMejor().f());
 			break;
 		case FUNCION4:
-			_txtInforme.append("Los Mejores Valores son "
-					+ _AG.getElMejor().toString() + "\n");
+			_txtInforme.append("Los Mejores Valores son:\n"
+					+ _AG.getElMejor().toString() + "\n\n");
 			_txtInforme.append("Alcanza un Minimo de: " + _AG.getElMejor().f());
 			break;
 		case FUNCION5:
-			_txtInforme.append("Los Mejores Valores son: \n"
+			_txtInforme.append("Los Mejores Valores son: \n\n"
 					+ _AG.getElMejor().toString() + "\n");
 			_txtInforme.append("Alcanza un Minimo de: "
 					+ _AG.getElMejor().f());

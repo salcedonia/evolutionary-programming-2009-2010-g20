@@ -130,7 +130,7 @@ public class CromosomaFuncion5 extends Cromosoma {
 		String txtFenotipo="";
 		
 		for(int i=0; i<_numGenes; i++)		
-			txtFenotipo += "X" + (i+1) + ": " + _fenotipo[i] + "\n";
+			txtFenotipo += "   - X" + (i+1) + ": " + _fenotipo[i] + "\n";
 		
 		return txtFenotipo;
 	}
