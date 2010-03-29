@@ -46,19 +46,24 @@ public class ValidadorDatos {
 	private int _valorN;
 	
 	/**
-	 * Porcentage de la élite respecto a la población.
+	 * Porcentage de la elite respecto a la poblacion.
 	 */
 	private double _porcentageElite;
 	
 	/**
-	 * Paso al que avanza la variación de parámetros.
+	 * Paso al que avanza la variacion de parámetros.
 	 */
 	private double _pasoVariacion;
 	
 	/**
-	 * Límite para la variación de parámetros.
+	 * Límite para la variacion de parámetros.
 	 */
 	private double _limiteVariacion;
+
+	/**
+	 * Numero de copias estimadas para el mejor individuo en el Escalado Simple.
+	 */
+	private int _numEstimadoCopiasMejor;
 	
 	/**
 	 * Constructor de la clase Validador de Datos.
@@ -83,9 +88,9 @@ public class ValidadorDatos {
 
 		return numGeneracionesOk() && tamPoblacionOk() && probCruceOk() && probMutacionOk() 
 				&& precisionOk() && valorNOk() && porcentageEliteOk() && pasoVariacionOk()
-				&& limiteVariacionOk() && VariacionOk(variacion);
+				&& limiteVariacionOk() && VariacionOk(variacion) && NumEstimadoCopiasMejorOk();
 	}
-
+	
 	/**
 	 * Evalua la validez de los datos introducidos en el cuadro de texto de numero de Generaciones. Cuando
 	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable entera correspondiente.
@@ -472,9 +477,46 @@ public class ValidadorDatos {
                     "Error en los datos", JOptionPane.ERROR_MESSAGE);
 		}
 		
-		return varCorrecta;
-		
+		return varCorrecta;	
 	}
+
+	/**
+	 * Evalua la validez de los datos introducidos en el campo de texto de
+	 * numero de copias estimadas del mejor individuo para el escalado simple.
+	 * 
+	 * @return Verdadero si el dato introducido es correcto.
+	 */
+	private boolean NumEstimadoCopiasMejorOk() {
+
+		int numEstimadoCopiasMejor;
+		
+		try {
+			if(_ventana.getTxtNumEstimadoCopiasMejor().getText().matches("")){
+				JOptionPane.showMessageDialog(_ventana, "!Debe introducir el Numero Estimado de Copias del Mejor Individuo!",
+	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}else{
+				numEstimadoCopiasMejor = Integer.parseInt(_ventana.getTxtNumEstimadoCopiasMejor().getText());
+			
+				if (numEstimadoCopiasMejor < 0) {
+					JOptionPane.showMessageDialog(_ventana, "!El Numero Estimado de Copias del Mejor Individuo tiene que ser un numero positivo!",
+							"Error en los datos", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}else
+					// Guardamos el resultado de la validaciÃ³n
+					_limiteVariacion = numEstimadoCopiasMejor;
+			}
+		}
+		catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(_ventana, "!El Numero Estimado de Copias del Mejor Individuo tiene que ser un numero entero!",
+                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
+		
+		return true;
+	}
+
 
 	// ----------GETTERS & SETTERS-----------//
 	
@@ -548,5 +590,10 @@ public class ValidadorDatos {
 
 	public void setLimiteVariacion(double limiteVariacion) {
 		_limiteVariacion = limiteVariacion;
+	}
+
+	public int getNumEstimadoCopiasMejor() {
+		
+		return _numEstimadoCopiasMejor;
 	}
 }
