@@ -3,16 +3,16 @@ package logica;
 import gui.Ventana;
 
 /**
- * Clase principal de la aplicación.
+ * Clase principal de la aplicacion.
  * 
  * @author Grupo20.
  */
 public class Principal {
 		
 	/**
-	 * Método principal de la aplicación.
+	 * Metodo principal de la aplicacion.
 	 * 
-	 * @param args Argumentos de entrada a la aplicación.
+	 * @param args Argumentos de entrada a la aplicacion.
 	 */
 	public static void main(String[] args) {
 		

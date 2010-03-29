@@ -5,12 +5,10 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * Implementa una lista ordenada de menor a mayor,
- * con elementos duplicados. 
- * Accede y borra el máximo y el mínimo en tiempo constante.
+ * Implementa una lista ordenada de menor a mayor,bcon elementos duplicados. 
+ * Accede y borra el maximo y el minimo en tiempo constante.
  * 
  * @author Grupo20.
- *
  */
 public class ListaOrdenada<E> {
 	
@@ -30,6 +28,7 @@ public class ListaOrdenada<E> {
 	 * @param comparador El comparador para los elementos.
 	 */
 	public ListaOrdenada(Comparator<E> comparador) {
+		
 		_lista = new ArrayList<E>();
 		_comparador = comparador;
 	}
@@ -50,8 +49,8 @@ public class ListaOrdenada<E> {
 	/**
 	 * Posicion que ocuparia el elemento insertado.
 	 * 
-	 * @param elem El elemento a buscar su posición.
-	 * @return La posición que ocuparía el elemento insertado.
+	 * @param elem El elemento a buscar su posicion.
+	 * @return La posicion que ocuparía el elemento insertado.
 	 */
 	private int getPos(E elem) {
 		
@@ -84,6 +83,7 @@ public class ListaOrdenada<E> {
 	
 	/**
 	 * Devuelve el menor elemento.
+	 * 
 	 * @return El menor elemento de la lista.
 	 */
 	public E getMin() {
@@ -92,9 +92,11 @@ public class ListaOrdenada<E> {
 	
 	/**
 	 * Devuelve el mayor elemento.
+	 * 
 	 * @return El mayor elemento de la lista.
 	 */
 	public E getMax() {
+		
 		return _lista.get(_lista.size()-1);
 	}
 	
@@ -102,13 +104,15 @@ public class ListaOrdenada<E> {
 	 * Quita el menor elemento.
 	 */
 	public void removeMin() {
+		
 		_lista.remove(0);
 	}
 	
 	/**
-	 * Quita el máximo elemento.
+	 * Quita el maximo elemento.
 	 */
 	public void removeMax() {
+		
 		_lista.remove(_lista.size()-1);
 	}
 	
@@ -118,6 +122,7 @@ public class ListaOrdenada<E> {
 	 * @return El iterador de la clase.
 	 */
 	public Iterator<E> iterator() {
+		
 		return _lista.iterator();
 	}
 	

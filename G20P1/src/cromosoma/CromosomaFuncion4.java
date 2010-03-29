@@ -3,13 +3,13 @@ package cromosoma;
 import utils.Matematicas;
 
 /**
- * Clase que implementa la clase cromosoma para la función 4 a evaluar.
+ * Clase que implementa la clase cromosoma para la funcion 4 a evaluar.
  * 
  * @author Grupo20.
  */
 public class CromosomaFuncion4 extends Cromosoma {
 
-	// Extremos del intervalo de la función.
+	// Extremos del intervalo de la funcion.
 	private double[] _xMin;
 	private double[] _xMax;
 
@@ -17,7 +17,7 @@ public class CromosomaFuncion4 extends Cromosoma {
 	private int[] _longitudGen;
 	
 	/**
-	 * Constructora por defecto.
+	 * Constructor por defecto de la clase CromosomaFuncion4.
 	 */
 	public CromosomaFuncion4() {
 		
@@ -25,7 +25,7 @@ public class CromosomaFuncion4 extends Cromosoma {
 	
 	public CromosomaFuncion4(double tolerancia) {
 
-		// Establecemos el número de genes del problema 2
+		// Establecemos el número de genes del problema 4
 		_numGenes = 2;
 		
 		// Establecemos los intervalos para cada gen
@@ -45,7 +45,7 @@ public class CromosomaFuncion4 extends Cromosoma {
 			
 			_longitudGen[i] = calcularLongGen(i,tolerancia);
 			setLongitudCromosoma(getLongitudCromosoma() + _longitudGen[i]);
-			// Creamos el array de genes del tamaño adecuado
+			// Creamos el array de genes del tamanio adecuado
 			_genes[i] = new boolean[_longitudGen[i]];
 		}
 	}
@@ -55,7 +55,7 @@ public class CromosomaFuncion4 extends Cromosoma {
 		for (int i = 0; i < _numGenes; i++) {
 			_fenotipo[i] = fenotipo(_genes[i],i);
 		}
-		return f(); // valor de la función a optimizar
+		return f(); // valor de la funcion a optimizar
 	}
 
 	@Override
@@ -91,33 +91,33 @@ public class CromosomaFuncion4 extends Cromosoma {
 	public Object clone() {
 		CromosomaFuncion4 copia = new CromosomaFuncion4();
 		
-		copia._numGenes = this._numGenes;
-		copia._adaptacion = this._adaptacion;
+		copia._numGenes = _numGenes;
+		copia._adaptacion = _adaptacion;
 		
 		// Copia de atributos de esta clase
 		copia._xMax = new double[_numGenes];
 		copia._xMin = new double[_numGenes];
 		copia._longitudGen = new int[_numGenes];
 		for (int i = 0; i < _numGenes; i++) {
-			copia._xMax[i] = this._xMax[i];
-			copia._xMin[i] = this._xMin[i];
-			copia._longitudGen[i] = this._longitudGen[i];
+			copia._xMax[i] = _xMax[i];
+			copia._xMin[i] = _xMin[i];
+			copia._longitudGen[i] = _longitudGen[i];
 		}		
 		
 		// Copia de atributos de la clase padre
-		copia.setAptitud(this._aptitud);
-		copia.setPuntAcumulada(this._puntAcumulada);
-		copia.setPuntuacion(this._puntuacion);
-		copia.setLongitudCromosoma(this._longitudCromosoma);
+		copia.setAptitud(_aptitud);
+		copia.setPuntAcumulada(_puntAcumulada);
+		copia.setPuntuacion(_puntuacion);
+		copia.setLongitudCromosoma(_longitudCromosoma);
 		
 		// Copia del fenotipo y los genes
 		copia._fenotipo = new double[_numGenes];
 		copia._genes = new boolean[_numGenes][];
 		for (int i = 0; i < _numGenes; i++) {
-			copia._fenotipo[i] = this._fenotipo[i];
+			copia._fenotipo[i] = _fenotipo[i];
 			copia._genes[i] = new boolean[_longitudGen[i]];
 			for (int j = 0; j < _longitudGen[i]; j++) {
-				copia._genes[i][j] = this._genes[i][j];
+				copia._genes[i][j] = _genes[i][j];
 			}
 		}		
 		
@@ -126,7 +126,7 @@ public class CromosomaFuncion4 extends Cromosoma {
 
 	@Override
 	public String toString() {
-		String txtFenotipo = "X1: "+_fenotipo[0]+" - X2: "+_fenotipo[1];
+		String txtFenotipo = "X1: "+_fenotipo[0]+"\nX2: "+_fenotipo[1];
 		return txtFenotipo;
 	}
 

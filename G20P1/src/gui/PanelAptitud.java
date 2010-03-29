@@ -22,29 +22,29 @@ public class PanelAptitud extends Plot2DPanel {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Aptitudes para el eje de abscisas del Mejor de cada generación.
+	 * Aptitudes para el eje de abscisas del Mejor de cada generacion.
 	 */
 	private double[] _yAptitudMejor;
 	
 	/**
-	 * Aptitudes para el eje de abscisas de las medias de cada generación.
+	 * Aptitudes para el eje de abscisas de las medias de cada generacion.
 	 */
 	private double[] _yAptitudMedia;
 	
 	/**
-	 * Constructora del panel de la gráfica.
+	 * Constructora del panel de la grafica.
 	 */
 	public PanelAptitud() {
 		
 		super();
 		
-		// Pone una leyenda en la parte baja de la gráfica
+		// Pone una leyenda en la parte baja de la grafica
 		addLegend("SOUTH");
 		
 	}
 	
 	/**
-	 * Inicia el panel de las gráficas y los vectores para sus funciones.
+	 * Inicia el panel de las graficas y los vectores para sus funciones.
 	 *
 	 * @param numGeneraciones Numero de generaciones del algoritmo genetico.
 	 */
@@ -57,39 +57,39 @@ public class PanelAptitud extends Plot2DPanel {
 		setFont(new Font(Font.SANS_SERIF,Font.PLAIN,14));
 				
 		// Cambia los nombres a los ejes
-		setAxisLabels("Número de Generación","Aptitud");
+		setAxisLabels("Numero de Generacion","Aptitud");
 				
-		// Título
+		// Titulo
 		BaseLabel titulo = new BaseLabel("Comparativa de Aptitud", Color.BLACK, 0.5, 1.1);
-		titulo.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20)); // fuente para el título
+		titulo.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20)); // fuente para el titulo
 		addPlotable(titulo);
 		
-		// Eje de abscisas (Número de Generación)
-		// Cambios en la posición y el ángulo
+		// Eje de abscisas (Numero de Generacion)
+		// Cambios en la posicion y el angulo
 		getAxis(0).setLightLabelAngle(-Math.PI / 4);
 		getAxis(0).setLabelPosition(0.5, -0.15);
 		// fuente para el nombre del eje
 		getAxis(0).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
-		// fuente para la numeración del eje
+		// fuente para la numeracion del eje
 		getAxis(0).setLightLabelFont(new Font(Font.SANS_SERIF,Font.BOLD,14));
  
 		// Eje de ordenadas (Aptitud)
-		// Cambios en la posición y el ángulo
+		// Cambios en la posicion y el angulo
 		getAxis(1).setLightLabelAngle(-Math.PI / 4);
 		getAxis(1).setLabelPosition(-0.15, 0.5);
 		getAxis(1).setLabelAngle(-Math.PI / 2);
 		// fuente para el nombre del eje
 		getAxis(1).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
-		// fuente para la numeración del eje
+		// fuente para la numeracion del eje
 		getAxis(1).setLightLabelFont(new Font(Font.SANS_SERIF,Font.BOLD,14));
 
-		// Creación de los vectores para almacenar las y
+		// Creacion de los vectores para almacenar las y
 		_yAptitudMedia = new double[numGeneraciones];
 		_yAptitudMejor = new double[numGeneraciones];
 	}
 	
 	/**
-	 * Almacena para la generación actual los datos a recoger para las graficas.
+	 * Almacena para la generacion actual los datos a recoger para las graficas.
 	 * 
 	 * @param AGenetico Algoritmo genetico.
 	 */

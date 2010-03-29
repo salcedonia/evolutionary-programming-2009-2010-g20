@@ -23,8 +23,8 @@ import logica.AG;
 import logica.TipoProblema;
 
 /**
- * Clase que implementa los mÃˆtodos necesarios para la gestiÃ›n de la ventana
- * grÂ·fica del usuario.
+ * Clase que implementa los metodos necesarios para la gestion de la ventana
+ * grafica del usuario.
  * 
  * @author Grupo20.
  */
@@ -131,7 +131,7 @@ public class Ventana extends JFrame {
 	private JLabel _lblSeleccionElitismo;
 	
 	/**
-	 * Etiqueta de tamaño de la élite.
+	 * Etiqueta de tamanio de la elite.
 	 */
 	private JLabel _lblTamElite;
 
@@ -141,17 +141,17 @@ public class Ventana extends JFrame {
 	private JLabel _lblSeleccionEscaladoSimple;
 	
 	/**
-	 * Etiqueta de variación de parámetros.
+	 * Etiqueta de variacion de parametros.
 	 */
 	private JLabel _lblVariacionParametros;
 	
 	/**
-	 * Etiqueta del paso de variación de parámetros.
+	 * Etiqueta del paso de variacion de parametros.
 	 */
 	private JLabel _lblPasoVariacion;
 	
 	/**
-	 * Etiqueta del límite de variación de paramétros.
+	 * Etiqueta del limite de variacion de parametros.
 	 */
 	private JLabel _lblLimiteVariacion;
 
@@ -191,7 +191,7 @@ public class Ventana extends JFrame {
 	private JComboBox _cmbSeleccionElitismo;
 	
 	/**
-	 * Campo de texto para el % de tamaño de la élite.
+	 * Campo de texto para el % de tamanio de la elite.
 	 */
 	private JTextField _txtPorcentageElite;
 
@@ -201,17 +201,17 @@ public class Ventana extends JFrame {
 	private JComboBox _cmbSeleccionEscaladoSimple;
 
 	/**
-	 * Lista de seleccion de variación de parámetros.
+	 * Lista de seleccion de variacion de parametros.
 	 */
 	private JComboBox _cmbSeleccionVarParametros;
 	
 	/**
-	 * Campo de texto para el paso de la variación de parámetros.
+	 * Campo de texto para el paso de la variacion de parametros.
 	 */
 	private JTextField _txtPasoVariacion;
 	
 	/**
-	 * Campo de texto para el límite de la variación de parámetros.
+	 * Campo de texto para el limite de la variacion de parametros.
 	 */
 	private JTextField _txtLimiteVariacion;
 	
@@ -231,12 +231,12 @@ public class Ventana extends JFrame {
 	private PanelFuncion _panelFuncion;
 
 	/**
-	 * Panel de pestaÃ±as.
+	 * Panel de pestanias.
 	 */
 	private JTabbedPane _panelPestanas;
 
 	/**
-	 * Tipo de cromosoma a crear. Por defecto es la FunciÃ›n 1.
+	 * Tipo de cromosoma a crear. Por defecto es la Funcion 1.
 	 */
 	private TipoCromosoma _tipoCromosoma = TipoCromosoma.FUNCION1;
 
@@ -246,7 +246,7 @@ public class Ventana extends JFrame {
 	private TipoProblema _tipoProblema = TipoProblema.MAXIMIZACION;
 
 	/**
-	 * Tipo de variación de parámetros a realizar.
+	 * Tipo de variacion de parametros a realizar.
 	 */
 	private TipoVariacion _tipoVariacion = TipoVariacion.NINGUNA;
 	
@@ -256,7 +256,7 @@ public class Ventana extends JFrame {
 	private boolean _elitismo = false;
 
 	/**
-	 * Indica si se aplicac Escalado Simple en el algoritmo o no.
+	 * Indica si se aplica Escalado Simple en el algoritmo o no.
 	 */
 	private boolean _escaladoSimple = false;
 
@@ -265,7 +265,7 @@ public class Ventana extends JFrame {
 	 */
 	public Ventana() {
 
-		// Set de las caracterÃŒsticas de la ventana
+		// Set de las caracteristicas de la ventana
 		setTitle("Practica 1: AGS");
 		setIconImage(new ImageIcon(ICONO).getImage());
 		setResizable(false);
@@ -273,7 +273,7 @@ public class Ventana extends JFrame {
 		setBounds(10, 50, ANCHO, ALTO);
 		setLocationRelativeTo(null);
 
-		// InicializaciÃ›n de los elementos de la ventana
+		// Inicializacion de los elementos de la ventana
 		iniciaInterfaz();
 		setEnabled(true);
 		setVisible(true);
@@ -287,7 +287,7 @@ public class Ventana extends JFrame {
 	 */
 	private void iniciaInterfaz() {
 
-		// Se crea el panel de pestaÃ±as
+		// Se crea el panel de pestanias
 		_panelPestanas = new JTabbedPane();
 		_panelPestanas.add("Parametros", creaPanelPrincipal());
 		_panelPestanas.add("Aptitud", creaPanelAptitud());
@@ -298,10 +298,10 @@ public class Ventana extends JFrame {
 	}
 
 	/**
-	 * Crea el panel para mostrar las grÃ¡ficas correspondientes a la funciÃ³n.
+	 * Crea el panel para mostrar las graficas correspondientes a la funcion.
 	 * 
-	 * @return El panel para mostrar las grÃ¡ficas correspondientes a la
-	 *         funciÃ³n.
+	 * @return El panel para mostrar las graficas correspondientes a la
+	 *         funcion.
 	 */
 	private Component creaPanelFuncion() {
 
@@ -311,9 +311,9 @@ public class Ventana extends JFrame {
 	}
 
 	/**
-	 * Crea el panel para mostrar las grÃ¡ficas correspondientes a la aptitud.
+	 * Crea el panel para mostrar las graficas correspondientes a la aptitud.
 	 * 
-	 * @return El panel para mostrar las grÃ¡ficas correspondientes a la
+	 * @return El panel para mostrar las graficas correspondientes a la
 	 *         aptitud.
 	 */
 	private Component creaPanelAptitud() {
@@ -343,7 +343,7 @@ public class Ventana extends JFrame {
 		constraints.weighty = 0.7;
 		constraints.weightx = 0.6;
 
-		// Aniadimos todas las opciones de la aplicaciÃ›n.
+		// Aniadimos todas las opciones de la aplicacion.
 		_panelPrincipal.add(creaPanelOpciones(), constraints);
 
 		// Creamos el panel de texto que informa del analisis
@@ -364,9 +364,9 @@ public class Ventana extends JFrame {
 	}
 
 	/**
-	 * Crea el panel con todas las opciones de la aplicaciÃ›n.
+	 * Crea el panel con todas las opciones de la aplicacion.
 	 * 
-	 * @return El panel con todas las opciones de la aplicaciÃ›n.
+	 * @return El panel con todas las opciones de la aplicacion.
 	 */
 	private JPanel creaPanelOpciones() {
 
@@ -395,7 +395,7 @@ public class Ventana extends JFrame {
 		constraints.weighty = 0.1;
 		constraints.weightx = 1.0;
 
-		// Aniade los botones de la aplicaciÃ›n.
+		// Aniade los botones de la aplicacion.
 		creaBotonesOpciones();
 		_panelOpciones.add(_panelBotonesOpciones, constraints);
 
@@ -404,7 +404,7 @@ public class Ventana extends JFrame {
 
 	/**
 	 * Crea las opciones del cuerpo del panel de opciones donde se situan todos
-	 * los elementos de configuraciÃ›n del AGS.
+	 * los elementos de configuracion del AGS.
 	 */
 	private void creaBodyOpciones() {
 
@@ -429,7 +429,7 @@ public class Ventana extends JFrame {
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblNumGeneraciones, constraints);
 
-		_lblTamPoblacion = new JLabel("TamaÃ±o de la Poblacion:");
+		_lblTamPoblacion = new JLabel("Tamanio de la Poblacion:");
 		constraints.gridx = 0;
 		constraints.gridy = 2;
 		constraints.fill = GridBagConstraints.BOTH;
@@ -459,13 +459,13 @@ public class Ventana extends JFrame {
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblValorN, constraints);
 
-		_lblSeleccionElitismo = new JLabel("Seleccion por elitismo:");
+		_lblSeleccionElitismo = new JLabel("Seleccion por Elitismo:");
 		constraints.gridx = 0;
 		constraints.gridy = 7;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblSeleccionElitismo, constraints);
 		
-		_lblTamElite = new JLabel("Tamaño de la Élite:");
+		_lblTamElite = new JLabel("Tamanio de la Elite:");
 		constraints.gridx = 0;
 		constraints.gridy = 8;
 		constraints.fill = GridBagConstraints.BOTH;
@@ -477,19 +477,19 @@ public class Ventana extends JFrame {
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblSeleccionEscaladoSimple, constraints);
 		
-		_lblVariacionParametros = new JLabel("Variación de parámetros:");
+		_lblVariacionParametros = new JLabel("Variacion de parametros:");
 		constraints.gridx = 0;
 		constraints.gridy = 10;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblVariacionParametros, constraints);
 		
-		_lblPasoVariacion = new JLabel("Paso de la variación:");
+		_lblPasoVariacion = new JLabel("Paso de la variacion:");
 		constraints.gridx = 0;
 		constraints.gridy = 11;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblPasoVariacion, constraints);
 		
-		_lblLimiteVariacion = new JLabel("Límite de la variación:");
+		_lblLimiteVariacion = new JLabel("Limite de la variacion:");
 		constraints.gridx = 0;
 		constraints.gridy = 12;
 		constraints.fill = GridBagConstraints.BOTH;
@@ -633,8 +633,8 @@ public class Ventana extends JFrame {
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_cmbSeleccionEscaladoSimple, constraints);
 		
-		String[] variacionStrings = { "Ninguna", "Número de generaciones", "Número de población",
-				"Prob. de Cruce", "Prob. de Mutación", "Precisión", "Valor de N", "Elitismo"};
+		String[] variacionStrings = { "Ninguna", "Numero Maximo de Generaciones", "Tamanio de Poblacion",
+				"Probabilidad de Cruce", "Probabilidad de Mutacion", "Precision", "Valor de N", "Elitismo"};
 
 		_cmbSeleccionVarParametros = new JComboBox(variacionStrings);
 		_cmbSeleccionVarParametros.setSelectedIndex(0);
@@ -652,15 +652,15 @@ public class Ventana extends JFrame {
 							_txtLimiteVariacion.setEnabled(false);
 						}
 						else {
-							if (seleccion.matches("Número de generaciones"))
+							if (seleccion.matches("Numero Maximo de Generaciones"))
 								_tipoVariacion = TipoVariacion.NUM_GENERACION;
-							else if (seleccion.matches("Número de población"))
+							else if (seleccion.matches("Tamanio de Poblacion"))
 								_tipoVariacion = TipoVariacion.NUM_POBLACION;
-							else if (seleccion.matches("Prob. de Cruce"))
+							else if (seleccion.matches("Probabilidad de Cruce"))
 								_tipoVariacion = TipoVariacion.PROB_CRUCE;
-							else if (seleccion.matches("Prob. de Mutación"))
+							else if (seleccion.matches("Probabilidad de Mutacion"))
 								_tipoVariacion = TipoVariacion.PROB_MUTACION;
-							else if (seleccion.matches("Precisión"))
+							else if (seleccion.matches("Precision"))
 								_tipoVariacion = TipoVariacion.PRECISION;
 							else if (seleccion.matches("Valor de N"))
 								_tipoVariacion = TipoVariacion.VALOR_N;
@@ -734,13 +734,11 @@ public class Ventana extends JFrame {
 		}
 		else {
 			comienzaAGSVariacion();
-		}
-		
-		
+		}	
 	}
 	
 	/**
-	 * Ejecuta el algoritmo genético simple con los datos de los parámetros.
+	 * Ejecuta el algoritmo genetico simple con los datos de los parametros.
 	 */
 	private void comienzaAGSNormal() {
 		
@@ -755,52 +753,47 @@ public class Ventana extends JFrame {
 				_elitismo, _escaladoSimple, _tipoCromosoma, _tipoProblema,
 				_validadorDatos.getPorcentageElite());
 
-		// Crea poblaciÃ›n inicial de cromosomas
+		// Crea poblacion inicial de cromosomas
 		_AG.inicializa();
 
-		// Inicializa las componentes de las gráficas
+		// Inicializa las componentes de las graficas
 		_panelAptitud.inicializaGraficas(_validadorDatos.getNumGeneraciones());
 
-		// EvalË™a los individuos y coge el mejor
+		// Evalua los individuos y coge el mejor
 		_AG.evaluarPoblacion();
 
 		while (!_AG.terminado()) {
 			_AG.aumentarGeneracion();
 			
-			// No hace nada si no la opción elitismo está inactiva
+			// No hace nada si no la opcion elitismo esta inactiva
 			_AG.separaElite(); 
 			
 			_AG.seleccion();
 			_AG.reproduccion();
 			_AG.mutacion();
 			
-			// No hace nada si no la opción elitismo está inactiva
+			// No hace nada si no la opcion elitismo esta inactiva
 			_AG.incluyeElite();
 			
 			_AG.evaluarPoblacion();
-			_panelAptitud.guardaDatosGraficas(_AG);
-			
-			
+			_panelAptitud.guardaDatosGraficas(_AG);			
 		}
 
 		// Actualizamos las graficas
-		_panelAptitud
-				.imprimeDatosGraficas(_validadorDatos.getNumGeneraciones());
+		_panelAptitud.imprimeDatosGraficas(_validadorDatos.getNumGeneraciones());
 
 		// Mostramos el resultado en el cuadro de texto de informe.
 		imprimeResultadoConsola();
-		
-		
 	}
 
 	/**
-	 * Ejecuta varias veces el algoritmo genético simple con la variación de
-	 * parámetros introducida en pasoVariacion y limiteVariacion.
+	 * Ejecuta varias veces el algoritmo genetico simple con la variacion de
+	 * parametros introducida en pasoVariacion y limiteVariacion.
 	 */
 	private void comienzaAGSVariacion() {
 		
-		double i = 0; // valor variable del parámetro
-		int nEjecucion = 1; // Nº de ejecución		
+		double i = 0; // valor variable del parametro
+		int nEjecucion = 1; // N de ejecucion		
 			
 		switch (_tipoVariacion) {
 
@@ -903,26 +896,26 @@ public class Ventana extends JFrame {
 				break;
 			}
 			
-			// Crea poblaciÃ›n inicial de cromosomas
+			// Crea poblacion inicial de cromosomas
 			_AG.inicializa();
 
-			// Inicializa las componentes de las gráficas
+			// Inicializa las componentes de las graficas
 			//_panelAptitud.inicializaGraficas(_validadorDatos.getNumGeneraciones());
 
-			// EvalË™a los individuos y coge el mejor
+			// Evalua los individuos y coge el mejor
 			_AG.evaluarPoblacion();
 
 			while (!_AG.terminado()) {
 				_AG.aumentarGeneracion();
 				
-				// No hace nada si no la opción elitismo está inactiva
+				// No hace nada si no la opcion elitismo esta inactiva
 				_AG.separaElite(); 
 				
 				_AG.seleccion();
 				_AG.reproduccion();
 				_AG.mutacion();
 				
-				// No hace nada si no la opción elitismo está inactiva
+				// No hace nada si no la opcion elitismo esta inactiva
 				_AG.incluyeElite();
 				
 				_AG.evaluarPoblacion();
@@ -930,7 +923,7 @@ public class Ventana extends JFrame {
 				
 			}
 			
-			_txtInforme.append("\nEjecución " + nEjecucion + " - Parámetro Variable: " + i + "\n");
+			_txtInforme.append("\nEjecucion " + nEjecucion + " - Parametro Variable: " + i + "\n");
 			imprimeResultadoConsola();
 			
 			_panelFuncion.guardaDatosEjecucion(_AG);
@@ -944,11 +937,11 @@ public class Ventana extends JFrame {
 	}
 	
 	/**
-	 * Devuelve el tipo de problema según la función seleccionada actualmente.
+	 * Devuelve el tipo de problema segun la funcion seleccionada actualmente.
 	 */
 	private void setTipoProblema() {
 
-		// Asignación del tipo de problema
+		// Asignacion del tipo de problema
 		switch (_tipoCromosoma) {
 
 		case FUNCION1:
@@ -964,6 +957,9 @@ public class Ventana extends JFrame {
 
 	}
 	
+	/**
+	 * Imprime los resultados en el Area de Texto inferior.
+	 */
 	private void imprimeResultadoConsola() {
 		
 		switch (_tipoCromosoma) {
@@ -1059,9 +1055,9 @@ public class Ventana extends JFrame {
 	}
 	
 	/**
-	 * Devuelve el campo de texto del porcentage de élite.
+	 * Devuelve el campo de texto del porcentage de elite.
 	 * 
-	 * @return El campo de texto del porcentage de élite.
+	 * @return El campo de texto del porcentage de elite.
 	 */
 	public JTextField getTxtPorcentageElite() {
 
@@ -1069,9 +1065,9 @@ public class Ventana extends JFrame {
 	}
 	
 	/**
-	 * Devuelve el campo de texto del paso de variación de parámetros.
+	 * Devuelve el campo de texto del paso de variacion de parametros.
 	 * 
-	 * @return El campo de texto del paso de variación de parámetros.
+	 * @return El campo de texto del paso de variacion de parametros.
 	 */
 	public JTextField getTxtPasoVariacion() {
 		
@@ -1079,9 +1075,9 @@ public class Ventana extends JFrame {
 	}
 	
 	/**
-	 * Devuelve el campo de texto del límite de variación de parámetros.
+	 * Devuelve el campo de texto del limite de variacion de parametros.
 	 * 
-	 * @return El campo de texto del límite de variación de parámetros.
+	 * @return El campo de texto del limite de variacion de parametros.
 	 */
 	public JTextField getTxtLimiteVariacion() {
 		
