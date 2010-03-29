@@ -22,46 +22,46 @@ public class PanelFuncion extends Plot2DPanel{
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Valores para la aptitud de El Mejor de cada ejecución.
+	 * Valores para la aptitud de El Mejor de cada ejecucion.
 	 */
 	private double[] _yAptitudMejor;
 	
 	/**
-	 * Valores de las aptitudes medias de cada ejecución.
+	 * Valores de las aptitudes medias de cada ejecucion.
 	 */
 	private double[] _yAptitudMedia;
 	
 	/**
-	 * Valores del parámetro variable.
+	 * Valores del parametro variable.
 	 */
 	private double[] _xParametroVariable;
 	
 	/**
-	 * Número de paso del parámetro variable.
+	 * Numero de paso del parametro variable.
 	 */
 	private int _numPaso;
 	
 	/**
-	 * Constructora del panel de la gráfica.
+	 * Constructora del panel de la grafica.
 	 */
 	public PanelFuncion() {
 		super();
 		
-		// Pone una leyenda en la parte baja de la gráfica
+		// Pone una leyenda en la parte baja de la grafica
 		addLegend("SOUTH");
 	}
 	
 	/**
-	 * Inicia el panel para la variación de parámetros y los vectores para sus
-	 * gráficas.
+	 * Inicia el panel para la variacion de parametros y los vectores para sus
+	 * graficas.
 	 * 
-	 * @param inicio Valor de inicio para el parámetro variable.
-	 * @param paso El avance del parámetro variable.
-	 * @param limite Límite para la variación de parámetros.
+	 * @param inicio Valor de inicio para el parametro variable.
+	 * @param paso El avance del parametro variable.
+	 * @param limite Limite para la variacion de parametros.
 	 */
 	public void inicializaPanelFuncion(double inicio, double paso, double limite) {
 		
-		// Calculamos el número de pasos
+		// Calculamos el numero de pasos
 		
 		_numPaso = 0;
 		
@@ -69,8 +69,8 @@ public class PanelFuncion extends Plot2DPanel{
 		
 		if (numPasos == 0) numPasos = 1;
 		
-		// Imprime en la gráfica de parámetros variables las componentes X 
-		// para el parámetro variable
+		// Imprime en la grafica de parametros variables las componentes X 
+		// para el parametro variable
 		_xParametroVariable = new double[numPasos];
 		
 		_xParametroVariable[0] = inicio;
@@ -82,45 +82,45 @@ public class PanelFuncion extends Plot2DPanel{
 		// Inicializa un nuevo panel borrando los anteriores resultados
 		removeAllPlots();
 		
-		// Fuente general para la gráfica
+		// Fuente general para la grafica
 		setFont(new Font(Font.SANS_SERIF,Font.PLAIN,14));
 		
 		// Cambia los nombres a los ejes
-		setAxisLabels("Parámetro Variable","Aptitud");
+		setAxisLabels("Parametro Variable","Aptitud");
 				
 		// Título
-		BaseLabel titulo = new BaseLabel("Aptitud con variación de parámetros", Color.BLACK, 0.5, 1.1);
-		titulo.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20)); // fuente para el título
+		BaseLabel titulo = new BaseLabel("Aptitud con Variacion de Parametros", Color.BLACK, 0.5, 1.1);
+		titulo.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20)); // fuente para el titulo
 		addPlotable(titulo);
 		
-		// Eje de abscisas (Número de Generación)
-		// Cambios en la posición y el ángulo
+		// Eje de abscisas (Numero de Generacion)
+		// Cambios en la posicion y el angulo
 		getAxis(0).setLightLabelAngle(-Math.PI / 4);
 		getAxis(0).setLabelPosition(0.5, -0.15);
 		// fuente para el nombre del eje
 		getAxis(0).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
-		// fuente para la numeración del eje
+		// fuente para la numeracion del eje
 		getAxis(0).setLightLabelFont(new Font(Font.SANS_SERIF,Font.BOLD,14));
  
 		// Eje de ordenadas (Aptitud)
-		// Cambios en la posición y el ángulo
+		// Cambios en la posicion y el angulo
 		getAxis(1).setLightLabelAngle(-Math.PI / 4);
 		getAxis(1).setLabelPosition(-0.15, 0.5);
 		getAxis(1).setLabelAngle(-Math.PI / 2);
 		// fuente para el nombre del eje
 		getAxis(1).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
-		// fuente para la numeración del eje
+		// fuente para la numeracion del eje
 		getAxis(1).setLightLabelFont(new Font(Font.SANS_SERIF,Font.BOLD,14));
 
-		// Creación de los vectores para almacenar las y
+		// Creacion de los vectores para almacenar las y
 		_yAptitudMedia = new double[numPasos];
 		_yAptitudMejor = new double[numPasos];
 	}
 	
 	/**
-	 * Completa la información de la ejecución con el valor del parámetro.
+	 * Completa la informacion de la ejecucion con el valor del parametro.
 	 * 
-	 * @param AGenetico Algoritmo genético.
+	 * @param AGenetico Algoritmo genetico.
 	 */
 	public void guardaDatosEjecucion(AG AGenetico) {
 		
@@ -134,7 +134,7 @@ public class PanelFuncion extends Plot2DPanel{
 	}
 	
 	/**
-	 * Imprime los resultados de los vectores en la gráfica.
+	 * Imprime los resultados de los vectores en la grafica.
 	 */
 	public void imprimeDatosPanelFuncion() {
 		

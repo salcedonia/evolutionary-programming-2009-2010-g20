@@ -14,7 +14,7 @@ import cromosoma.CromosomaFuncion5;
 import cromosoma.TipoCromosoma;
 
 /**
- * Clase que implementa los mï¿½todos necesarios para el algoritmo genï¿½tico
+ * Clase que implementa los metodos necesarios para el algoritmo genetico
  * simple.
  * 
  * @author Grupo20.
@@ -22,7 +22,7 @@ import cromosoma.TipoCromosoma;
 public class AG {
 
 	/**
-	 * Poblaciï¿½n a evaluar.
+	 * Poblacion a evaluar.
 	 */
 	private Cromosoma[] _poblacion;
 	/**
@@ -43,7 +43,7 @@ public class AG {
 	private int _posMejor;
 	
 	/**
-	 * Especificación del tipo de problema.
+	 * Especificacion del tipo de problema.
 	 */
 	private TipoProblema _tipoProblema;
 
@@ -66,12 +66,12 @@ public class AG {
 	private boolean _elitismo;
 	
 	/**
-	 * Tamaño para la élite.
+	 * Tamanio para la elite.
 	 */
 	private int _tamElite;
 	
 	/**
-	 * Árbol con los cromosomas pertenecientes a la élite.
+	 * arbol con los cromosomas pertenecientes a la elite.
 	 */
 	private ListaOrdenada<Cromosoma> _elite;
 
@@ -125,7 +125,7 @@ public class AG {
 		_tipoCromosoma = tipoCromosoma;
 		_tipoProblema = tipoProblema;
 		
-		// Calcula el número de cromosomas de la élite
+		// Calcula el numero de cromosomas de la elite
 		if (_elitismo) {
 			_tamElite = (int) (tamElite * _tamPoblacion);
 		}
@@ -133,7 +133,7 @@ public class AG {
 	}
 
 	/**
-	 * Aumenta el nï¿½mero de generaciones procesadas.
+	 * Aumenta el numero de generaciones procesadas.
 	 */
 	public void aumentarGeneracion() {
 
@@ -141,22 +141,23 @@ public class AG {
 	}
 
 	/**
-	 * Realiza la selecciï¿½n de individuos de la poblaciï¿½n.
+	 * Realiza la seleccion de individuos de la poblacion.
 	 */
 	public void seleccion() {
-		seleccionRuleta(); // Por ahora solo tenemos este método
+		
+		seleccionRuleta(); 
 	}
 	
 	/**
-	 * Método de seleccion por ruleta. Se seleccionan los cromosomas supervivientes
-	 * para la reproducción.
+	 * Metodo de seleccion por ruleta. Se seleccionan los cromosomas supervivientes
+	 * para la reproduccion.
 	 */
 	private void seleccionRuleta() {
 		
 		// Seleccionados para sobrevivir
 		int[] sel_super = new int[_tamPoblacion];
 		double prob; // probabilidad de seleccion
-		int pos_super; // posición del superviviente
+		int pos_super; // posicion del superviviente
 		Random generador = new Random();
 		for (int i = 0; i < _tamPoblacion; i++) {
 			prob = generador.nextDouble();
@@ -181,7 +182,7 @@ public class AG {
 	
 
 	/**
-	 * Realiza la reproducciï¿½n de individuos de la poblaciï¿½n.
+	 * Realiza la reproduccion de individuos de la poblacion.
 	 */
 	public void reproduccion() {
 		
@@ -205,7 +206,7 @@ public class AG {
 			}
 		}
 		
-		// El número de seleccionados se hace par
+		// El numero de seleccionados se hace par
 		if ((num_sel_cruce % 2) == 1)
 			num_sel_cruce--;
 		
@@ -255,7 +256,7 @@ public class AG {
 			}
 		}
 		
-		// se evalúan y sustituyen a los padres
+		// se evaluan y sustituyen a los padres
 		padre.setGenes(hijo1);
 		padre.setAptitud(padre.evalua());
 		madre.setGenes(hijo2);
@@ -263,7 +264,7 @@ public class AG {
 	}
 
 	/**
-	 * Realiza la mutaciï¿½n de los individuos seleccionados en la poblaciï¿½n.
+	 * Realiza la mutacion de los individuos seleccionados en la poblacion.
 	 */
 	public void mutacion() {
 		
@@ -288,21 +289,24 @@ public class AG {
 					}
 				}
 			}
+			
+			// Si ha cambiado entonces lo volvemos a evaluar
 			if (mutado) 
 				_poblacion[i].setAptitud(_poblacion[i].evalua());
 		}
 	}
 
 	/**
-	 * Asigna la calidad a los individuos de una poblaciï¿½n. (adaptación, aptitud y el Mejor)
+	 * Asigna la calidad a los individuos de una poblacion. Calcula la adaptacion, la aptitud 
+	 * y el Mejor individuo.
 	 */
 	public void evaluarPoblacion() {
 		
-		double punt_acu = 0; // puntuación acumulada
+		double punt_acu = 0; // puntuacion acumulada
 		double aptitud_mejor = 0; // mejor aptitud
 		double sumadaptacion = 0; // suma de la adaptacion
 		
-		// Actualizamos la adaptación de cada cromosoma según el tipo de problema
+		// Actualizamos la adaptación de cada cromosoma segun el tipo de problema
 		switch (_tipoProblema) {
 
 		case MINIMIZACION:
@@ -334,14 +338,14 @@ public class AG {
 			}
 		}
 		
-		// Actualizamos los valores de puntuación
+		// Actualizamos los valores de puntuacion
 		for (int i = 0; i < _tamPoblacion; i++) {
 			_poblacion[i].setPuntuacion(_poblacion[i].getAdaptacion()/sumadaptacion);
 			_poblacion[i].setPuntAcumulada(_poblacion[i].getPuntuacion() + punt_acu);
 			punt_acu = punt_acu + _poblacion[i].getPuntuacion();
 		}
 		
-		// Si el mejor de esta generación es mejor que el mejor que
+		// Si el mejor de esta generacion es mejor que el mejor que
 		// tenia antes, se actualiza
 		switch (_tipoProblema) {
 
@@ -360,30 +364,30 @@ public class AG {
 	}
 	
 	/**
-	 * Ajusta el valor de adaptación de cada cromosoma de la población para
-	 * el caso de minimización.
+	 * Ajusta el valor de adaptacion de cada cromosoma de la poblacion para
+	 * el caso de minimizacion.
 	 */
 	private void revisaAdaptacionMinimiza() {
 		
 		double cmax = -Double.MAX_VALUE;
 		// un valor por debajo de cualquiera que pueda
-		// tomar la función objetivo
+		// tomar la funcion objetivo
 		for (int i = 0; i < _tamPoblacion; i++) {
 			if (_poblacion[i].getAptitud() > cmax) 
 				cmax = _poblacion[i].getAptitud();
 		}
 		cmax = cmax * 1.05; // margen para evitar sumadaptacion = 0
-							// si converge la población
+							// si converge la poblacion
 		
-		// Hacemos el ajuste de la adaptación según la fórmula: f(x) = cmax - g(x)
+		// Hacemos el ajuste de la adaptacion segun la formula: f(x) = cmax - g(x)
 		for (int i = 0; i < _tamPoblacion; i++) {
 			_poblacion[i].setAdaptacion(cmax - _poblacion[i].getAptitud());
 		}
 	}
 	
 	/**
-	 * Ajusta el valor de adaptación de cada cromosoma de la población para
-	 * el caso de maximización.
+	 * Ajusta el valor de adaptacion de cada cromosoma de la poblacion para
+	 * el caso de maximizacion.
 	 */
 	private void revisaAdaptacionMaximiza() {
 		
@@ -394,7 +398,7 @@ public class AG {
 				fmin = _poblacion[i].getAptitud();
 		}
 		
-		// Hacemos el ajuste a la adaptación según la fórmula f(x) = g(x) + Fmin
+		// Hacemos el ajuste a la adaptacion segun la formula f(x) = g(x) + Fmin
 		for (int i = 0; i < _tamPoblacion; i++) {
 			_poblacion[i].setAdaptacion(fmin + _poblacion[i].getAptitud());
 		}
@@ -416,12 +420,12 @@ public class AG {
 	 */
 	public void inicializa() {
 
-		// Creamos la poblacion del tamaÃ±o especificado
+		// Creamos la poblacion del tamanio especificado
 		_poblacion = new Cromosoma[_tamPoblacion];
 		
 		for (int j = 0; j < _tamPoblacion; j++) {
 
-			// Creamos el tipo de cromosoma segï¿½n corresponda
+			// Creamos el tipo de cromosoma segun corresponda
 			switch (_tipoCromosoma) {
 
 			case FUNCION1:
@@ -448,9 +452,9 @@ public class AG {
 	}
 
 	/**
-	 * Devuelve el mejor individuo de una poblaciï¿½n.
+	 * Devuelve el mejor individuo de una poblacion.
 	 * 
-	 * @return El mejor individuo de una poblaciï¿½n.
+	 * @return El mejor individuo de una poblacion.
 	 */
 	public Cromosoma getElMejor() {
 
@@ -458,8 +462,9 @@ public class AG {
 	}
 	
 	/**
-	 * Devuelve el número de la generación actual.
-	 * @return El número de la generación actual.
+	 * Devuelve el numero de la generacion actual.
+	 * 
+	 * @return El numero de la generacion actual.
 	 */
 	public int getNumGeneracion() {
 		
@@ -467,9 +472,9 @@ public class AG {
 	}
 	
 	/**
-	 * Calcula la aptitud media de la población.
+	 * Calcula la aptitud media de la poblacion.
 	 * 
-	 * @return La aptitud media de la población.
+	 * @return La aptitud media de la poblacion.
 	 */
 	public double getAptitudMedia() {
 		
@@ -485,16 +490,17 @@ public class AG {
 	}
 	
 	/**
-	 * Coge los cromosomas que va a formar parte de la élite.
-	 * @return Array con los cromosomas de la élite.
+	 * Coge los cromosomas que va a formar parte de la elite.
+	 * 
+	 * @return Array con los cromosomas de la elite.
 	 */
 	public void separaElite() {
 		
-		// Solo se realizan cambios si está activo el flag de elitismo
+		// Solo se realizan cambios si esta activo el flag de elitismo
 		if (_elitismo) {
 			
 			// Comparador para el orden de los cromosomas en la lista ordenada
-			// de la élite
+			// de la elite
 			Comparator<Cromosoma> miComparador = new Comparator<Cromosoma>() {
 				public int compare(Cromosoma n1, Cromosoma n2) {
 					return (n1.compareTo(n2));
@@ -503,13 +509,13 @@ public class AG {
 			
 			_elite = new ListaOrdenada<Cromosoma>(miComparador);
 			
-			// Introduce los primeros tamElite cromosomas de la población
+			// Introduce los primeros tamElite cromosomas de la poblacion
 			// en la lista ordenada
 			for (int i = 0; i < _tamElite; i++)
 				_elite.add((Cromosoma)_poblacion[i].clone());
 			
 			// Para cada cromosoma restante de la poblacion, se introduce en
-			// la élite si es mejor que el peor de la élite
+			// la elite si es mejor que el peor de la elite
 			for (int i = _tamElite; i < _tamPoblacion; i++) {
 				
 				switch (_tipoProblema) {
@@ -532,16 +538,16 @@ public class AG {
 	}
 	
 	/**
-	 * Incluye los cromosomas de la élite en la población, sustituyendo
+	 * Incluye los cromosomas de la elite en la poblacion, sustituyendo
 	 * a los peores.
 	 */
 	public void incluyeElite() {
 		
-		// Solo se realizan cambios si está activo el flag de elitismo
+		// Solo se realizan cambios si esta activo el flag de elitismo
 		if (_elitismo) {
 			
 			// Comparador para los Integer de las posiciones de los cromosomas
-			// de la población en la lista ordenada de peores cromosomas
+			// de la poblacion en la lista ordenada de peores cromosomas
 			Comparator<Integer> miComparador = new Comparator<Integer>() {
 				public int compare(Integer n1, Integer n2) {
 					return (_poblacion[n1].compareTo(_poblacion[n2]));
@@ -549,10 +555,10 @@ public class AG {
 			};
 			
 			// Variable local para almacenar las posiciones de los peores
-			// cromosomas de la población
+			// cromosomas de la poblacion
 			ListaOrdenada<Integer> peores = new ListaOrdenada<Integer>(miComparador);
 			
-			// Introduce los primeros tamElite cromosomas de la población
+			// Introduce los primeros tamElite cromosomas de la poblacion
 			// en la lista de peores cromosomas
 			for (int i = 0; i < _tamElite; i++)
 				peores.add(i);
@@ -580,8 +586,8 @@ public class AG {
 				}
 			}
 			
-			// Reemplazo de los peores cromosomas de la población por los 
-			// cromosomas de la élite
+			// Reemplazo de los peores cromosomas de la poblacion por los 
+			// cromosomas de la elite
 			Iterator<Integer> itSelElite = peores.iterator();
 			Iterator<Cromosoma> itElite = _elite.iterator();
 			while (itSelElite.hasNext()) {
@@ -589,8 +595,6 @@ public class AG {
 				Cromosoma cromosoma = (Cromosoma) itElite.next();
 				_poblacion[posCromosoma] = (Cromosoma) cromosoma.clone();
 			}
-		}
-		
+		}	
 	}
-	
 }

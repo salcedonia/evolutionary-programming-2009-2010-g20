@@ -73,10 +73,10 @@ public class ValidadorDatos {
 	
 	/**
 	 * Comprueba que todos los valores introducidos por el usuario son validos
-	 * para proceder a la evaluaci脹n de la funci脹n correspondiente.
+	 * para proceder a la evaluacion de la funcion correspondiente.
 	 * 
-	 * @param variacion El tipo de par醡etro a variar.
-	 * @return Verdadero si todos los par路metros son v路lidos y falso en caso
+	 * @param variacion El tipo de parametro a variar.
+	 * @return Verdadero si todos los parametros son validos y falso en caso
 	 *         contrario.
 	 */
 	public boolean parametrosOk(TipoVariacion variacion) {
@@ -110,7 +110,7 @@ public class ValidadorDatos {
 							"Error en los datos", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}else
-					// Guardamos el resultado de la validaci贸n
+					// Guardamos el resultado de la validacion
 					_numGeneraciones = numGeneraciones;
 			}
 		}catch(NumberFormatException e){
@@ -125,7 +125,7 @@ public class ValidadorDatos {
 	}
 	
 	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de Tama帽o de Poblacion. Cuando
+	 * Evalua la validez de los datos introducidos en el cuadro de texto de Tamanio de Poblacion. Cuando
 	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable entera correspondiente.
 	 * 
 	 * @return Verdadero si el dato introducido es correcto.
@@ -137,23 +137,23 @@ public class ValidadorDatos {
 		try{
 			
 			if(_ventana.getTxtTamPoblacion().getText().matches("")){
-				JOptionPane.showMessageDialog(_ventana, "!Debe introducir el Tama帽o de la poblacion!",
+				JOptionPane.showMessageDialog(_ventana, "!Debe introducir el Tamanio de la poblacion!",
 	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}else{
 				tamPoblacion = Integer.parseInt(_ventana.getTxtTamPoblacion().getText());
 			
 				if(tamPoblacion < 0){
-					JOptionPane.showMessageDialog(_ventana, "!El Tama帽o de la Poblacion tiene que ser un numero entero positivo!",
+					JOptionPane.showMessageDialog(_ventana, "!El Tamanio de la Poblacion tiene que ser un numero entero positivo!",
 							"Error en los datos", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}else
-					// Guardamos el resultado de la validaci贸n
+					// Guardamos el resultado de la validacion
 					_tamPoblacion = tamPoblacion;
 			}
 		}catch(NumberFormatException e){
 			
-			JOptionPane.showMessageDialog(_ventana, "!El Tama帽o de la Poblacion tiene que ser un numero entero!",
+			JOptionPane.showMessageDialog(_ventana, "!El Tamanio de la Poblacion tiene que ser un numero entero!",
                     "Error en los datos", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
@@ -182,7 +182,7 @@ public class ValidadorDatos {
 				probCruce = Double.parseDouble(_ventana.getTxtProbCruce().getText());
 			
 				if(probCruce >= 0 && probCruce <= 1){
-					// Guardamos el resultado de la validaci贸n
+					// Guardamos el resultado de la validacion
 					_probCruce = probCruce;
 				}else{
 					JOptionPane.showMessageDialog(_ventana, "!La Probabilidad de Cruce tiene que ser un numero entero positivo entre 0 y 1!",
@@ -221,7 +221,7 @@ public class ValidadorDatos {
 				probMutacion = Double.parseDouble(_ventana.getTxtProbMutacion().getText());
 			
 				if(probMutacion >= 0 && probMutacion <= 1){
-					// Guardamos el resultado de la validaci贸n
+					// Guardamos el resultado de la validacion
 					_probMutacion = probMutacion;
 				}else{
 					JOptionPane.showMessageDialog(_ventana, "!La Probabilidad de Mutacion tiene que ser un numero entero positivo entre 0 y 1!",
@@ -260,7 +260,7 @@ public class ValidadorDatos {
 				precision = Double.parseDouble(_ventana.getTxtPrecision().getText());
 			
 				if(precision >= 0 && precision <= 1){
-					// Guardamos el resultado de la validaci贸n
+					// Guardamos el resultado de la validacion
 					_precision = precision;
 				}else{
 					JOptionPane.showMessageDialog(_ventana, "!La Precision tiene que ser un numero entero positivo entre 0 y 1!",
@@ -303,7 +303,7 @@ public class ValidadorDatos {
 							"Error en los datos", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}else
-					// Guardamos el resultado de la validaci贸n
+					// Guardamos el resultado de la validacion
 					_valorN = valorN;
 			}
 		}catch(NumberFormatException e){
@@ -319,7 +319,7 @@ public class ValidadorDatos {
 	
 	/**
 	 * Evalua la validez de los datos introducidos en el campo de texto del
-	 * porcentage de 閘ite.
+	 * porcentage de elite.
 	 * 
 	 * @return Verdadero si el dato introducido es correcto.
 	 */
@@ -329,14 +329,14 @@ public class ValidadorDatos {
 		
 		try {
 			if(_ventana.getTxtPorcentageElite().getText().matches("")){
-				JOptionPane.showMessageDialog(_ventana, "ebe introducir el % para el tama駉 de la 閘ite!",
+				JOptionPane.showMessageDialog(_ventana, "!Debe introducir el % para el tamanio de la elite!",
 	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}else{
 				porcentageElite = Double.parseDouble(_ventana.getTxtPorcentageElite().getText());
 			
 				if ((porcentageElite < 0) || (porcentageElite > 1)) {
-					JOptionPane.showMessageDialog(_ventana, "!El porcentage de la 閘ite tiene que ser un numero entre 0 y 1!",
+					JOptionPane.showMessageDialog(_ventana, "!El porcentage de la elite tiene que ser un numero entre 0 y 1!",
 							"Error en los datos", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}else
@@ -345,7 +345,7 @@ public class ValidadorDatos {
 			}
 		}
 		catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(_ventana, "!El % de la 閘ite tiene que ser un numero real!",
+			JOptionPane.showMessageDialog(_ventana, "!El % de la elite tiene que ser un numero real!",
                     "Error en los datos", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
@@ -356,7 +356,7 @@ public class ValidadorDatos {
 	
 	/**
 	 * Evalua la validez de los datos introducidos en el campo de texto de
-	 * paso de variaci髇 de par醡etros.
+	 * paso de variacion de parametros.
 	 * 
 	 * @return Verdadero si el dato introducido es correcto.
 	 */
@@ -366,14 +366,14 @@ public class ValidadorDatos {
 		
 		try {
 			if(_ventana.getTxtPasoVariacion().getText().matches("")){
-				JOptionPane.showMessageDialog(_ventana, "ebe introducir el paso de la variaci髇 de par醡etros!",
+				JOptionPane.showMessageDialog(_ventana, "ebe introducir el paso de la Variacion de Parametros!",
 	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}else{
 				pasoVariacion = Double.parseDouble(_ventana.getTxtPasoVariacion().getText());
 			
 				if (pasoVariacion <= 0) {
-					JOptionPane.showMessageDialog(_ventana, "!El paso de la variaci髇 tiene que ser un numero positivo!",
+					JOptionPane.showMessageDialog(_ventana, "!El paso de la Variacion de Parametros tiene que ser un numero positivo!",
 							"Error en los datos", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}else
@@ -382,7 +382,7 @@ public class ValidadorDatos {
 			}
 		}
 		catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(_ventana, "!El paso de la variaci髇 de par醡etros tiene que ser un n鷐ero real!",
+			JOptionPane.showMessageDialog(_ventana, "!El paso de la Variacion de Parametros tiene que ser un n鷐ero real!",
                     "Error en los datos", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
@@ -393,7 +393,7 @@ public class ValidadorDatos {
 	
 	/**
 	 * Evalua la validez de los datos introducidos en el campo de texto de
-	 * l韒ite de variaci髇 de par醡etros.
+	 * limite de variacion de parametros.
 	 * 
 	 * @return Verdadero si el dato introducido es correcto.
 	 */
@@ -403,14 +403,14 @@ public class ValidadorDatos {
 		
 		try {
 			if(_ventana.getTxtLimiteVariacion().getText().matches("")){
-				JOptionPane.showMessageDialog(_ventana, "ebe introducir el l韒ite para la variaci髇 de par醡etros!",
+				JOptionPane.showMessageDialog(_ventana, "!Debe introducir el Limite para la Variacion de Parametros!",
 	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}else{
 				limiteVariacion = Double.parseDouble(_ventana.getTxtLimiteVariacion().getText());
 			
 				if (limiteVariacion < 0) {
-					JOptionPane.showMessageDialog(_ventana, "!El l韒ite de la variaci髇 de par醡etros tiene que ser un numero positivo!",
+					JOptionPane.showMessageDialog(_ventana, "!El Limite de la Variacion de Parametros tiene que ser un numero positivo!",
 							"Error en los datos", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}else
@@ -419,7 +419,7 @@ public class ValidadorDatos {
 			}
 		}
 		catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(_ventana, "!El l韒ite de la variaci髇 de par醡etros tiene que ser un numero real!",
+			JOptionPane.showMessageDialog(_ventana, "!El Limite de la Variacion de Parametros tiene que ser un numero real!",
                     "Error en los datos", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
@@ -429,11 +429,11 @@ public class ValidadorDatos {
 	}
 	
 	/**
-	 * Comprueba que el rango de la variaci髇 es correcto.
-	 * Es correcto si el l韒ite es mayor que el inicio.
+	 * Comprueba que el Rango de la Variacion es correcto.
+	 * Es correcto si el Limite es mayor que el inicio.
 	 * 
-	 * @param variacion El tipo de par醡etro a variar.
-	 * @return Verdadero si el rango de variaci髇 es correcto.
+	 * @param variacion El tipo de Parametro a variar.
+	 * @return Verdadero si el Rango de Variacion es correcto.
 	 */
 	public boolean VariacionOk(TipoVariacion variacion) {
 		
@@ -468,7 +468,7 @@ public class ValidadorDatos {
 		}
 		
 		if (!varCorrecta) {
-			JOptionPane.showMessageDialog(_ventana, "!El rango de variaci髇 no es correcto!",
+			JOptionPane.showMessageDialog(_ventana, "!El Rango de Variacion no es correcto!",
                     "Error en los datos", JOptionPane.ERROR_MESSAGE);
 		}
 		
@@ -476,6 +476,8 @@ public class ValidadorDatos {
 		
 	}
 
+	// ----------GETTERS & SETTERS-----------//
+	
 	public int getNumGeneraciones() {
 		return _numGeneraciones;
 	}

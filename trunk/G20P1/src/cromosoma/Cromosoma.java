@@ -16,33 +16,33 @@ public abstract class Cromosoma implements Comparable<Object> {
 	protected boolean[][] _genes;
 	
 	/**
-	 * Número de genes del problema.
+	 * Numero de genes del problema.
 	 */
 	protected int _numGenes;
 
 	/**
-	 * Decodificación de los genes del cromosoma.
+	 * Decodificacion de los genes del cromosoma.
 	 */
 	protected double[] _fenotipo;
 
 	/**
-	 * Valor de la función de evaluación.
+	 * Valor de la funcion de evaluacion.
 	 */
 	protected double _aptitud;
 	
 	/**
-	 * Valor de la función de adaptación.
+	 * Valor de la funcion de adaptacion.
 	 */
 	protected double _adaptacion;
 
 	/**
-	 * Puntuación relativa (aptitud/suma).
+	 * Puntuacion relativa (aptitud/suma).
 	 */
 	
 	protected double _puntuacion;
 	
 	/**
-	 * Puntuaciï¿½n acumulada para la selecciï¿½n.
+	 * Puntuacion acumulada para la seleccion.
 	 */
 	protected double _puntAcumulada;
 	
@@ -103,9 +103,9 @@ public abstract class Cromosoma implements Comparable<Object> {
 	}
 
 	/**
-	 * Devuelve el número de genes del cromosoma.
+	 * Devuelve el numero de genes del cromosoma.
 	 * 
-	 * @return El número de genes del cromosoma.
+	 * @return El numero de genes del cromosoma.
 	 */
 	public int getNumGenes() {
 		
@@ -113,9 +113,9 @@ public abstract class Cromosoma implements Comparable<Object> {
 	}
 
 	/**
-	 * Establece el número de genes del cromosoma.
+	 * Establece el numero de genes del cromosoma.
 	 * 
-	 * @param fenotipo Nuevo valor del número de genes.
+	 * @param fenotipo Nuevo valor del numero de genes.
 	 */
 	public void setNumGenes(int numGenes) {
 		
@@ -163,9 +163,9 @@ public abstract class Cromosoma implements Comparable<Object> {
 	}
 	
 	/**
-	 * Devuelve la adaptación del cromosoma.
+	 * Devuelve la adaptacion del cromosoma.
 	 * 
-	 * @return La adaptación del cromosoma.
+	 * @return La adaptacion del cromosoma.
 	 */
 	public double getAdaptacion() {
 		
@@ -173,9 +173,9 @@ public abstract class Cromosoma implements Comparable<Object> {
 	}
 
 	/**
-	 * Establece la adaptación a valor "adaptación".
+	 * Establece la adaptacion a valor "adaptacion".
 	 * 
-	 * @param aptitud Nuevo valor de adaptación a establecer.
+	 * @param aptitud Nuevo valor de adaptacion a establecer.
  	 */
 	public void setAdaptacion(double adaptacion) {
 		
@@ -183,9 +183,9 @@ public abstract class Cromosoma implements Comparable<Object> {
 	}
 
 	/**
-	 * Devuelve la puntuaciï¿½n del cromosoma.
+	 * Devuelve la puntuacion del cromosoma.
 	 * 
-	 * @return La puntuaciï¿½n del cromosoma.
+	 * @return La puntuacion del cromosoma.
 	 */
 	public double getPuntuacion() {
 		
@@ -193,7 +193,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 	}
 
 	/**
-	 * Establece la puntuaciï¿½n del cromosoma a valor "puntuacion".
+	 * Establece la puntuacion del cromosoma a valor "puntuacion".
 	 * 
 	 * @param puntuacion Nuevo valor para establecer en la puntuacion.
 	 */
@@ -203,9 +203,9 @@ public abstract class Cromosoma implements Comparable<Object> {
 	}
 
 	/**
-	 * Devuelve la puntuaciï¿½n acumulada.
+	 * Devuelve la puntuacion acumulada.
 	 * 
-	 * @return La puntuaciï¿½n acumulada.
+	 * @return La puntuacion acumulada.
 	 */
 	public double getPuntAcumulada() {
 		
@@ -215,18 +215,30 @@ public abstract class Cromosoma implements Comparable<Object> {
 	/**
 	 * Establece la puntuacion acumulada a valor "acumulada".
 	 * 
-	 * @param acumulada Nuevo valor de puntuaciï¿½n acumulada a establecer.
+	 * @param acumulada Nuevo valor de puntuacion acumulada a establecer.
 	 */
 	public void setPuntAcumulada(double acumulada) {
 		
 		_puntAcumulada = acumulada;
 	}
 	
-	public void setLongitudCromosoma(int _longitudCromosoma) {
-		this._longitudCromosoma = _longitudCromosoma;
+	/**
+	 * Establece la Longitud del Cromosoma a valor "longitudCromosoma".
+	 * 
+	 * @param longitudCromosoma Nuevo valor a establecer.
+	 */
+	public void setLongitudCromosoma(int longitudCromosoma) {
+		
+		_longitudCromosoma = longitudCromosoma;
 	}
 
+	/**
+	 * Devuelve la longitud del Cromosoma.
+	 * 
+	 * @return La longitud del cromosoma.
+	 */
 	public int getLongitudCromosoma() {
+		
 		return _longitudCromosoma;
 	}
 	
@@ -291,7 +303,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * Calcula el fenotipo de un gen.
 	 * 
 	 * @param gen Gen a calcular su fenotipo.
-	 * @param nGen Número del gen para calcular su fenotipo.
+	 * @param nGen Numero del gen para calcular su fenotipo.
 	 * @return El fenotipo del gen.
 	 */
 	public abstract double fenotipo(boolean[] gen, int nGen);
@@ -306,16 +318,16 @@ public abstract class Cromosoma implements Comparable<Object> {
 	public abstract int calcularLongGen(int nGen, double tolerancia);
 	
 	/**
-	 * Calcula el valor de la función a partir del fenotipo actual. 
-	 * (función de evaluación).
+	 * Calcula el valor de la funcion a partir del fenotipo actual. 
+	 * (funcion de evaluacion).
 	 * 
-	 * @return El valor de la función usando el fenotipo actual.
+	 * @return El valor de la funcion usando el fenotipo actual.
 	 */
 	public abstract double f();
 	
 	
 	/**
-	 * Devuelve una copia del objeto que invoca este método.
+	 * Devuelve una copia del objeto que invoca este metodo.
 	 */
 	public abstract Object clone();
 
