@@ -14,7 +14,7 @@ import org.math.plot.plotObjects.BaseLabel;
  * 
  * @author Grupo20.
  */
-public class PanelAptitud extends Plot2DPanel{
+public class PanelAptitud extends Plot2DPanel {
 
 	/**
 	 * Constante de ID.
@@ -32,6 +32,18 @@ public class PanelAptitud extends Plot2DPanel{
 	private double[] _yAptitudMedia;
 	
 	/**
+	 * Constructora del panel de la gráfica.
+	 */
+	public PanelAptitud() {
+		
+		super();
+		
+		// Pone una leyenda en la parte baja de la gráfica
+		addLegend("SOUTH");
+		
+	}
+	
+	/**
 	 * Inicia el panel de las gráficas y los vectores para sus funciones.
 	 *
 	 * @param numGeneraciones Numero de generaciones del algoritmo genetico.
@@ -46,9 +58,6 @@ public class PanelAptitud extends Plot2DPanel{
 				
 		// Cambia los nombres a los ejes
 		setAxisLabels("Número de Generación","Aptitud");
-		
-		// Pone una leyenda en la parte baja de la gráfica
-		addLegend("SOUTH");
 				
 		// Título
 		BaseLabel titulo = new BaseLabel("Comparativa de Aptitud", Color.BLACK, 0.5, 1.1);
