@@ -75,14 +75,15 @@ public class ValidadorDatos {
 	 * Comprueba que todos los valores introducidos por el usuario son validos
 	 * para proceder a la evaluaciÃ›n de la funciÃ›n correspondiente.
 	 * 
+	 * @param variacion El tipo de parámetro a variar.
 	 * @return Verdadero si todos los parÂ·metros son vÂ·lidos y falso en caso
 	 *         contrario.
 	 */
-	public boolean parametrosOk() {
+	public boolean parametrosOk(TipoVariacion variacion) {
 
 		return numGeneracionesOk() && tamPoblacionOk() && probCruceOk() && probMutacionOk() 
 				&& precisionOk() && valorNOk() && porcentageEliteOk() && pasoVariacionOk()
-				&& limiteVariacionOk();
+				&& limiteVariacionOk() && VariacionOk(variacion);
 	}
 
 	/**
@@ -425,6 +426,54 @@ public class ValidadorDatos {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Comprueba que el rango de la variación es correcto.
+	 * Es correcto si el límite es mayor que el inicio.
+	 * 
+	 * @param variacion El tipo de parámetro a variar.
+	 * @return Verdadero si el rango de variación es correcto.
+	 */
+	public boolean VariacionOk(TipoVariacion variacion) {
+		
+		boolean varCorrecta = false;
+		
+		switch (variacion) {
+
+		case NINGUNA:
+			varCorrecta = true;
+			break;
+		case NUM_GENERACION:
+			varCorrecta = _numGeneraciones < _limiteVariacion;
+			break;
+		case NUM_POBLACION:
+			varCorrecta = _tamPoblacion < _limiteVariacion;
+			break;
+		case PROB_CRUCE:
+			varCorrecta = _probCruce < _limiteVariacion;
+			break;
+		case PROB_MUTACION:
+			varCorrecta = _probMutacion < _limiteVariacion;
+			break;
+		case PRECISION:
+			varCorrecta = _precision < _limiteVariacion;
+			break;
+		case VALOR_N:
+			varCorrecta = _valorN < _limiteVariacion;
+			break;
+		case ELITISMO:
+			varCorrecta = _porcentageElite < _limiteVariacion;
+			break;
+		}
+		
+		if (!varCorrecta) {
+			JOptionPane.showMessageDialog(_ventana, "!El rango de variación no es correcto!",
+                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		return varCorrecta;
+		
 	}
 
 	public int getNumGeneraciones() {

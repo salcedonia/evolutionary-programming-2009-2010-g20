@@ -715,7 +715,7 @@ public class Ventana extends JFrame {
 		_btnComenzar.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 
-				if (_validadorDatos.parametrosOk())
+				if (_validadorDatos.parametrosOk(_tipoVariacion))
 					comenzarAGS();
 			}
 		});
@@ -786,7 +786,6 @@ public class Ventana extends JFrame {
 		// Actualizamos las graficas
 		_panelAptitud
 				.imprimeDatosGraficas(_validadorDatos.getNumGeneraciones());
-		// TODO: Poner aqui el otro panel
 
 		// Mostramos el resultado en el cuadro de texto de informe.
 		imprimeResultadoConsola();
@@ -833,6 +832,8 @@ public class Ventana extends JFrame {
 		
 		// Inicializamos el tipo de problema a resolver
 		setTipoProblema();
+		
+		_panelFuncion.inicializaPanelFuncion(i, paso, limite);
 		
 		while (i < limite) {
 			
@@ -932,9 +933,13 @@ public class Ventana extends JFrame {
 			_txtInforme.append("\nEjecución " + nEjecucion + " - Parámetro Variable: " + i + "\n");
 			imprimeResultadoConsola();
 			
+			_panelFuncion.guardaDatosEjecucion(_AG);
+			
 			nEjecucion++;
 			i += paso;
 		}
+		
+		_panelFuncion.imprimeDatosPanelFuncion();
 		
 	}
 	
