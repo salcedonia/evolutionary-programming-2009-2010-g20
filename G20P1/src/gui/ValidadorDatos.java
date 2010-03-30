@@ -504,7 +504,7 @@ public class ValidadorDatos {
 					return false;
 				}else
 					// Guardamos el resultado de la validación
-					_limiteVariacion = numEstimadoCopiasMejor;
+					_numEstimadoCopiasMejor = numEstimadoCopiasMejor;
 			}
 		}
 		catch (NumberFormatException e) {

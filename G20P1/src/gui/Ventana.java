@@ -1021,6 +1021,7 @@ public class Ventana extends JFrame {
 			i += paso;
 		}
 
+		_btnComenzar.setEnabled(true);
 		_panelFuncion.imprimeDatosPanelFuncion();
 
 	}
