@@ -254,26 +254,6 @@ public class AG {
 		}
 
 		int i = 0, j = 0;
-
-		/*// primera parte del intercambio: 1 a 1 y 2 a 2
-		for (i = 0; i < padre.getNumGenes() && nBit < punto_cruce; i++) {
-			for (j = 0; j < hijo1[i].length && nBit < punto_cruce; j++) {
-				hijo1[i][j] = padre.getGenes()[i][j];
-				hijo2[i][j] = madre.getGenes()[i][j];
-				nBit++;
-			}
-		}
-		
-		
-
-		// segunda parte: 1 a 2 y 2 a 1
-		for (; i < padre.getNumGenes(); i++) {
-			for (; j < hijo1[i].length; j++) {
-				hijo1[i][j] = madre.getGenes()[i][j];
-				hijo2[i][j] = padre.getGenes()[i][j];
-				nBit++;
-			}
-		}*/
 		
 		while ( (nBit!=punto_cruce) && (nBit < padre.getLongitudCromosoma()) ) {
 			
