@@ -223,8 +223,8 @@ public class AG {
 			num_sel_cruce--;
 
 		// Se cruzan los individuos elegidos en un punto al azar
-		punto_cruce = (int) generador.nextDouble()
-				* _poblacion[0].getLongitudCromosoma();
+		punto_cruce = (int) (generador.nextDouble()
+				* _poblacion[0].getLongitudCromosoma());
 		for (int i = 0; i < num_sel_cruce; i += 2) {
 			cruce(_poblacion[sel_cruce[i]], _poblacion[sel_cruce[i + 1]],
 					punto_cruce);
@@ -255,7 +255,7 @@ public class AG {
 
 		int i = 0, j = 0;
 
-		// primera parte del intercambio: 1 a 1 y 2 a 2
+		/*// primera parte del intercambio: 1 a 1 y 2 a 2
 		for (i = 0; i < padre.getNumGenes() && nBit < punto_cruce; i++) {
 			for (j = 0; j < hijo1[i].length && nBit < punto_cruce; j++) {
 				hijo1[i][j] = padre.getGenes()[i][j];
@@ -263,6 +263,8 @@ public class AG {
 				nBit++;
 			}
 		}
+		
+		
 
 		// segunda parte: 1 a 2 y 2 a 1
 		for (; i < padre.getNumGenes(); i++) {
@@ -270,6 +272,30 @@ public class AG {
 				hijo1[i][j] = madre.getGenes()[i][j];
 				hijo2[i][j] = padre.getGenes()[i][j];
 				nBit++;
+			}
+		}*/
+		
+		while ( (nBit!=punto_cruce) && (nBit < padre.getLongitudCromosoma()) ) {
+			
+			hijo1[i][j] = padre.getGenes()[i][j];
+			hijo2[i][j] = madre.getGenes()[i][j];
+			nBit++;
+			j++;
+			if (j >= padre.getGenes()[i].length) {
+				i++;
+				j = 0;
+			}
+		}
+		
+		while ( (nBit < padre.getLongitudCromosoma()) ) {
+			
+			hijo1[i][j] = madre.getGenes()[i][j];
+			hijo2[i][j] = padre.getGenes()[i][j];
+			nBit++;
+			j++;
+			if (j >= padre.getGenes()[i].length) {
+				i++;
+				j = 0;
 			}
 		}
 
@@ -479,7 +505,7 @@ public class AG {
 		// calculamos en fmin el peor valor absoluto de las aptitudes
 		for (int i = 0; i < _tamPoblacion; i++) {
 			if (Math.abs(_poblacion[i].getAptitud()) < fmin)
-				fmin = _poblacion[i].getAptitud();
+				fmin = Math.abs(_poblacion[i].getAptitud());
 		}
 
 		// Hacemos el ajuste a la adaptacion segun la formula f(x) = g(x) + Fmin

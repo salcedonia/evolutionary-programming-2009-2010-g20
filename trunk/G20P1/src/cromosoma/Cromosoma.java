@@ -70,7 +70,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 
 		Random generador = new Random();
 		   
-		for (int i = 0; i < _genes.length; i++) {
+		for (int i = 0; i < _genes[nGen].length; i++) {
 			
 			// Generamos un numero aleatorio entre 0.0 y 0.1
 			double aleatorio = generador.nextDouble();
