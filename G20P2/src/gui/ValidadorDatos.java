@@ -87,7 +87,7 @@ public class ValidadorDatos {
 	public boolean parametrosOk(TipoVariacion variacion) {
 
 		return numGeneracionesOk() && tamPoblacionOk() && probCruceOk() && probMutacionOk() 
-				&& precisionOk() && valorNOk() && porcentageEliteOk() && pasoVariacionOk()
+				&& porcentageEliteOk() && pasoVariacionOk()
 				&& limiteVariacionOk() && VariacionOk(variacion) && NumEstimadoCopiasMejorOk();
 	}
 	
@@ -237,83 +237,6 @@ public class ValidadorDatos {
 		}catch(NumberFormatException e){
 			
 			JOptionPane.showMessageDialog(_ventana, "!La Probabilidad de Mutacion tiene que ser un numero entero!",
-                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-			
-			return false;
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de Precision. Cuando
-	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable real correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	public boolean precisionOk() {
-		
-		double precision;
-		
-		try{
-			
-			if(_ventana.getTxtPrecision().getText().matches("")){
-				JOptionPane.showMessageDialog(_ventana, "!Debe introducir la Precision!",
-	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}else{
-				precision = Double.parseDouble(_ventana.getTxtPrecision().getText());
-			
-				if(precision >= 0 && precision <= 1){
-					// Guardamos el resultado de la validacion
-					_precision = precision;
-				}else{
-					JOptionPane.showMessageDialog(_ventana, "!La Precision tiene que ser un numero entero positivo entre 0 y 1!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-			}
-		}catch(NumberFormatException e){
-			
-			JOptionPane.showMessageDialog(_ventana, "!La Precision tiene que ser un numero entero!",
-                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-			
-			return false;
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de Valor de N. Cuando
-	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable entera correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	public boolean valorNOk() {
-		
-		int valorN;
-		
-		try{
-			
-			if(_ventana.getTxtValorN().getText().matches("")){
-				JOptionPane.showMessageDialog(_ventana, "!Debe introducir el Valor de N!",
-	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}else{
-				valorN = Integer.parseInt(_ventana.getTxtValorN().getText());
-			
-				if(valorN < 0){
-					JOptionPane.showMessageDialog(_ventana, "!El Valor de N tiene que ser un numero entero positivo!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}else
-					// Guardamos el resultado de la validacion
-					_valorN = valorN;
-			}
-		}catch(NumberFormatException e){
-			
-			JOptionPane.showMessageDialog(_ventana, "!El Valor de N tiene que ser un numero entero!",
                     "Error en los datos", JOptionPane.ERROR_MESSAGE);
 			
 			return false;

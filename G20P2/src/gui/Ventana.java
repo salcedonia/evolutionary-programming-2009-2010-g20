@@ -21,9 +21,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.text.JTextComponent;
 
-import cromosoma.TipoCromosoma;
 import logica.AG;
+import logica.TipoCruce;
+import logica.TipoMutacion;
 import logica.TipoProblema;
+import logica.TipoSeleccion;
+import logica.TipoVersion;
 
 /**
  * Clase que implementa los metodos necesarios para la gestion de la ventana
@@ -44,7 +47,6 @@ public class Ventana extends JFrame {
 	private static final String NUM_GENERACIONES_DEF = "100";
 	private static final String PROB_CRUCE_DEF = "0.7";
 	private static final String PROB_MUTACION_DEF = "0.1";
-	private static final String TOLERANCIA_DEF = "0.0001";
 	private static final String NUM_ELITE_DEF = "0.01";
 	private static final String NUM_ESTIMADO_COPIAS_MEJOR_DEF = "1";
 	
@@ -103,6 +105,21 @@ public class Ventana extends JFrame {
 	 * Seleccion de la version del problema.
 	 */
 	private JComboBox _cmbSeleccionVersion;
+	
+	/**
+	 * Etiqueta de seleccion del metodo de seleccion.
+	 */
+	private JLabel _lblSeleccionSeleccion;
+	
+	/**
+	 * Etiqueta de seleccion del metodo de cruce.
+	 */
+	private JLabel _lblSeleccionCruce;
+	
+	/**
+	 * Etiqueta de seleccion del metodo de mutacion.
+	 */
+	private JLabel _lblSeleccionMutacion;
 
 	/**
 	 * Etiqueta de tamanio de poblacion.
@@ -118,16 +135,6 @@ public class Ventana extends JFrame {
 	 * Etiqueta de probabilidad de nmutacion.
 	 */
 	private JLabel _lblProbMutacion;
-
-	/**
-	 * Etiqueta de precision.
-	 */
-	private JLabel _lblPrecision;
-
-	/**
-	 * Etiqueta de valor de N.
-	 */
-	private JLabel _lblValorN;
 
 	/**
 	 * Etiqueta de Seleccion de elitismo.
@@ -158,6 +165,21 @@ public class Ventana extends JFrame {
 	 * Etiqueta del limite de variacion de parametros.
 	 */
 	private JLabel _lblLimiteVariacion;
+	
+	/**
+	 * Lista de seleccion del metodo de seleccion.
+	 */
+	private JComboBox _cmbSeleccionSeleccion;
+	
+	/**
+	 * Lista de seleccion del metodo de cruce.
+	 */
+	private JComboBox _cmbSeleccionCruce;
+	
+	/**
+	 * Lista de seleccion del metodo de mutacion.
+	 */
+	private JComboBox _cmbSeleccionMutacion;
 
 	/**
 	 * Campo de texto de numero de generaciones.
@@ -178,16 +200,6 @@ public class Ventana extends JFrame {
 	 * Campo de texto de probabilidad de mutacion.
 	 */
 	private JTextField _txtProbMutacion;
-
-	/**
-	 * Campo de texto de precision.
-	 */
-	private JTextField _txtPrecision;
-
-	/**
-	 * Campo de texto de Valor de N.
-	 */
-	private JTextField _txtValorN;
 
 	/**
 	 * Lista de seleccion de Elitismo.
@@ -245,9 +257,27 @@ public class Ventana extends JFrame {
 	private JProgressBar _barraProgreso;
 
 	/**
-	 * Tipo de cromosoma a crear. Por defecto es la Funcion 1.
+	 * Tipo de version de problema a usar.
 	 */
-	private TipoCromosoma _tipoCromosoma = TipoCromosoma.FUNCION1;
+	private TipoVersion _tipoVersion = TipoVersion.VERSION1;
+	
+	/**
+	 * Tipo de seleccion a usar por el algoritmo genetico.
+	 */
+	private TipoSeleccion _tipoSeleccion = TipoSeleccion.RULETA;
+
+	
+	/**
+	 * Tipo de cruce a usar por el algoritmo genetico.
+	 */
+	private TipoCruce _tipoCruce = TipoCruce.PMX;
+
+	
+	/**
+	 * Tipo de mutacion a usar por el algoritmo genetico.
+	 */
+	private TipoMutacion _tipoMutacion = TipoMutacion.INSERCION;
+
 
 	/**
 	 * Tipo de problema a resolver.
@@ -431,91 +461,96 @@ public class Ventana extends JFrame {
 		constraints.fill = GridBagConstraints.BOTH;
 		_lblSeleccionVersion = new JLabel("Version del problema:");
 		_panelBodyOpciones.add(_lblSeleccionVersion, constraints);
+		
+		_lblSeleccionSeleccion = new JLabel("Metodo de seleccion:");
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		constraints.fill = GridBagConstraints.BOTH;
+		_panelBodyOpciones.add(_lblSeleccionSeleccion, constraints);
+		
+		_lblSeleccionCruce = new JLabel("Metodo de cruce:");
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		constraints.fill = GridBagConstraints.BOTH;
+		_panelBodyOpciones.add(_lblSeleccionCruce, constraints);
+		
+		_lblSeleccionMutacion = new JLabel("Metodo de mutacion:");
+		constraints.gridx = 0;
+		constraints.gridy = 3;
+		constraints.fill = GridBagConstraints.BOTH;
+		_panelBodyOpciones.add(_lblSeleccionMutacion, constraints);
 
 		_lblNumGeneraciones = new JLabel("Numero de Generaciones:");
 		constraints.gridx = 0;
-		constraints.gridy = 1;
+		constraints.gridy = 4;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblNumGeneraciones, constraints);
 
 		_lblTamPoblacion = new JLabel("Tamanio de la Poblacion:");
 		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridy = 5;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblTamPoblacion, constraints);
 
 		_lblProbCruce = new JLabel("Probabilidad de Cruce:");
 		constraints.gridx = 0;
-		constraints.gridy = 3;
+		constraints.gridy = 6;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblProbCruce, constraints);
 
 		_lblProbMutacion = new JLabel("Probabilidad de Mutacion:");
 		constraints.gridx = 0;
-		constraints.gridy = 4;
+		constraints.gridy = 7;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblProbMutacion, constraints);
 
-		_lblPrecision = new JLabel("Precision:");
-		constraints.gridx = 0;
-		constraints.gridy = 5;
-		constraints.fill = GridBagConstraints.BOTH;
-		_panelBodyOpciones.add(_lblPrecision, constraints);
-
-		_lblValorN = new JLabel("Valor de N:");
-		constraints.gridx = 0;
-		constraints.gridy = 6;
-		constraints.fill = GridBagConstraints.BOTH;
-		_panelBodyOpciones.add(_lblValorN, constraints);
-
 		_lblSeleccionElitismo = new JLabel("Seleccion por Elitismo:");
-		constraints.gridx = 0;
-		constraints.gridy = 7;
-		constraints.fill = GridBagConstraints.BOTH;
-		_panelBodyOpciones.add(_lblSeleccionElitismo, constraints);
-
-		_lblNumEstimadoCopiasMejor = new JLabel("N¼ Estimado Copias del Mejor:");
 		constraints.gridx = 0;
 		constraints.gridy = 8;
 		constraints.fill = GridBagConstraints.BOTH;
-		_panelBodyOpciones.add(_lblNumEstimadoCopiasMejor, constraints);
-
-		_lblSeleccionEscaladoSimple = new JLabel("Escalado Simple:");
+		_panelBodyOpciones.add(_lblSeleccionElitismo, constraints);
+		
+		_lblTamElite = new JLabel("Tamanio de la Elite:");
 		constraints.gridx = 0;
 		constraints.gridy = 9;
 		constraints.fill = GridBagConstraints.BOTH;
-		_panelBodyOpciones.add(_lblSeleccionEscaladoSimple, constraints);
-
-		_lblTamElite = new JLabel("Tamanio de la Elite:");
+		_panelBodyOpciones.add(_lblTamElite, constraints);
+		
+		_lblSeleccionEscaladoSimple = new JLabel("Escalado Simple:");
 		constraints.gridx = 0;
 		constraints.gridy = 10;
 		constraints.fill = GridBagConstraints.BOTH;
-		_panelBodyOpciones.add(_lblTamElite, constraints);
+		_panelBodyOpciones.add(_lblSeleccionEscaladoSimple, constraints);
+
+		_lblNumEstimadoCopiasMejor = new JLabel("N¼ Estimado Copias del Mejor:");
+		constraints.gridx = 0;
+		constraints.gridy = 11;
+		constraints.fill = GridBagConstraints.BOTH;
+		_panelBodyOpciones.add(_lblNumEstimadoCopiasMejor, constraints);
 
 		_lblVariacionParametros = new JLabel("Variacion de parametros:");
 		constraints.gridx = 0;
-		constraints.gridy = 11;
+		constraints.gridy = 12;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblVariacionParametros, constraints);
 
 		_lblPasoVariacion = new JLabel("Paso de la variacion:");
 		constraints.gridx = 0;
-		constraints.gridy = 12;
+		constraints.gridy = 13;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblPasoVariacion, constraints);
 
 		_lblLimiteVariacion = new JLabel("Limite de la variacion:");
 		constraints.gridx = 0;
-		constraints.gridy = 13;
+		constraints.gridy = 14;
 		constraints.fill = GridBagConstraints.BOTH;
 		_panelBodyOpciones.add(_lblLimiteVariacion, constraints);
 
 		// Creamos todos los cuadros de texto correspondientes
 
-		String[] funcionesStrings = { "Funcion1", "Funcion2", "Funcion3",
-				"Funcion4", "Funcion5" };
+		String[] versionesStrings = { "Version 1", "Version 2" };
 
-		_cmbSeleccionVersion = new JComboBox(funcionesStrings);
+		_cmbSeleccionVersion = new JComboBox(versionesStrings);
 		_cmbSeleccionVersion
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -524,26 +559,23 @@ public class Ventana extends JFrame {
 						String seleccion = (String) cb.getSelectedItem();
 
 						// Guardamos la decision correspondiente
-						if (seleccion.matches("Funcion1")) {
-							_tipoCromosoma = TipoCromosoma.FUNCION1;
-							_txtValorN.setEnabled(false);
+						if (seleccion.matches("Version 1")) {
+							_tipoVersion = TipoVersion.VERSION1;
+							
+							_cmbSeleccionCruce.setEnabled(true);
+							_cmbSeleccionMutacion.setEnabled(true);
+							
 						}
-						if (seleccion.matches("Funcion2")) {
-							_tipoCromosoma = TipoCromosoma.FUNCION2;
-							_txtValorN.setEnabled(false);
+						if (seleccion.matches("Version 2")) {
+							_tipoVersion = TipoVersion.VERSION2;
+							
+							_cmbSeleccionCruce.setEnabled(false);
+							_cmbSeleccionCruce.setSelectedIndex(0);
+							
+							_cmbSeleccionMutacion.setEnabled(false);
+							_cmbSeleccionMutacion.setSelectedIndex(0);
 						}
-						if (seleccion.matches("Funcion3")) {
-							_tipoCromosoma = TipoCromosoma.FUNCION3;
-							_txtValorN.setEnabled(false);
-						}
-						if (seleccion.matches("Funcion4")) {
-							_tipoCromosoma = TipoCromosoma.FUNCION4;
-							_txtValorN.setEnabled(false);
-						}
-						if (seleccion.matches("Funcion5")) {
-							_tipoCromosoma = TipoCromosoma.FUNCION5;
-							_txtValorN.setEnabled(true);
-						}
+						
 					}
 				});
 
@@ -553,44 +585,139 @@ public class Ventana extends JFrame {
 		constraints.gridy = 0;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_cmbSeleccionVersion, constraints);
+		
+		String[] seleccionStrings = { "Ruleta", "Torneo", "Ranking" };
+
+		_cmbSeleccionSeleccion = new JComboBox(seleccionStrings);
+		_cmbSeleccionSeleccion
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent e) {
+
+						JComboBox cb = (JComboBox) e.getSource();
+						String seleccion = (String) cb.getSelectedItem();
+
+						// Guardamos la decision correspondiente
+						if (seleccion.matches("Ruleta")) {
+							_tipoSeleccion = TipoSeleccion.RULETA;
+						}
+						else if (seleccion.matches("Torneo")) {
+							_tipoSeleccion = TipoSeleccion.TORNEO;
+						}
+						else if (seleccion.matches("Ranking")) {
+							_tipoSeleccion = TipoSeleccion.RANKING;
+						}
+						
+					}
+				});
+
+		constraints.weightx = 1.4;
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.gridx = 1;
+		constraints.gridy = 1;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		_panelBodyOpciones.add(_cmbSeleccionSeleccion, constraints);
+		
+		String[] cruceStrings = { "PMX", "OX", "Variante OX", "Ciclos CX", 
+				"ERX", "Cod. Ordinal", "Propio" };
+
+		_cmbSeleccionCruce = new JComboBox(cruceStrings);
+		_cmbSeleccionCruce
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent e) {
+
+						JComboBox cb = (JComboBox) e.getSource();
+						String seleccion = (String) cb.getSelectedItem();
+
+						// Guardamos la decision correspondiente
+						if (seleccion.matches("PMX")) {
+							_tipoCruce = TipoCruce.PMX;
+						}
+						else if (seleccion.matches("OX")) {
+							_tipoCruce = TipoCruce.OX;
+						}
+						else if (seleccion.matches("Variante OX")) {
+							_tipoCruce = TipoCruce.VARIANTE_OX;
+						}
+						else if (seleccion.matches("Ciclos CX")) {
+							_tipoCruce = TipoCruce.CICLOS_CX;
+						}
+						else if (seleccion.matches("ERX")) {
+							_tipoCruce = TipoCruce.ERX;
+						}
+						else if (seleccion.matches("Cod. Ordinal")) {
+							_tipoCruce = TipoCruce.COD_ORDINAL;
+						}
+						else if (seleccion.matches("Propio")) {
+							_tipoCruce = TipoCruce.PROPIO;
+						}
+						
+					}
+				});
+
+		constraints.weightx = 1.4;
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		_panelBodyOpciones.add(_cmbSeleccionCruce, constraints);
+		
+		String[] mutacionStrings = { "Insercion", "Intercambio", "Inversion", "Propio" };
+
+		_cmbSeleccionMutacion = new JComboBox(mutacionStrings);
+		_cmbSeleccionMutacion
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent e) {
+
+						JComboBox cb = (JComboBox) e.getSource();
+						String seleccion = (String) cb.getSelectedItem();
+
+						// Guardamos la decision correspondiente
+						if (seleccion.matches("Insercion")) {
+							_tipoMutacion = TipoMutacion.INSERCION;
+						}
+						else if (seleccion.matches("Intercambio")) {
+							_tipoMutacion = TipoMutacion.INTERCAMBIO;
+						}
+						else if (seleccion.matches("Inversion")) {
+							_tipoMutacion = TipoMutacion.INVERSION;
+						}
+						else if (seleccion.matches("Propio")) {
+							_tipoMutacion = TipoMutacion.PROPIO;
+						}
+						
+					}
+				});
+
+		constraints.weightx = 1.4;
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.gridx = 1;
+		constraints.gridy = 3;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		_panelBodyOpciones.add(_cmbSeleccionMutacion, constraints);
 
 		_txtNumGeneraciones = new JTextField(NUM_GENERACIONES_DEF);
 		constraints.gridx = 1;
-		constraints.gridy = 1;
+		constraints.gridy = 4;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_txtNumGeneraciones, constraints);
 
 		_txtTamPoblacion = new JTextField(NUM_POBLACION_DEF);
 		constraints.gridx = 1;
-		constraints.gridy = 2;
+		constraints.gridy = 5;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_txtTamPoblacion, constraints);
 
 		_txtProbCruce = new JTextField(PROB_CRUCE_DEF);
 		constraints.gridx = 1;
-		constraints.gridy = 3;
+		constraints.gridy = 6;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_txtProbCruce, constraints);
 
 		_txtProbMutacion = new JTextField(PROB_MUTACION_DEF);
 		constraints.gridx = 1;
-		constraints.gridy = 4;
+		constraints.gridy = 7;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_txtProbMutacion, constraints);
-
-		_txtPrecision = new JTextField(TOLERANCIA_DEF);
-		constraints.gridx = 1;
-		constraints.gridy = 5;
-		constraints.fill = GridBagConstraints.HORIZONTAL;
-		_panelBodyOpciones.add(_txtPrecision, constraints);
-
-		_txtValorN = new JTextField();
-		_txtValorN.setText("1");
-		_txtValorN.setEnabled(false);
-		constraints.gridx = 1;
-		constraints.gridy = 6;
-		constraints.fill = GridBagConstraints.HORIZONTAL;
-		_panelBodyOpciones.add(_txtValorN, constraints);
 
 		String[] elitismoStrings = { "Si", "No" };
 
@@ -614,15 +741,15 @@ public class Ventana extends JFrame {
 				});
 
 		constraints.gridx = 1;
-		constraints.gridy = 7;
+		constraints.gridy = 8;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_cmbSeleccionElitismo, constraints);
 
-		_txtNumEstimadoCopiasMejor = new JTextField(NUM_ESTIMADO_COPIAS_MEJOR_DEF);
-		_txtNumEstimadoCopiasMejor.setEnabled(false);
+		_txtPorcentageElite = new JTextField(NUM_ELITE_DEF);
+		_txtPorcentageElite.setEnabled(false);
 		constraints.gridx = 1;
-		constraints.gridy = 8;
-		_panelBodyOpciones.add(_txtNumEstimadoCopiasMejor, constraints);
+		constraints.gridy = 9;
+		_panelBodyOpciones.add(_txtPorcentageElite, constraints);
 		
 		String[] escaladoSimpleStrings = { "Si", "No" };
 
@@ -647,16 +774,16 @@ public class Ventana extends JFrame {
 				});
 
 		constraints.gridx = 1;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_cmbSeleccionEscaladoSimple, constraints);
-
-		_txtPorcentageElite = new JTextField(NUM_ELITE_DEF);
-		_txtPorcentageElite.setEnabled(false);
+		
+		_txtNumEstimadoCopiasMejor = new JTextField(NUM_ESTIMADO_COPIAS_MEJOR_DEF);
+		_txtNumEstimadoCopiasMejor.setEnabled(false);
 		constraints.gridx = 1;
-		constraints.gridy = 10;
-		_panelBodyOpciones.add(_txtPorcentageElite, constraints);
-
+		constraints.gridy = 11;
+		_panelBodyOpciones.add(_txtNumEstimadoCopiasMejor, constraints);
+		
 		String[] variacionStrings = { "Ninguna",
 				"Numero Maximo de Generaciones", "Tamanio de Poblacion",
 				"Probabilidad de Cruce", "Probabilidad de Mutacion",
@@ -700,20 +827,20 @@ public class Ventana extends JFrame {
 				});
 
 		constraints.gridx = 1;
-		constraints.gridy = 11;
+		constraints.gridy = 12;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		_panelBodyOpciones.add(_cmbSeleccionVarParametros, constraints);
 
 		_txtPasoVariacion = new JTextField(NUM_ELITE_DEF);
 		_txtPasoVariacion.setEnabled(false);
 		constraints.gridx = 1;
-		constraints.gridy = 12;
+		constraints.gridy = 13;
 		_panelBodyOpciones.add(_txtPasoVariacion, constraints);
 
 		_txtLimiteVariacion = new JTextField(NUM_ELITE_DEF);
 		_txtLimiteVariacion.setEnabled(false);
 		constraints.gridx = 1;
-		constraints.gridy = 13;
+		constraints.gridy = 14;
 		_panelBodyOpciones.add(_txtLimiteVariacion, constraints);
 
 		// Borde del panel
@@ -805,7 +932,7 @@ public class Ventana extends JFrame {
 	 * Ejecuta el algoritmo genetico simple con los datos de los parametros.
 	 */
 	private void comienzaAGSNormal() {
-
+		/*
 		// Inicializamos el tipo de problema a resolver
 		setTipoProblema();
 
@@ -859,6 +986,7 @@ public class Ventana extends JFrame {
 
 		// Volvemos a activar el boton
 		_btnComenzar.setEnabled(true);
+		*/
 	}
 
 	/**
@@ -867,6 +995,7 @@ public class Ventana extends JFrame {
 	 */
 	private void comienzaAGSVariacion() {
 
+		/*
 		double i = 0; // valor variable del parametro
 		int nEjecucion = 1; // N de ejecucion
 
@@ -1023,7 +1152,7 @@ public class Ventana extends JFrame {
 
 		_btnComenzar.setEnabled(true);
 		_panelFuncion.imprimeDatosPanelFuncion();
-
+*/
 	}
 
 	/**
@@ -1031,6 +1160,7 @@ public class Ventana extends JFrame {
 	 */
 	private void setTipoProblema() {
 
+		/*
 		// Asignacion del tipo de problema
 		switch (_tipoCromosoma) {
 
@@ -1043,14 +1173,14 @@ public class Ventana extends JFrame {
 		case FUNCION5:
 			_tipoProblema = TipoProblema.MINIMIZACION;
 			break;
-		}
+		}*/
 	}
 
 	/**
 	 * Imprime los resultados en el Area de Texto inferior.
 	 */
 	private void imprimeResultadoConsola() {
-
+/*
 		switch (_tipoCromosoma) {
 
 		case FUNCION1:
@@ -1079,7 +1209,7 @@ public class Ventana extends JFrame {
 					+ _AG.getElMejor().toString() + "\n");
 			_txtInforme.append("Alcanza un Minimo de: " + _AG.getElMejor().f());
 			break;
-		}
+		}*/
 	}
 
 	/**
@@ -1120,26 +1250,6 @@ public class Ventana extends JFrame {
 	public JTextField getTxtProbMutacion() {
 
 		return _txtProbMutacion;
-	}
-
-	/**
-	 * Devuelve el campo de texto de Precision.
-	 * 
-	 * @return El campo de texto de Precision.
-	 */
-	public JTextField getTxtPrecision() {
-
-		return _txtPrecision;
-	}
-
-	/**
-	 * Devuelve el campo de texto de Valor de N.
-	 * 
-	 * @return El campo de texto de Valor de N.
-	 */
-	public JTextField getTxtValorN() {
-
-		return _txtValorN;
 	}
 
 	/**

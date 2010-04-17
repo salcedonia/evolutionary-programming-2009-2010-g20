@@ -89,6 +89,28 @@ public class AG {
 	 * Tipo de cromosoma a crear.
 	 */
 	private TipoCromosoma _tipoCromosoma;
+	
+	/**
+	 * Tipo de version de problema a usar.
+	 */
+	private TipoVersion _tipoVersion = TipoVersion.VERSION1;
+	
+	/**
+	 * Tipo de seleccion a usar por el algoritmo genetico.
+	 */
+	private TipoSeleccion _tipoSeleccion = TipoSeleccion.RULETA;
+
+	
+	/**
+	 * Tipo de cruce a usar por el algoritmo genetico.
+	 */
+	private TipoCruce _tipoCruce = TipoCruce.PMX;
+
+	
+	/**
+	 * Tipo de mutacion a usar por el algoritmo genetico.
+	 */
+	private TipoMutacion _tipoMutacion = TipoMutacion.INSERCION;
 
 	/**
 	 * Valor de N.
@@ -123,6 +145,14 @@ public class AG {
 	 *            Tipo de cromosoma empleado.
 	 * @param tipoProblema
 	 *            Tipo de problema empleado.
+	 * @param tipoVersion
+	 *            Tipo de version empleada.
+	 * @param tipoSeleccion
+	 *            Tipo de seleccion empleada.
+	 * @param tipoCruce
+	 *            Tipo de cruce empleado.
+	 * @param tipoMutacion
+	 *            Tipo de mutacion empleada.
 	 * @param tamElite
 	 *            Tamanio maximo de miembros de elite.
 	 * @param P
@@ -132,6 +162,8 @@ public class AG {
 			double probMutacion, double tolerancia, int valorN,
 			boolean elitismo, boolean escaladoSimple,
 			TipoCromosoma tipoCromosoma, TipoProblema tipoProblema,
+			TipoVersion tipoVersion, TipoSeleccion tipoSeleccion,
+			TipoCruce tipoCruce, TipoMutacion tipoMutacion,
 			double tamElite, int P) {
 
 		_numMaxGeneraciones = numMaxGeneraciones;
@@ -144,6 +176,10 @@ public class AG {
 		_escaladoSimple = escaladoSimple;
 		_tipoCromosoma = tipoCromosoma;
 		_tipoProblema = tipoProblema;
+		_tipoVersion = tipoVersion;
+		_tipoSeleccion = tipoSeleccion;
+		_tipoCruce = tipoCruce;
+		_tipoMutacion = tipoMutacion;
 		_P = P;
 
 		// Calcula el numero de cromosomas de la elite
@@ -157,8 +193,19 @@ public class AG {
 	 * Realiza la seleccion de individuos de la poblacion.
 	 */
 	public void seleccion() {
-
-		seleccionRuleta();
+		
+		switch (_tipoSeleccion) {
+		
+		case RULETA:
+			seleccionRuleta();
+			break;
+		case TORNEO:
+			seleccionTorneo();
+			break;
+		case RANKING:
+			seleccionRanking();
+			break;
+		}
 	}
 
 	/**
@@ -190,6 +237,24 @@ public class AG {
 
 		// Ahora nuestra poblacion intermedia es nuestra poblacion.
 		_poblacion = nuevaPoblacion;
+	}
+	
+	/**
+	 * Metodo de seleccion por Torneo. Se seleccionan los cromosomas
+	 * supervivientes para la reproduccion.
+	 */
+	private void seleccionTorneo() {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Metodo de seleccion por Ranking. Se seleccionan los cromosomas
+	 * supervivientes para la reproduccion.
+	 */
+	private void seleccionRanking() {
+
+		// Por hacer
 	}
 
 	/**
@@ -232,7 +297,8 @@ public class AG {
 	}
 
 	/**
-	 * Cruza los cromosomas padre y madre por el punto de cruce.
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun
+	 * el metodo elegido.
 	 * 
 	 * @param padre
 	 *            Uno de los cromosomas a cruzar.
@@ -242,6 +308,55 @@ public class AG {
 	 *            El punto de cruce para cruzar los cromosomas.
 	 */
 	private void cruce(Cromosoma padre, Cromosoma madre, int punto_cruce) {
+
+		switch (_tipoVersion) {
+		
+		case VERSION1:
+			switch (_tipoCruce) {
+			
+			case PMX:
+				crucePMX(padre,madre,punto_cruce);
+				break;
+			case OX:
+				cruceOX(padre,madre,punto_cruce);
+				break;
+			case VARIANTE_OX:
+				cruceVarianteOX(padre,madre,punto_cruce);
+				break;
+			case CICLOS_CX:
+				cruceCiclosCX(padre,madre,punto_cruce);
+				break;
+			case ERX:
+				cruceERX(padre,madre,punto_cruce);
+				break;
+			case COD_ORDINAL:
+				cruceCodOrdinal(padre,madre,punto_cruce);
+				break;
+			case PROPIO:
+				crucePropio(padre,madre,punto_cruce);
+				break;
+			}
+			break;
+			
+		case VERSION2:
+			crucePMX2(padre,madre,punto_cruce);
+			break;
+		}
+		
+	}
+	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun la 
+	 * practica 1.
+	 * 
+	 * @param padre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param madre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param punto_cruce
+	 *            El punto de cruce para cruzar los cromosomas.
+	 */
+	private void cruceAGSSimple(Cromosoma padre, Cromosoma madre, int punto_cruce) {
 
 		int nBit = 0; // contador para el número de bit recorrido
 
@@ -285,11 +400,174 @@ public class AG {
 		madre.setGenes(hijo2);
 		madre.setAptitud(madre.evalua());
 	}
+	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun el 
+	 * metodo PMX.
+	 * 
+	 * @param padre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param madre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param punto_cruce
+	 *            El punto de cruce para cruzar los cromosomas.
+	 */
+	private void crucePMX(Cromosoma padre, Cromosoma madre, int punto_cruce) {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun el 
+	 * metodo OX.
+	 * 
+	 * @param padre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param madre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param punto_cruce
+	 *            El punto de cruce para cruzar los cromosomas.
+	 */
+	private void cruceOX(Cromosoma padre, Cromosoma madre, int punto_cruce) {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun el 
+	 * metodo para la variante de OX.
+	 * 
+	 * @param padre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param madre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param punto_cruce
+	 *            El punto de cruce para cruzar los cromosomas.
+	 */
+	private void cruceVarianteOX(Cromosoma padre, Cromosoma madre, int punto_cruce) {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun el 
+	 * metodo con ciclos CX.
+	 * 
+	 * @param padre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param madre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param punto_cruce
+	 *            El punto de cruce para cruzar los cromosomas.
+	 */
+	private void cruceCiclosCX(Cromosoma padre, Cromosoma madre, int punto_cruce) {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun el 
+	 * metodo ERX.
+	 * 
+	 * @param padre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param madre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param punto_cruce
+	 *            El punto de cruce para cruzar los cromosomas.
+	 */
+	private void cruceERX(Cromosoma padre, Cromosoma madre, int punto_cruce) {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun el 
+	 * metodo con condificacion ordinal.
+	 * 
+	 * @param padre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param madre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param punto_cruce
+	 *            El punto de cruce para cruzar los cromosomas.
+	 */
+	private void cruceCodOrdinal(Cromosoma padre, Cromosoma madre, int punto_cruce) {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun el 
+	 * metodo nuestro.
+	 * 
+	 * @param padre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param madre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param punto_cruce
+	 *            El punto de cruce para cruzar los cromosomas.
+	 */
+	private void crucePropio(Cromosoma padre, Cromosoma madre, int punto_cruce) {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun el 
+	 * metodo PMX para la version 2.
+	 * 
+	 * @param padre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param madre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param punto_cruce
+	 *            El punto de cruce para cruzar los cromosomas.
+	 */
+	private void crucePMX2(Cromosoma padre, Cromosoma madre, int punto_cruce) {
+
+		// Por hacer
+	}
 
 	/**
-	 * Realiza la mutacion de los individuos seleccionados en la poblacion.
+	 * Realiza la mutacion de los individuos seleccionados en la poblacion,
+	 * segun el metodo elegido.
 	 */
 	public void mutacion() {
+
+		switch (_tipoVersion) {
+		
+		case VERSION1:
+			switch (_tipoMutacion) {
+			
+			case INSERCION:
+				mutacionInsercion();
+				break;
+			case INTERCAMBIO:
+				mutacionIntercambio();
+				break;
+			case INVERSION:
+				mutacionInversion();
+				break;
+			case PROPIO:
+				mutacionPropio();
+				break;
+			}
+			break;
+			
+		case VERSION2:
+			mutacionInsercion2();
+			break;
+		}
+		
+		
+	}
+	
+	/**
+	 * Realiza la mutacion de los individuos seleccionados en la poblacion
+	 * segun la practica 1.
+	 */
+	public void mutacionAGSSimple() {
 
 		boolean mutado;
 		double prob;
@@ -317,6 +595,51 @@ public class AG {
 			if (mutado)
 				_poblacion[i].setAptitud(_poblacion[i].evalua());
 		}
+	}
+	
+	/**
+	 * Realiza la mutacion de los individuos seleccionados en la poblacion
+	 * segun el metodo de insercion.
+	 */
+	public void mutacionInsercion() {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Realiza la mutacion de los individuos seleccionados en la poblacion
+	 * segun el metodo de intercambio.
+	 */
+	public void mutacionIntercambio() {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Realiza la mutacion de los individuos seleccionados en la poblacion
+	 * según el metodo de inversion.
+	 */
+	public void mutacionInversion() {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Realiza la mutacion de los individuos seleccionados en la poblacion
+	 * segun nuestro propio metodo.
+	 */
+	public void mutacionPropio() {
+
+		// Por hacer
+	}
+	
+	/**
+	 * Realiza la mutacion de los individuos seleccionados en la poblacion
+	 * segun el metodo de insercion para la version 2.
+	 */
+	public void mutacionInsercion2() {
+
+		// Por hacer
 	}
 
 	/**
