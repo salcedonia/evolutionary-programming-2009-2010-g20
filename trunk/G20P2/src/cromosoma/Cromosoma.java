@@ -13,7 +13,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * Genes del cromosoma.
 	 * Un array de booleanos para cada gen.
 	 */
-	protected boolean[][] _genes;
+	protected int[][] _genes;
 	
 	/**
 	 * Numero de genes del problema.
@@ -76,9 +76,9 @@ public abstract class Cromosoma implements Comparable<Object> {
 			double aleatorio = generador.nextDouble();
 			
 			if(aleatorio < 0.5)
-				_genes[nGen][i] = false;
+				_genes[nGen][i] = 0;
 		    else
-				_genes[nGen][i] = true;	
+				_genes[nGen][i] = 1;	
 		}
 	}
 
@@ -87,7 +87,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * 
 	 * @return El array de genes.
 	 */
-	public boolean[][] getGenes() {
+	public int[][] getGenes() {
 		
 		return _genes;
 	}
@@ -97,7 +97,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * 
 	 * @param genes Nuevo valor del array de genes a establecer.
 	 */
-	public void setGenes(boolean[][] genes) {
+	public void setGenes(int[][] genes) {
 		
 		_genes = genes;
 	}
@@ -251,11 +251,11 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * @return El valor decimal del número binario codificado en el vector de 
 	 * booleanos.
 	 */
-	public double bin_dec(boolean[] gen) {
+	public double bin_dec(int[] gen) {
 		
 		double valorDecimal = 0, potencia_2 = 1;
 		for (int i = 0; i < gen.length; i++) {
-			if (gen[i]) {
+			if (gen[i]==1) {
 				valorDecimal += potencia_2;
 			}
 			potencia_2 *= 2;
@@ -306,7 +306,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * @param nGen Numero del gen para calcular su fenotipo.
 	 * @return El fenotipo del gen.
 	 */
-	public abstract double fenotipo(boolean[] gen, int nGen);
+	public abstract double fenotipo(int[] gen, int nGen);
 	
 	/**
 	 * Calcula la longitud del gen con la tolerancia.
