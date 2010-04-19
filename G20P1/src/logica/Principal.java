@@ -17,13 +17,6 @@ public class Principal {
 	 */
 	public static void main(String[] args) {
 
-		try {
-			
-			new Ventana();
-		} catch (Exception e) {
-			
-			// A veces muestra una excepcion en el pintado de las graficas en la funcion 5
-			// Asi no muestra ninguna excepcion
-		}
+		new Ventana();
 	}
 }
