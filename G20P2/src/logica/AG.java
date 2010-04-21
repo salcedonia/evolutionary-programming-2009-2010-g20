@@ -20,6 +20,7 @@ import cromosoma.practica1.CromosomaFuncion2;
 import cromosoma.practica1.CromosomaFuncion3;
 import cromosoma.practica1.CromosomaFuncion4;
 import cromosoma.practica1.CromosomaFuncion5;
+import cromosoma.practica2.CromosomaViajante;
 
 /**
  * Clase que implementa los metodos necesarios para el algoritmo genetico
@@ -713,7 +714,24 @@ public class AG {
 	public void evaluarPoblacion() {
 
 		double punt_acu = 0; // puntuacion acumulada
-		double aptitud_mejor = 0; // mejor aptitud
+		double aptitud_mejor = 0;
+
+		// Dependiendo del tipo de practica se inicializa con un valor u otro
+		switch (_tipoVista) {
+
+		case PRACTICA1:
+			aptitud_mejor = 0;
+			break;
+		case PRACTICA2:
+			
+			// Es un problema de minimizacion y lo inicializamos con el primer
+			// valor de aptitud del primer individuo de la poblacion para luego
+			// ir quedandonos con los mas bajos pero siempre positivos.
+			aptitud_mejor = _poblacion[0].getAptitud();
+		case PRACTICA3:
+			break;
+		}
+		
 		double sumadaptacion = 0; // suma de la adaptacion
 
 		// Actualizamos la adaptacion de cada cromosoma segun el tipo de
@@ -782,7 +800,8 @@ public class AG {
 		switch (_tipoProblema) {
 
 		case MINIMIZACION:
-			if ((_elMejorGlobal == null) || (aptitud_mejor < _elMejorGlobal.getAptitud())) {
+			if ((_elMejorGlobal == null)
+					|| (aptitud_mejor < _elMejorGlobal.getAptitud())) {
 				_elMejorGlobal = (Cromosoma) _poblacion[_posMejor].clone();
 			}
 
@@ -792,7 +811,8 @@ public class AG {
 
 			break;
 		case MAXIMIZACION:
-			if ((_elMejorGlobal == null) || (aptitud_mejor > _elMejorGlobal.getAptitud())) {
+			if ((_elMejorGlobal == null)
+					|| (aptitud_mejor > _elMejorGlobal.getAptitud())) {
 				_elMejorGlobal = (Cromosoma) _poblacion[_posMejor].clone();
 			}
 
@@ -912,27 +932,41 @@ public class AG {
 
 		for (int j = 0; j < _tamPoblacion; j++) {
 
-			// Creamos el tipo de cromosoma segun corresponda
-			switch (_tipoCromosoma) {
+			switch (_tipoVista) {
 
-			case FUNCION1:
-				_poblacion[j] = new CromosomaFuncion1(_tolerancia);
+			case PRACTICA1:
+				// Creamos el tipo de cromosoma segun corresponda
+				switch (_tipoCromosoma) {
+
+				case FUNCION1:
+					_poblacion[j] = new CromosomaFuncion1(_tolerancia);
+					break;
+				case FUNCION2:
+					_poblacion[j] = new CromosomaFuncion2(_tolerancia);
+					break;
+				case FUNCION3:
+					_poblacion[j] = new CromosomaFuncion3(_tolerancia);
+					break;
+				case FUNCION4:
+					_poblacion[j] = new CromosomaFuncion4(_tolerancia);
+					break;
+				case FUNCION5:
+					_poblacion[j] = new CromosomaFuncion5(_tolerancia, _valorN);
+					break;
+				}
+
 				break;
-			case FUNCION2:
-				_poblacion[j] = new CromosomaFuncion2(_tolerancia);
+
+			case PRACTICA2:
+				// Creamos el cromosoma para el tipo
+				_poblacion[j] = new CromosomaViajante();
+
 				break;
-			case FUNCION3:
-				_poblacion[j] = new CromosomaFuncion3(_tolerancia);
-				break;
-			case FUNCION4:
-				_poblacion[j] = new CromosomaFuncion4(_tolerancia);
-				break;
-			case FUNCION5:
-				_poblacion[j] = new CromosomaFuncion5(_tolerancia, _valorN);
+
+			case PRACTICA3:
 				break;
 			}
 
-			// Inicializamos el cromosoma
 			_poblacion[j].inicializaCromosoma();
 			_poblacion[j].setAptitud(_poblacion[j].evalua());
 		}
@@ -957,7 +991,7 @@ public class AG {
 
 		return _elMejorLocal;
 	}
-	
+
 	/**
 	 * Devuelve el numero de la generacion actual.
 	 * 

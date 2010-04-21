@@ -104,7 +104,7 @@ public class Ventana extends JFrame {
 	/**
 	 * Tipo de vista a mostrar.
 	 */
-	private TipoVista _tipoVista = TipoVista.PRACTICA1;
+	private TipoVista _tipoVista = TipoVista.PRACTICA2;
 	/**
 	 * Tipo de variacion de parametros
 	 */
@@ -378,8 +378,9 @@ public class Ventana extends JFrame {
 					.getNumGeneraciones());
 
 			// Mostramos el resultado en el cuadro de texto de informe.
-			_panelResultados.imprimeResultadoConsola(_tipoCromosoma, _AG
-					.getElMejorGlobal().toString(), _AG.getElMejorGlobal().f());
+			_panelResultados.imprimeResultadoConsola(_tipoVista,
+					_tipoCromosoma, _AG.getElMejorGlobal().toString(), _AG
+							.getElMejorGlobal().f());
 
 			// Volvemos a activar el boton
 			_panelBotonesOpciones.activarBotonComenzar();
@@ -387,6 +388,65 @@ public class Ventana extends JFrame {
 			break;
 
 		case PRACTICA2:
+			// Inicializamos el tipo de problema a resolver
+			setTipoProblema();
+
+			// Creamos el objeto encargado del algoritmo genetico simple
+			_AG = new AG(_validadorDatos.getNumGeneraciones(), _validadorDatos
+					.getTamPoblacion(), _validadorDatos.getProbCruce(),
+					_validadorDatos.getProbMutacion(), _validadorDatos
+							.getPrecision(), _validadorDatos.getValorN(),
+					_elitismo, _escaladoSimple, _tipoCromosoma, _tipoProblema,
+					_tipoVersion, _tipoSeleccion, _tipoCruce, _tipoMutacion,
+					_tipoVista, _validadorDatos.getPorcentageElite(),
+					_validadorDatos.getNumEstimadoCopiasMejor());
+
+			// Crea poblacion inicial de cromosomas
+			_AG.inicializa();
+
+			// Inicializa las componentes de las graficas
+			_panelAptitud.inicializaGraficas(_validadorDatos
+					.getNumGeneraciones());
+
+			// Evalua los individuos y coge el mejor
+			_AG.evaluarPoblacion();
+
+			while (!_AG.terminado()) {
+
+				_AG.aumentarGeneracion();
+
+				// Actualizamos el progreso de la barra
+				_panelBotonesOpciones.actualizaBarraProgreso(_AG
+						.getNumGeneracion());
+
+				// No hace nada si no la opcion elitismo esta inactiva
+				_AG.separaElite();
+
+				_AG.seleccion();
+				_AG.reproduccion();
+				_AG.mutacion();
+
+				// No hace nada si no la opcion elitismo esta inactiva
+				_AG.incluyeElite();
+
+				_AG.evaluarPoblacion();
+
+				// Guardamos los datos de las graficas
+				_panelAptitud.guardaDatosGraficas(_AG);
+			}
+
+			// Actualizamos las graficas
+			_panelAptitud.imprimeDatosGraficas(_validadorDatos
+					.getNumGeneraciones());
+
+			// Mostramos el resultado en el cuadro de texto de informe.
+			_panelResultados.imprimeResultadoConsola(_tipoVista,
+					_tipoCromosoma, _AG.getElMejorGlobal().toString(), _AG
+							.getElMejorGlobal().f());
+
+			// Volvemos a activar el boton
+			_panelBotonesOpciones.activarBotonComenzar();
+
 			break;
 		case PRACTICA3:
 			break;
@@ -559,9 +619,9 @@ public class Ventana extends JFrame {
 
 				_panelResultados.aniadirTexto("\nEjecucion " + nEjecucion
 						+ " - Parametro Variable: " + i + "\n");
-				_panelResultados.imprimeResultadoConsola(_tipoCromosoma, _AG
-						.getElMejorGlobal().toString(), _AG.getElMejorGlobal()
-						.f());
+				_panelResultados.imprimeResultadoConsola(_tipoVista,
+						_tipoCromosoma, _AG.getElMejorGlobal().toString(), _AG
+								.getElMejorGlobal().f());
 
 				_panelFuncion.guardaDatosEjecucion(_AG);
 
@@ -578,7 +638,6 @@ public class Ventana extends JFrame {
 			break;
 		case PRACTICA3:
 			break;
-
 		}
 	}
 
@@ -588,6 +647,9 @@ public class Ventana extends JFrame {
 	private void setTipoProblema() {
 
 		// Asignacion del tipo de problema
+		switch(_tipoVista){
+		
+		case PRACTICA1:
 		switch (_tipoCromosoma) {
 
 		case FUNCION1:
@@ -598,6 +660,13 @@ public class Ventana extends JFrame {
 		case FUNCION4:
 		case FUNCION5:
 			_tipoProblema = TipoProblema.MINIMIZACION;
+			break;
+		}
+		break;
+		case PRACTICA2:
+			_tipoProblema = TipoProblema.MINIMIZACION;
+			break;
+		case PRACTICA3:
 			break;
 		}
 	}
