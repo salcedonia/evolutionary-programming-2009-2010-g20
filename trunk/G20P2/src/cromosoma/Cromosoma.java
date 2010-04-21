@@ -1,7 +1,5 @@
 package cromosoma;
 
-import java.util.Random;
-
 /**
  * Clase que implementa los metodos comunes de un cromosoma.
  * 
@@ -10,21 +8,20 @@ import java.util.Random;
 public abstract class Cromosoma implements Comparable<Object> {
 
 	/**
-	 * Genes del cromosoma.
-	 * Un array de booleanos para cada gen.
+	 * Genes del cromosoma. Un array de booleanos para cada gen.
 	 */
 	protected int[][] _genes;
 	
 	/**
-	 * Numero de genes del problema.
+	 * Tipos de genes distintos del problema.
 	 */
 	protected int _numGenes;
-
+	
 	/**
 	 * Decodificacion de los genes del cromosoma.
 	 */
 	protected double[] _fenotipo;
-
+	
 	/**
 	 * Valor de la funcion de evaluacion.
 	 */
@@ -51,97 +48,6 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 */
 	protected int _longitudCromosoma;
 	
-	/**
-	 * Inicializa los genes del cromosoma.
-	 */
-	public void inicializaCromosoma() {
-		
-		for (int i = 0; i < _numGenes; i++) {
-			
-			// Inicializamos el gen
-			inicializaGen(i);
-		}
-	}
-	
-	/**
-	 * Inicializa aleatoriamente el vector de genes.
-	 */
-	private void inicializaGen(int nGen) {
-
-		Random generador = new Random();
-		   
-		for (int i = 0; i < _genes[nGen].length; i++) {
-			
-			// Generamos un numero aleatorio entre 0.0 y 0.1
-			double aleatorio = generador.nextDouble();
-			
-			if(aleatorio < 0.5)
-				_genes[nGen][i] = 0;
-		    else
-				_genes[nGen][i] = 1;	
-		}
-	}
-
-	/**
-	 * Devuelve el array de genes.
-	 * 
-	 * @return El array de genes.
-	 */
-	public int[][] getGenes() {
-		
-		return _genes;
-	}
-
-	/**
-	 * Establece el array de genes a valor "genes".
-	 * 
-	 * @param genes Nuevo valor del array de genes a establecer.
-	 */
-	public void setGenes(int[][] genes) {
-		
-		_genes = genes;
-	}
-
-	/**
-	 * Devuelve el numero de genes del cromosoma.
-	 * 
-	 * @return El numero de genes del cromosoma.
-	 */
-	public int getNumGenes() {
-		
-		return _numGenes;
-	}
-
-	/**
-	 * Establece el numero de genes del cromosoma.
-	 * 
-	 * @param fenotipo Nuevo valor del numero de genes.
-	 */
-	public void setNumGenes(int numGenes) {
-		
-		_numGenes = numGenes;
-	}
-	
-	/**
-	 * Devuelve el fenotipo del cromosoma.
-	 * 
-	 * @return El fenotipo del cromosoma.
-	 */
-	public double[] getFenotipo() {
-		
-		return _fenotipo;
-	}
-
-	/**
-	 * Establece el fenotipo del cromosoma a valor "fenotipo".
-	 * 
-	 * @param fenotipo Nuevo valor del fenotipo a establecer.
-	 */
-	public void setFenotipo(double[] fenotipo) {
-		
-		_fenotipo = fenotipo;
-	}
-
 	/**
 	 * Devuelve la aptitud del cromosoma.
 	 * 
@@ -241,30 +147,69 @@ public abstract class Cromosoma implements Comparable<Object> {
 		
 		return _longitudCromosoma;
 	}
-	
-	/**
-	 * Halla el valor decimal de un número binario a partir de un vector de 
-	 * booleanos.
-	 * 
-	 * @param gen Gen a convertir en decimal.
-	 * 
-	 * @return El valor decimal del número binario codificado en el vector de 
-	 * booleanos.
-	 */
-	public double bin_dec(int[] gen) {
 		
-		double valorDecimal = 0, potencia_2 = 1;
-		for (int i = 0; i < gen.length; i++) {
-			if (gen[i]==1) {
-				valorDecimal += potencia_2;
-			}
-			potencia_2 *= 2;
-		}
-		return valorDecimal;
+	/**
+	 * Devuelve el array de genes.
+	 * 
+	 * @return El array de genes.
+	 */
+	public int[][] getGenes() {
+		
+		return _genes;
+	}
+
+	/**
+	 * Establece el array de genes a valor "genes".
+	 * 
+	 * @param genes Nuevo valor del array de genes a establecer.
+	 */
+	public void setGenes(int[][] genes) {
+		
+		_genes = genes;
+	}
+
+	/**
+	 * Devuelve el numero de genes del cromosoma.
+	 * 
+	 * @return El numero de genes del cromosoma.
+	 */
+	public int getNumGenes() {
+		
+		return _numGenes;
+	}
+
+	/**
+	 * Establece el numero de genes del cromosoma.
+	 * 
+	 * @param fenotipo Nuevo valor del numero de genes.
+	 */
+	public void setNumGenes(int numGenes) {
+		
+		_numGenes = numGenes;
 	}
 	
 	/**
-	 * Indica en base a qué atributos se compara el cromosoma.
+	 * Devuelve el fenotipo del cromosoma.
+	 * 
+	 * @return El fenotipo del cromosoma.
+	 */
+	public double[] getFenotipo() {
+		
+		return _fenotipo;
+	}
+
+	/**
+	 * Establece el fenotipo del cromosoma a valor "fenotipo".
+	 * 
+	 * @param fenotipo Nuevo valor del fenotipo a establecer.
+	 */
+	public void setFenotipo(double[] fenotipo) {
+		
+		_fenotipo = fenotipo;
+	}
+	
+	/**
+	 * Indica en base a que atributos se compara el cromosoma.
 	 * 
 	 * @param obj El cromosoma a comparar con el this.
 	 * @return +1 si this > objeto, -1 si this < objeto, 0 si son iguales.
@@ -293,11 +238,24 @@ public abstract class Cromosoma implements Comparable<Object> {
 	// ---------------METODOS ABSTRACTOS----------------//
 	
 	/**
+	 * Inicializa los genes de tipo binario del cromosoma.
+	 */
+	public abstract void inicializaCromosoma();
+		
+	/**
 	 * Evalua la calidad del cromosoma.
 	 * 
 	 * @return La calidad del cromosoma.
 	 */
 	public abstract double evalua();
+	
+	/**
+	 * Calcula el valor de la funcion a partir del fenotipo actual. 
+	 * (funcion de evaluacion).
+	 * 
+	 * @return El valor de la funcion usando el fenotipo actual.
+	 */
+	public abstract double f();
 	
 	/**
 	 * Calcula el fenotipo de un gen.
@@ -309,24 +267,6 @@ public abstract class Cromosoma implements Comparable<Object> {
 	public abstract double fenotipo(int[] gen, int nGen);
 	
 	/**
-	 * Calcula la longitud del gen con la tolerancia.
-	 * 
-	 * @param tolerancia Tolerancia del algoritmo.
-	 * 
-	 * @return La longitud del gen.
-	 */
-	public abstract int calcularLongGen(int nGen, double tolerancia);
-	
-	/**
-	 * Calcula el valor de la funcion a partir del fenotipo actual. 
-	 * (funcion de evaluacion).
-	 * 
-	 * @return El valor de la funcion usando el fenotipo actual.
-	 */
-	public abstract double f();
-	
-	
-	/**
 	 * Devuelve una copia del objeto que invoca este metodo.
 	 */
 	public abstract Object clone();
@@ -335,5 +275,4 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * Devuelve el string que contiene el fenotipo del cromosoma.
 	 */
 	public abstract String toString();
-	
 }

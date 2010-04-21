@@ -1,5 +1,7 @@
 package cromosoma.practica1;
 
+import java.util.Random;
+
 import cromosoma.Cromosoma;
 import utils.Matematicas;
 
@@ -9,12 +11,20 @@ import utils.Matematicas;
  * @author Grupo20.
  */
 public class CromosomaFuncion1 extends Cromosoma{
-
-	// Extremos del intervalo de la funcion.
+	
+	/**
+	 * Minimo valor del intervalo.
+	 */
 	private double[] _xMin;
+	
+	/**
+	 * Maximo valor del intervalo.
+	 */
 	private double[] _xMax;
 
-	// Longitud del gen
+	/**
+	 * Array de longitudes para cada tipo de gen.
+	 */
 	private int[] _longitudGen;
 	
 	/**
@@ -55,12 +65,74 @@ public class CromosomaFuncion1 extends Cromosoma{
 	}
 	
 	@Override
+	public void inicializaCromosoma() {
+		
+		for (int i = 0; i < _numGenes; i++) {
+			
+			// Inicializamos el gen
+			inicializaGen(i);
+		}
+	}
+
+	/**
+	 * Inicializa aleatoriamente el vector de genes de tipo binario.
+	 * 
+	 * @param nGen Numero de gen a inicializar.
+	 */
+	private void inicializaGen(int nGen) {
+
+		Random generador = new Random();
+		   
+		for (int i = 0; i < _genes[nGen].length; i++) {
+			
+			// Generamos un numero aleatorio entre 0.0 y 0.1
+			double aleatorio = generador.nextDouble();
+			
+			if(aleatorio < 0.5)
+				_genes[nGen][i] = 0;
+		    else
+				_genes[nGen][i] = 1;	
+		}
+	}
+	
+	/**
+	 * Halla el valor decimal de un número binario a partir de un vector de 
+	 * booleanos.
+	 * 
+	 * @param gen Gen a convertir en decimal.
+	 * 
+	 * @return El valor decimal del numero binario codificado en el vector de 
+	 * booleanos.
+	 */
+	public double bin_dec(int[] gen) {
+		
+		double valorDecimal = 0, potencia_2 = 1;
+		for (int i = 0; i < gen.length; i++) {
+			if (gen[i]==1) {
+				valorDecimal += potencia_2;
+			}
+			potencia_2 *= 2;
+		}
+		return valorDecimal;
+	}
+	
+	/**
+	 * Calcula el fenotipo de un gen.
+	 * 
+	 * @param gen Gen a calcular su fenotipo.
+	 * @param nGen Numero del gen para calcular su fenotipo.
+	 * @return El fenotipo del gen.
+	 */
 	public double fenotipo(int[] gen, int nGen) {
 		return _xMin[nGen] + (_xMax[nGen] - _xMin[nGen]) * 
 		bin_dec(gen) / (Math.pow(2, gen.length) - 1);
 	} 
 	
-	@Override
+	/**
+	 * Evalua la calidad del cromosoma.
+	 * 
+	 * @return La calidad del cromosoma.
+	 */
 	public double evalua() {
 		for (int i = 0; i < _numGenes; i++) {
 			_fenotipo[i] = fenotipo(_genes[i],i);
@@ -68,13 +140,24 @@ public class CromosomaFuncion1 extends Cromosoma{
 		return f(); // valor de la funcion a optimizar
 	}
 
-	@Override
+	/**
+	 * Calcula la longitud del gen con la tolerancia.
+	 * 
+	 * @param tolerancia Tolerancia del algoritmo.
+	 * 
+	 * @return La longitud del gen.
+	 */
 	public int calcularLongGen(int nGen, double tolerancia) {
 		
 		return (int) Matematicas.log2(1 + ((_xMax[nGen] - _xMin[nGen])/tolerancia));
 	}
 
-	@Override
+	/**
+	 * Calcula el valor de la funcion a partir del fenotipo actual. 
+	 * (funcion de evaluacion).
+	 * 
+	 * @return El valor de la funcion usando el fenotipo actual.
+	 */
 	public double f() {
 		double x = _fenotipo[0];
 		return x + Math.abs(Math.sin(32 * Math.PI * x));
