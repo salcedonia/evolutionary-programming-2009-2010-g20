@@ -8,7 +8,6 @@ import gui.tipos.TipoCromosoma;
 import gui.tipos.TipoVista;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -44,11 +43,6 @@ public class PanelResultados extends JPanel {
 	private JScrollPane _scrPanelInforme;
 
 	/**
-	 * Etiqueta informativa acerca del resultado del AGS.
-	 */
-	private JLabel _lblInforme;
-
-	/**
 	 * Constructor de la clase PanelResultados.
 	 * 
 	 * @param ventana
@@ -64,8 +58,6 @@ public class PanelResultados extends JPanel {
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.fill = GridBagConstraints.BOTH;
-		_lblInforme = new JLabel("Resultado de la Ejecucion: ");
-		add(_lblInforme, constraints);
 
 		_txtInforme = new JTextArea(5, 40);
 		_txtInforme.setEditable(false);

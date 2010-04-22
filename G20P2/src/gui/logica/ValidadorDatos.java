@@ -68,6 +68,11 @@ public class ValidadorDatos {
 	 * Numero de copias estimadas para el mejor individuo en el Escalado Simple.
 	 */
 	private int _numEstimadoCopiasMejor;
+
+	/**
+	 * Numero de ciudades seleccionadas para ser mutadas por el metodo de insercion.
+	 */
+	private int _numCiudadesMutInsercion;
 	
 	/**
 	 * Constructor de la clase Validador de Datos.
@@ -100,13 +105,53 @@ public class ValidadorDatos {
 		case PRACTICA2: 
 			return numGeneracionesOk() && tamPoblacionOk() && probCruceOk() && probMutacionOk() 
 			&& porcentageEliteOk() && pasoVariacionOk()
-			&& limiteVariacionOk() && VariacionOk(variacion) && NumEstimadoCopiasMejorOk();
+			&& limiteVariacionOk() && VariacionOk(variacion) && NumEstimadoCopiasMejorOk()&&
+			NumCiudadesMutInsercionOk();
 		case PRACTICA3: break;
 		}
 		
 		return true;
 	}
 	
+	/**
+	 * Evalua la validez de los datos introducidos en el cuadro de texto de numero de Ciudades para
+	 * la mutacion por insercion. Cuando ha comprobado que el resultado es optimo entonces guarda el 
+	 * valor en la variable entera correspondiente.
+	 * 
+	 * @return Verdadero si el dato introducido es correcto.
+	 */
+	private boolean NumCiudadesMutInsercionOk() {
+
+		int numCiudadesMutInsercion;
+		
+		try{
+			
+			if(_ventana.getTxtNumCiudadesMutInsercion().getText().matches("")){
+				JOptionPane.showMessageDialog(_ventana, "!Debe introducir el Numero de Ciudades para la Mutacion por Insercion!",
+	                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}else{
+				numCiudadesMutInsercion = Integer.parseInt(_ventana.getTxtNumCiudadesMutInsercion().getText());
+			
+				if(numCiudadesMutInsercion < 0 && numCiudadesMutInsercion <= 27){
+					JOptionPane.showMessageDialog(_ventana, "!El Numero de Ciudades para la Mutacion por Insercion tiene que ser un numero entero positivo y <= 27!",
+							"Error en los datos", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}else
+					// Guardamos el resultado de la validacion
+					_numCiudadesMutInsercion = numCiudadesMutInsercion;
+			}
+		}catch(NumberFormatException e){
+			
+			JOptionPane.showMessageDialog(_ventana, "!Numero de Ciudades para la Mutacion por Insercion tiene que ser un numero entero!",
+                    "Error en los datos", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
+		
+		return true;
+	}
+
 	/**
 	 * Evalua la validez de los datos introducidos en el cuadro de texto de numero de Generaciones. Cuando
 	 * ha comprobado que el resultado es optimo entonces guarda el valor en la variable entera correspondiente.
@@ -611,5 +656,10 @@ public class ValidadorDatos {
 	public int getNumEstimadoCopiasMejor() {
 		
 		return _numEstimadoCopiasMejor;
+	}
+
+	public int getNumCiudadesMutInsercion() {
+		
+		return _numCiudadesMutInsercion;
 	}
 }
