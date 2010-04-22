@@ -39,6 +39,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 	private static final String PROB_MUTACION_DEF = "0.1";
 	private static final String NUM_ELITE_DEF = "0.01";
 	private static final String NUM_ESTIMADO_COPIAS_MEJOR_DEF = "1";
+	private static final String NUM_CIUDADES_MUT_INSERCION = "5";
 	
 	// ----- COMPONENTES ----- //
 	private JLabel _lblSeleccionVersion;
@@ -58,6 +59,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 	private JTextField _txtNumEstimadoCopiasMejor;
 	private JTextField _txtPasoVariacion;
 	private JTextField _txtLimiteVariacion;
+	private JTextField _txtNumCiudadesMutInsercion;
 	private JLabel _lblProbMutacion;
 	private JLabel _lblSeleccionElitismo;
 	private JLabel _lblPorcentajeElite;
@@ -66,6 +68,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 	private JLabel _lblVariacionParametros;
 	private JLabel _lblPasoVariacion;
 	private JLabel _lblLimiteVariacion;
+	private JLabel _lblNumCiudadesMutInsercion;
 	private JComboBox _cmbSeleccionVarParametros;
 	private JComboBox _cmbSeleccionVersion;
 	private JComboBox _cmbSeleccionCruce;
@@ -136,38 +139,44 @@ public class PanelOpcionesPractica2 extends JPanel{
 		constraints.gridy = 7;
 		add(_lblProbMutacion, constraints);
 
-		_lblSeleccionElitismo = new JLabel("Seleccion por Elitismo:");
+		_lblNumCiudadesMutInsercion = new JLabel("Numero de Ciudades para la Mutacion:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
 		constraints.gridy = 8;
+		add(_lblNumCiudadesMutInsercion, constraints);
+		
+		_lblSeleccionElitismo = new JLabel("Seleccion por Elitismo:");
+		constraints.anchor = GridBagConstraints.EAST;
+		constraints.gridx = 0;
+		constraints.gridy = 9;
 		add(_lblSeleccionElitismo, constraints);
 
 		_lblPorcentajeElite = new JLabel("Tamanio de la Elite:");
 		_lblPorcentajeElite.setVisible(false);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		constraints.insets = new Insets(0, 40, 0, 0);
 		add(_lblPorcentajeElite, constraints);
 
 		_lblSeleccionEscaladoSimple = new JLabel("Escalado Simple:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		add(_lblSeleccionEscaladoSimple, constraints);
 
 		_lblNumEstimadoCopiasMejor = new JLabel("N¼ Estimado Copias del Mejor:");
 		_lblNumEstimadoCopiasMejor.setVisible(false);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		constraints.insets = new Insets(0, 40, 0, 0);
 		add(_lblNumEstimadoCopiasMejor, constraints);
 
 		_lblVariacionParametros = new JLabel("Variacion de Parametros:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 10;
+		constraints.gridy = 11;
 		constraints.insets = new Insets(0, 0, 0, 0);
 		add(_lblVariacionParametros, constraints);
 
@@ -175,14 +184,14 @@ public class PanelOpcionesPractica2 extends JPanel{
 		_lblPasoVariacion.setVisible(false);
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 11;
+		constraints.gridy = 12;
 		add(_lblPasoVariacion, constraints);
 
 		_lblLimiteVariacion = new JLabel("Limite de la Variacion:");
 		_lblLimiteVariacion.setVisible(false);
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 12;
+		constraints.gridy = 13;
 		add(_lblLimiteVariacion, constraints);
 
 		// Creamos todos los cuadros de texto correspondientes
@@ -303,14 +312,21 @@ public class PanelOpcionesPractica2 extends JPanel{
 						// Guardamos la decision correspondiente
 						if (seleccion.matches("Insercion")) {
 							_ventana.setTipoMutacion(TipoMutacion.INSERCION);
+							_lblNumCiudadesMutInsercion.setVisible(true);
+							_txtNumCiudadesMutInsercion.setVisible(true);
 						} else if (seleccion.matches("Intercambio")) {
 							_ventana.setTipoMutacion(TipoMutacion.INTERCAMBIO);
+							_lblNumCiudadesMutInsercion.setVisible(false);
+							_txtNumCiudadesMutInsercion.setVisible(false);
 						} else if (seleccion.matches("Inversion")) {
 							_ventana.setTipoMutacion(TipoMutacion.INVERSION);
+							_lblNumCiudadesMutInsercion.setVisible(false);
+							_txtNumCiudadesMutInsercion.setVisible(false);
 						} else if (seleccion.matches("Propio")) {
 							_ventana.setTipoMutacion(TipoMutacion.PROPIO);
+							_lblNumCiudadesMutInsercion.setVisible(false);
+							_txtNumCiudadesMutInsercion.setVisible(false);
 						}
-
 					}
 				});
 
@@ -343,6 +359,13 @@ public class PanelOpcionesPractica2 extends JPanel{
 		constraints.gridy = 7;
 		add(_txtProbMutacion, constraints);
 
+
+		_txtNumCiudadesMutInsercion = new JTextField(NUM_CIUDADES_MUT_INSERCION);
+		_txtNumCiudadesMutInsercion.setColumns(3);
+		constraints.gridx = 1;
+		constraints.gridy = 8;
+		add(_txtNumCiudadesMutInsercion, constraints);
+		
 		_cmbSeleccionElitismo = new JCheckBox();
 		_cmbSeleccionElitismo.setSelected(false);
 		_cmbSeleccionElitismo
@@ -361,7 +384,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 				});
 
 		constraints.gridx = 1;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		constraints.insets = new Insets(0, 10, 0, 0);
 		add(_cmbSeleccionElitismo, constraints);
 
@@ -369,7 +392,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 		_txtPorcentajeElite.setColumns(5);
 		_txtPorcentajeElite.setVisible(false);
 		constraints.gridx = 1;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		constraints.insets = new Insets(0, 250, 0, 0);
 		add(_txtPorcentajeElite, constraints);
 
@@ -391,7 +414,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 				});
 
 		constraints.gridx = 1;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		constraints.insets = new Insets(0, 10, 0, 0);
 		add(_cmbSeleccionEscaladoSimple, constraints);
 
@@ -400,7 +423,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 		_txtNumEstimadoCopiasMejor.setColumns(5);
 		_txtNumEstimadoCopiasMejor.setVisible(false);
 		constraints.gridx = 1;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		constraints.insets = new Insets(0, 250, 0, 0);
 		add(_txtNumEstimadoCopiasMejor, constraints);
 
@@ -448,7 +471,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 				});
 
 		constraints.gridx = 1;
-		constraints.gridy = 10;
+		constraints.gridy = 11;
 		constraints.insets = new Insets(0, 0, 0, 0);
 		add(_cmbSeleccionVarParametros, constraints);
 
@@ -456,14 +479,14 @@ public class PanelOpcionesPractica2 extends JPanel{
 		_txtPasoVariacion.setColumns(5);
 		_txtPasoVariacion.setVisible(false);
 		constraints.gridx = 1;
-		constraints.gridy = 11;
+		constraints.gridy = 12;
 		add(_txtPasoVariacion, constraints);
 
 		_txtLimiteVariacion = new JTextField(NUM_ELITE_DEF);
 		_txtLimiteVariacion.setColumns(5);
 		_txtLimiteVariacion.setVisible(false);
 		constraints.gridx = 1;
-		constraints.gridy = 12;
+		constraints.gridy = 13;
 		add(_txtLimiteVariacion, constraints);
 
 		// Borde del panel
@@ -544,5 +567,14 @@ public class PanelOpcionesPractica2 extends JPanel{
 	 */
 	public JTextField getTxtNumEstimadoCopiasMejor() {
 		return _txtNumEstimadoCopiasMejor;
+	}
+
+	/**
+	 * Devuelve el campo de texto de numero estimado de copias del mejor de la interfaz grafica.
+	 * 
+	 * @return El campo de texto de numero estimado de copias del mejor de la interfaz grafica.
+	 */
+	public JTextField getTxtNumCiudadesMutInsercion() {	
+		return _txtNumCiudadesMutInsercion;
 	}
 }

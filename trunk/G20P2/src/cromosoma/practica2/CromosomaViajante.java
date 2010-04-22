@@ -6,7 +6,8 @@ import cromosoma.Cromosoma;
 
 /**
  * Clase que implementa los metodos necesarios para la gestion del cromosoma
- * para el problema del viajante.
+ * para el problema del viajante. El fenotipo en este caso es despreciable 
+ * y se usa directamente el valor entero del gen.
  * 
  * @author Grupo20.
  */
