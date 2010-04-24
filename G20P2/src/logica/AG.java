@@ -57,7 +57,6 @@ public class AG {
 	 * Posicion del mejor cromosoma.
 	 */
 	private int _posMejor;
-
 	/**
 	 * Especificacion del tipo de problema.
 	 */
@@ -140,11 +139,19 @@ public class AG {
 	 * Tipo de vista de la ventana grafica.
 	 */
 	private TipoVista _tipoVista;
-	
+
 	/**
 	 * Numero de ciudades para la mutacion por insercion.
 	 */
 	private int _numCiudadesMutInsercion;
+	/**
+	 * Tamanio del Torneo para el metodo de seleccion.
+	 */
+	private int _tamTorneo;
+	/**
+	 * Parametro para el metodo de seleccion por Ranking.
+	 */
+	private double _beta;
 
 	/**
 	 * Constructor de la clase AG.
@@ -183,6 +190,13 @@ public class AG {
 	 *            Tamanio maximo de miembros de elite.
 	 * @param P
 	 *            Numero estimado de copias del mejor individuo de la poblacion.
+	 * @param numCiudadesMutInsercion
+	 *            Numero de ciudades seleccionadas para la mutacion por
+	 *            insercion.
+	 * @param tamTorneo
+	 *            Tamanio para el metodo de seleccion por Torneo.
+	 * @param beta
+	 *            Parametro para el metodo de seleccion por Ranking.
 	 */
 	public AG(int numMaxGeneraciones, int tamPoblacion, double probCruce,
 			double probMutacion, double tolerancia, int valorN,
@@ -190,7 +204,8 @@ public class AG {
 			TipoCromosoma tipoCromosoma, TipoProblema tipoProblema,
 			TipoVersion tipoVersion, TipoSeleccion tipoSeleccion,
 			TipoCruce tipoCruce, TipoMutacion tipoMutacion,
-			TipoVista tipoVista, double tamElite, int P, int numCiudadesMutInsercion) {
+			TipoVista tipoVista, double tamElite, int P,
+			int numCiudadesMutInsercion, int tamTorneo, double beta) {
 
 		_numMaxGeneraciones = numMaxGeneraciones;
 		_tamPoblacion = tamPoblacion;
@@ -209,6 +224,8 @@ public class AG {
 		_tipoVista = tipoVista;
 		_P = P;
 		_numCiudadesMutInsercion = numCiudadesMutInsercion;
+		_tamTorneo = tamTorneo;
+		_beta = beta;
 
 		// Calcula el numero de cromosomas de la elite
 		if (_elitismo) {
@@ -216,6 +233,8 @@ public class AG {
 		} else
 			_tamElite = 0;
 	}
+
+	// -------------------- METODOS DE CRUCE ----------------------//
 
 	/**
 	 * Realiza la seleccion de individuos de la poblacion.
@@ -289,7 +308,30 @@ public class AG {
 	 */
 	private void seleccionTorneo() {
 
-		// Por hacer
+		int[] random;// , random2, random3;
+		Cromosoma[] nuevo = new Cromosoma[_tamPoblacion];
+		Random generador = new Random();
+
+		// int tamTorneo = valorNtorneo;
+		random = new int[_tamTorneo];
+		for (int i = 0; i < _tamPoblacion; i++) {
+
+			for (int j = 0; j < _tamTorneo; j++)
+				random[j] = generador.nextInt(_tamPoblacion);
+
+			int mejor = random[0];
+			for (int j = 1; j < _tamTorneo; j++) {
+
+				if (_poblacion[random[j]].getAptitud() < _poblacion[mejor]
+						.getAptitud()) {
+					mejor = random[j];
+				}
+			}
+
+			nuevo[i] = (Cromosoma) _poblacion[mejor].clone();
+		}
+
+		_poblacion = nuevo;
 	}
 
 	/**
@@ -298,8 +340,144 @@ public class AG {
 	 */
 	private void seleccionRanking() {
 
-		// Por hacer
+		// Ordenamos por QuickSort la poblacion
+		ordenaPoblacion();
+
+		Cromosoma[] futurosPadres = new Cromosoma[_tamPoblacion];
+		futurosPadres[0] = (Cromosoma) _poblacion[0].clone();
+		futurosPadres[1] = (Cromosoma) _poblacion[1].clone();
+		int numPadres = 2;
+
+		double[] segmentosFitness = rankPoblacion();
+		double segmentoEntero = segmentosFitness[segmentosFitness.length - 1];
+
+		while (numPadres < _tamPoblacion) {
+
+			double x = (double) (Math.random() * segmentoEntero);
+			if (x <= segmentosFitness[0]) {
+
+				// El primer individuo fue seleccionado
+				futurosPadres[numPadres] = (Cromosoma) _poblacion[0].clone();
+				numPadres++;
+			} else
+				for (int i = 1; i < _tamPoblacion; i++)
+					if (x > segmentosFitness[i - 1] && x <= segmentosFitness[i]) {
+
+						// El i-esimo individuo fue seleccionado
+						futurosPadres[numPadres] = (Cromosoma) _poblacion[i]
+								.clone();
+						numPadres++;
+					}
+		}
+
+		_poblacion = futurosPadres;
 	}
+
+	/**
+	 * Devuelve el Ranking de la poblacion.
+	 * 
+	 * @return El ranking de la poblacion.
+	 */
+	private double[] rankPoblacion() {
+
+		double[] segmentosFitness = new double[_tamPoblacion];
+
+		for (int i = 0; i < segmentosFitness.length; i++) {
+			double probIEsimo = (double) i / _tamPoblacion;
+			probIEsimo = probIEsimo * 2 * (_beta - 1);
+			probIEsimo = _beta - probIEsimo;
+			probIEsimo = (double) probIEsimo * ((double) 1 / _tamPoblacion);
+			if (i != 0)
+				segmentosFitness[i] = segmentosFitness[i - 1] + probIEsimo;
+			else
+				segmentosFitness[i] = probIEsimo;
+		}
+		return segmentosFitness;
+	}
+
+	/**
+	 * Ordena la poblacion por el metodo de QuickSort.
+	 */
+	private void ordenaPoblacion() {
+		quickSort(_poblacion, 0, _poblacion.length - 1);
+	}
+
+	/**
+	 * Ordena el array a por el metodo de QuickSort.
+	 * 
+	 * @param a
+	 *            Array a ordenar.
+	 * @param izquierda
+	 *            Indice por la izquierda.
+	 * @param derecha
+	 *            Indice por la derecha.
+	 */
+	public void quickSort(Cromosoma[] a, int izquierda, int derecha) {
+		if (derecha <= izquierda)
+			return;
+		int i = particion(a, izquierda, derecha);
+		quickSort(a, izquierda, i - 1);
+		quickSort(a, i + 1, derecha);
+	}
+
+	/**
+	 * Realiza la particion del array para hacer el QuickSort. Va desde
+	 * partition a[left] hasta a[right], asumiendo que left < right.
+	 */
+	private int particion(Cromosoma[] a, int izquierda, int derecha) {
+		int i = izquierda - 1;
+		int j = derecha;
+		while (true) {
+
+			while (menor(a[++i], a[derecha]))
+				// Encuentra el elemento por la izquierda a intercambiar
+				; // a[derecha] actua como centinela
+			while (menor(a[derecha], a[--j]))
+				// Encuentra el elemento por la derecha a intercambiar
+				if (j == izquierda)
+					break; // Para no salirnos del array
+			if (i >= j)
+				break; // Comprueba si se cruzan los indices
+
+			intercambio(a, i, j);
+		}
+
+		intercambio(a, i, derecha);
+
+		return i;
+	}
+
+	/**
+	 * Comprueba si x < y.
+	 * 
+	 * @param x
+	 *            Cromosoma x.
+	 * @param y
+	 *            Cromosoma y.
+	 * 
+	 * @return Verdadero si x < y y falso en caso contrario.
+	 */
+	private boolean menor(Cromosoma x, Cromosoma y) {
+		return (x.getAptitud() < y.getAptitud());
+	}
+
+	/**
+	 * Intercambia a[i] y a[j].
+	 * 
+	 * @param a
+	 *            Array
+	 * @param i
+	 *            Posicion 1 a intercambiar.
+	 * @param j
+	 *            Posicion 2 a intercambiar.
+	 */
+	private void intercambio(Cromosoma[] a, int i, int j) {
+		Cromosoma swap = a[i];
+		a[i] = a[j];
+		a[j] = swap;
+	}
+
+	// -------------------- METODOS DE CRUCE ----------------------//
 
 	/**
 	 * Realiza la reproduccion de individuos de la poblacion.
@@ -335,8 +513,7 @@ public class AG {
 			cruce(_poblacion[sel_cruce[i]], _poblacion[sel_cruce[i + 1]],
 					generador);
 		}
-		
-		
+
 	}
 
 	/**
@@ -438,19 +615,19 @@ public class AG {
 		GenP1[] hijo1 = new GenP1[padre.getNumGenes()];
 		GenP1[] hijo2 = new GenP1[madre.getNumGenes()];
 		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] = new GenP1(( (GenP1) padre.getGen(i) ).getLongitudGen());
-			hijo2[i] = new GenP1(( (GenP1) madre.getGen(i) ).getLongitudGen());
+			hijo1[i] = new GenP1(((GenP1) padre.getGen(i)).getLongitudGen());
+			hijo2[i] = new GenP1(((GenP1) madre.getGen(i)).getLongitudGen());
 		}
 
 		int i = 0, j = 0;
 
 		while ((nBit != punto_cruce) && (nBit < padre.getLongitudCromosoma())) {
 
-			hijo1[i].setBit(j, ( (GenP1) padre.getGen(i) ).getBit(j));
-			hijo2[i].setBit(j, ( (GenP1) madre.getGen(i) ).getBit(j));
+			hijo1[i].setBit(j, ((GenP1) padre.getGen(i)).getBit(j));
+			hijo2[i].setBit(j, ((GenP1) madre.getGen(i)).getBit(j));
 			nBit++;
 			j++;
-			if (j >= ( (GenP1) padre.getGen(i) ).getLongitudGen() ) {
+			if (j >= ((GenP1) padre.getGen(i)).getLongitudGen()) {
 				i++;
 				j = 0;
 			}
@@ -458,11 +635,11 @@ public class AG {
 
 		while ((nBit < padre.getLongitudCromosoma())) {
 
-			hijo1[i].setBit(j, ( (GenP1) madre.getGen(i) ).getBit(j));
-			hijo2[i].setBit(j, ( (GenP1) padre.getGen(i) ).getBit(j));
+			hijo1[i].setBit(j, ((GenP1) madre.getGen(i)).getBit(j));
+			hijo2[i].setBit(j, ((GenP1) padre.getGen(i)).getBit(j));
 			nBit++;
 			j++;
-			if (j >= ( (GenP1) padre.getGen(i) ).getLongitudGen() ) {
+			if (j >= ((GenP1) padre.getGen(i)).getLongitudGen()) {
 				i++;
 				j = 0;
 			}
@@ -505,7 +682,7 @@ public class AG {
 			genMadre.setGen(aux);
 
 		}
-		
+
 		for (int i = 0; i < padre.getLongitudCromosoma(); i++) {
 
 			// Se eliminan los repetidos fuera del intervalo
@@ -515,19 +692,21 @@ public class AG {
 
 				// Buscamos los repetidos por el cruce
 				while (!encontrado && j <= punto_cruce2) {
-					
+
 					GenP2 genPadreI = (GenP2) padre.getGen(i);
 					GenP2 genMadreI = (GenP2) madre.getGen(i);
-					
+
 					GenP2 genPadreJ = (GenP2) padre.getGen(j);
 					GenP2 genMadreJ = (GenP2) madre.getGen(j);
 
-					if (( (Integer)genPadreI.getGen() ).equals( (Integer)genPadreJ.getGen()) ) {
+					if (((Integer) genPadreI.getGen())
+							.equals((Integer) genPadreJ.getGen())) {
 						genPadreI.setGen(genMadreJ.getGen());
 						encontrado = true;
 					}
 
-					if ( ( (Integer)genMadreI.getGen()).equals((Integer)genMadreJ.getGen()) ) {
+					if (((Integer) genMadreI.getGen())
+							.equals((Integer) genMadreJ.getGen())) {
 						genMadreI.setGen(genPadreJ.getGen());
 						encontrado = true;
 					}
@@ -538,7 +717,6 @@ public class AG {
 				}
 			}
 		}
-		
 
 		// se evaluan y sustituyen a los padres
 		padre.setAptitud(padre.evalua());
@@ -564,71 +742,73 @@ public class AG {
 		boolean encontrado, libre;
 		int aux, j1, j2, k;
 
-		// se inicializan los hijos	copiando los valores en los dos hijos	
+		// se inicializan los hijos copiando los valores en los dos hijos
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
 		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] =  (GenP2) ((GenP2) padre.getGen(i)).clone();
+			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
 			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
 		}
 
 		// Intercambiamos los elementos del intervalo
-			for (int pos = punto_cruce1; pos <= punto_cruce2; pos++) {
+		for (int pos = punto_cruce1; pos <= punto_cruce2; pos++) {
 
-				GenP2 genPadre = (GenP2) padre.getGen(pos);
-				GenP2 genMadre = (GenP2) madre.getGen(pos);
+			GenP2 genPadre = (GenP2) padre.getGen(pos);
+			GenP2 genMadre = (GenP2) madre.getGen(pos);
 
-				aux = (Integer) genPadre.getGen();
-				genPadre.setGen(genMadre.getGen());
-				genMadre.setGen(aux);
-			}
+			aux = (Integer) genPadre.getGen();
+			genPadre.setGen(genMadre.getGen());
+			genMadre.setGen(aux);
+		}
 
 		j1 = (punto_cruce2 + 1) % padre.getLongitudCromosoma();
 		j2 = (punto_cruce2 + 1) % madre.getLongitudCromosoma();
 
 		for (int pos = (punto_cruce2 + 1) % padre.getLongitudCromosoma(); pos < punto_cruce1
-					|| pos > punto_cruce2; pos = (pos + 1)
-					% padre.getLongitudCromosoma()) {
+				|| pos > punto_cruce2; pos = (pos + 1)
+				% padre.getLongitudCromosoma()) {
 
-				encontrado = false;
-				while (!encontrado) {
+			encontrado = false;
+			while (!encontrado) {
 
-					libre = true;
-					k = punto_cruce1;
-					while (libre && k <= punto_cruce2) {
-						
-						if ( ((Integer)hijo1[j1].getGen()).equals((Integer)hijo2[k].getGen()))
-							libre = false;
-						k++;
-					}
+				libre = true;
+				k = punto_cruce1;
+				while (libre && k <= punto_cruce2) {
 
-					if (libre) {
-						( (GenP2) padre.getGen(pos) ).setGen(hijo1[j1].getGen());
-						encontrado = true;
-					}
-
-					j1 = (j1 + 1) % padre.getLongitudCromosoma();
+					if (((Integer) hijo1[j1].getGen())
+							.equals((Integer) hijo2[k].getGen()))
+						libre = false;
+					k++;
 				}
 
-				encontrado = false;
-				while (!encontrado) {
-
-					libre = true;
-					k = punto_cruce1;
-					while (libre && k <= punto_cruce2) {
-						if ( ((Integer)hijo2[j2].getGen()).equals((Integer)hijo1[k].getGen()))
-							libre = false;
-						k++;
-					}
-
-					if (libre) {
-						( (GenP2) madre.getGen(pos) ).setGen(hijo2[j2].getGen());
-						encontrado = true;
-					}
-
-					j2 = (j2 + 1) % madre.getLongitudCromosoma();
+				if (libre) {
+					((GenP2) padre.getGen(pos)).setGen(hijo1[j1].getGen());
+					encontrado = true;
 				}
+
+				j1 = (j1 + 1) % padre.getLongitudCromosoma();
 			}
+
+			encontrado = false;
+			while (!encontrado) {
+
+				libre = true;
+				k = punto_cruce1;
+				while (libre && k <= punto_cruce2) {
+					if (((Integer) hijo2[j2].getGen())
+							.equals((Integer) hijo1[k].getGen()))
+						libre = false;
+					k++;
+				}
+
+				if (libre) {
+					((GenP2) madre.getGen(pos)).setGen(hijo2[j2].getGen());
+					encontrado = true;
+				}
+
+				j2 = (j2 + 1) % madre.getLongitudCromosoma();
+			}
+		}
 
 		// se evaluan y sustituyen a los padres
 		padre.setAptitud(padre.evalua());
@@ -651,11 +831,11 @@ public class AG {
 	private void cruceVarianteOX(Cromosoma padre, Cromosoma madre,
 			int punto_cruce1, int punto_cruce2) {
 
-		// se inicializan los hijos	copiando los valores en los dos hijos	
+		// se inicializan los hijos copiando los valores en los dos hijos
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
 		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] =  (GenP2) ((GenP2) padre.getGen(i)).clone();
+			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
 			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
 		}
 
@@ -682,58 +862,70 @@ public class AG {
 	private void cruceCiclosCX(Cromosoma padre, Cromosoma madre,
 			int punto_cruce1, int punto_cruce2) {
 
+		// se inicializan los hijos copiando los valores en los dos hijos
+		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
+		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
+		for (int i = 0; i < padre.getNumGenes(); i++) {
+			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
+			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
+		}
+
+		// se evaluan y sustituyen a los padres
+		padre.setGenes(hijo1);
+		padre.setAptitud(padre.evalua());
+		madre.setGenes(hijo2);
+		madre.setAptitud(madre.evalua());
+		
 //		boolean encontrado = false;
 //		int posSig, pos;
-//		int[][] hijo1 = new int[padre.getNumGenes()][padre
-//				.getLongitudCromosoma()];
-//		int[][] hijo2 = new int[padre.getNumGenes()][padre
-//				.getLongitudCromosoma()];
 //
-//		for (int nGen = 0; nGen < padre.getNumGenes(); nGen++) {
-//			for (int i = 0; i < hijo1.length; i++) {
-//				hijo1[nGen][i] = -1;
-//				hijo2[nGen][i] = -1;
+//		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
+//		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
+//		for (int i = 0; i < padre.getNumGenes(); i++) {
+//			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
+//			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
+//		}
+//
+//		for (int i = 0; i < hijo1.length; i++) {
+//			hijo1[i].setGen(-1);
+//			hijo2[i].setGen(-1);
+//		}
+//
+//		hijo1[0].setGen((Integer)padre.getGenes()[0].getGen());
+//		posSig = (Integer)hijo2[0].getGen();
+//
+//		while (posSig != (Integer)hijo1[0].getGen()) {
+//			pos = 0;
+//			while (!encontrado) {
+//
+//				if ((Integer)padre.getGenes()[pos].getGen() == posSig) {
+//					hijo1[pos].setGen((Integer)padre.getGenes()[pos].getGen());
+//					posSig = (Integer)madre.getGenes()[pos].getGen();
+//					encontrado = true;
+//				}
+//				pos++;
 //			}
 //		}
 //
-//		for (int nGen = 0; nGen < padre.getNumGenes(); nGen++) {
-//
-//			hijo1[nGen][0] = padre.getGenes()[nGen][0];
-//			posSig = hijo2[nGen][0];
-//
-//			while (posSig != hijo1[nGen][0]) {
-//				pos = 0;
-//				while (!encontrado) {
-//					
-//					if (padre.getGenes()[nGen][pos] == posSig) {
-//						hijo1[nGen][pos] = padre.getGenes()[nGen][pos];
-//						posSig = madre.getGenes()[nGen][pos];
-//						encontrado = true;
-//					}
-//					pos++;
+//		hijo2[0].setGen((Integer)madre.getGenes()[0].getGen());
+//		posSig = (Integer)hijo1[0].getGen();
+//		while (posSig != (Integer)hijo2[0].getGen()) {
+//			pos = 0;
+//			while (!encontrado) {
+//				if ((Integer)madre.getGenes()[pos].getGen() == posSig) {
+//					hijo2[pos].setGen((Integer)madre.getGenes()[pos].getGen());
+//					posSig = (Integer)padre.getGenes()[pos].getGen();
+//					encontrado = true;
 //				}
+//				pos++;
 //			}
+//		}
 //
-//			hijo2[nGen][0] = madre.getGenes()[nGen][0];
-//			posSig = hijo1[nGen][0];
-//			while (posSig != hijo2[nGen][0]) {
-//				pos = 0;
-//				while (!encontrado) {
-//					if (madre.getGenes()[nGen][pos] == posSig) {
-//						hijo2[nGen][pos] = madre.getGenes()[nGen][pos];
-//						posSig = padre.getGenes()[nGen][pos];
-//						encontrado = true;
-//					}
-//					pos++;
-//				}
-//			}
-//
-//			for (int j = 0; j < hijo1.length; j++) {
-//				if (hijo1[nGen][j] == -1)
-//					hijo1[nGen][j] = madre.getGenes()[nGen][j];
-//				if (hijo2[nGen][j] == -1)
-//					hijo2[nGen][j] = padre.getGenes()[nGen][j];
-//			}
+//		for (int j = 0; j < hijo1.length; j++) {
+//			if ((Integer)hijo1[j].getGen() == -1)
+//				hijo1[j].setGen((Integer)madre.getGenes()[j].getGen());
+//			if ((Integer)hijo2[j].getGen() == -1)
+//				hijo2[j].setGen((Integer)padre.getGenes()[j].getGen());
 //		}
 //
 //		// se evaluan y sustituyen a los padres
@@ -759,13 +951,13 @@ public class AG {
 	private void cruceERX(Cromosoma padre, Cromosoma madre, int punto_cruce1,
 			int punto_cruce2) {
 
-		//TODO: Por hacer
-		
-		// se inicializan los hijos	copiando los valores en los dos hijos	
+		// TODO: Por hacer
+
+		// se inicializan los hijos copiando los valores en los dos hijos
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
 		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] =  (GenP2) ((GenP2) padre.getGen(i)).clone();
+			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
 			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
 		}
 
@@ -792,13 +984,13 @@ public class AG {
 	private void cruceCodificacionOrdinal(Cromosoma padre, Cromosoma madre,
 			int punto_cruce1, int punto_cruce2) {
 
-		//TODO: Por hacer
-		
-		// se inicializan los hijos	copiando los valores en los dos hijos	
+		// TODO: Por hacer
+
+		// se inicializan los hijos copiando los valores en los dos hijos
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
 		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] =  (GenP2) ((GenP2) padre.getGen(i)).clone();
+			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
 			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
 		}
 
@@ -825,13 +1017,13 @@ public class AG {
 	private void crucePropio(Cromosoma padre, Cromosoma madre,
 			int punto_cruce1, int punto_cruce2) {
 
-		//TODO: Por hacer
-		
-		// se inicializan los hijos	copiando los valores en los dos hijos	
+		// TODO: Por hacer
+
+		// se inicializan los hijos copiando los valores en los dos hijos
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
 		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] =  (GenP2) ((GenP2) padre.getGen(i)).clone();
+			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
 			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
 		}
 
@@ -842,7 +1034,8 @@ public class AG {
 		madre.setAptitud(madre.evalua());
 	}
 
-	
+	// ------------------- METODOS DE MUTACION --------------------//
+
 	/**
 	 * Realiza la mutacion de los individuos seleccionados en la poblacion,
 	 * segun el metodo elegido.
@@ -902,7 +1095,7 @@ public class AG {
 		for (int i = 0; i < _tamPoblacion; i++) {
 			mutado = false;
 			// para cada gen del cromosoma se prueba la mutacion
-			GenP1[] genes = (GenP1[])_poblacion[i].getGenes();
+			GenP1[] genes = (GenP1[]) _poblacion[i].getGenes();
 			for (int j = 0; j < genes.length; j++) {
 				for (int k = 0; k < genes[j].getLongitudGen(); k++) {
 					// se genera un numero aleatorio en [0 1)
@@ -912,7 +1105,7 @@ public class AG {
 					if (prob < _probMutacion) {
 
 						if (!genes[j].getBit(k))
-							genes[j].setBit(k,true);
+							genes[j].setBit(k, true);
 						else if (genes[j].getBit(k))
 							genes[j].setBit(k, false);
 
@@ -941,8 +1134,8 @@ public class AG {
 		for (int nPob = 0; nPob < _tamPoblacion; nPob++) {
 			mutado = false;
 			// para cada gen del cromosoma se prueba la mutacion
-			GenP2[] genes = (GenP2[])_poblacion[nPob].getGenes();
-			
+			GenP2[] genes = (GenP2[]) _poblacion[nPob].getGenes();
+
 			for (int pos = 0; pos < genes.length; pos++) {
 				// se genera un numero aleatorio en [0 1)
 				prob = generador.nextDouble();
@@ -954,18 +1147,24 @@ public class AG {
 					ArrayList<Integer> posCiudades = new ArrayList<Integer>();
 
 					for (int i = 0; i < _numCiudadesMutInsercion; i++) {
-						posiciones.add(generador.nextInt(_poblacion[0].getLongitudCromosoma()-1));
-						posCiudades.add(generador.nextInt(_poblacion[0].getLongitudCromosoma()-1));
+						posiciones.add(generador.nextInt(_poblacion[0]
+								.getLongitudCromosoma() - 1));
+						posCiudades.add(generador.nextInt(_poblacion[0]
+								.getLongitudCromosoma() - 1));
 					}
 
 					int ciudadReemplazada;
 					int j = 0;
 					int aux;
 					for (int i = 0; i < posiciones.size(); i++) {
-						ciudadReemplazada = (Integer) genes[posiciones.get(i)].getGen();
-						genes[posiciones.get(i)] = (GenP2) genes[posCiudades.get(i)].clone();
+						ciudadReemplazada = (Integer) genes[posiciones.get(i)]
+								.getGen();
+						genes[posiciones.get(i)] = (GenP2) genes[posCiudades
+								.get(i)].clone();
 						j = posiciones.get(i) + 1;
-						while ( !( (Integer) genes[j].getGen()).equals((Integer) genes[posCiudades.get(i)].getGen()) ) {
+						while (!((Integer) genes[j].getGen())
+								.equals((Integer) genes[posCiudades.get(i)]
+										.getGen())) {
 							aux = ciudadReemplazada;
 							ciudadReemplazada = (Integer) genes[j].getGen();
 							genes[j].setGen(aux);
@@ -979,7 +1178,7 @@ public class AG {
 			// Si ha cambiado entonces lo volvemos a evaluar
 			if (mutado)
 				_poblacion[nPob].setAptitud(_poblacion[nPob].evalua());
-		}	
+		}
 	}
 
 	/**
@@ -998,7 +1197,7 @@ public class AG {
 		for (int nPob = 0; nPob < _tamPoblacion; nPob++) {
 			mutado = false;
 			// para cada gen del cromosoma se prueba la mutacion
-			GenP2[] genes = (GenP2[])_poblacion[nPob].getGenes();
+			GenP2[] genes = (GenP2[]) _poblacion[nPob].getGenes();
 
 			for (int pos = 0; pos < genes.length; pos++) {
 				// se genera un numero aleatorio en [0 1)
@@ -1010,9 +1209,9 @@ public class AG {
 					int pos1, pos2, aux;
 
 					pos1 = generador.nextInt(_poblacion[0]
-					                                    .getLongitudCromosoma());
+							.getLongitudCromosoma());
 					pos2 = generador.nextInt(_poblacion[0]
-					                                    .getLongitudCromosoma());
+							.getLongitudCromosoma());
 
 					aux = (Integer) genes[pos1].getGen();
 					genes[pos1] = (GenP2) genes[pos2].clone();
@@ -1042,7 +1241,7 @@ public class AG {
 		for (int nPob = 0; nPob < _tamPoblacion; nPob++) {
 			mutado = false;
 			// para cada gen del cromosoma se prueba la mutacion
-			GenP2[] genes = (GenP2[])_poblacion[nPob].getGenes();
+			GenP2[] genes = (GenP2[]) _poblacion[nPob].getGenes();
 
 			for (int pos = 0; pos < genes.length; pos++) {
 				// se genera un numero aleatorio en [0 1)
@@ -1054,19 +1253,21 @@ public class AG {
 					int punto_cruce1 = 0, punto_cruce2 = 0, aux;
 
 					do {
-						// Se cruzan los individuos en funcion de dos puntos al azar
+						// Se cruzan los individuos en funcion de dos puntos al
+						// azar
 						// Donde el primero siempre es menor que el segundo
 						punto_cruce1 = generador.nextInt(_poblacion[0]
-						                                            .getLongitudCromosoma());
+								.getLongitudCromosoma());
 						punto_cruce2 = generador.nextInt(_poblacion[0]
-						                                            .getLongitudCromosoma());
+								.getLongitudCromosoma());
 					} while (punto_cruce1 >= punto_cruce2);
 
 					for (int i = punto_cruce1; i <= punto_cruce1
-					+ ((punto_cruce2 - punto_cruce1) / 2); i++) {
-						
+							+ ((punto_cruce2 - punto_cruce1) / 2); i++) {
+
 						aux = (Integer) genes[i].getGen();
-						genes[i] = (GenP2) genes[punto_cruce2 + punto_cruce1 - i].clone();
+						genes[i] = (GenP2) genes[punto_cruce2 + punto_cruce1
+								- i].clone();
 						genes[punto_cruce2 + punto_cruce1 - i].setGen(aux);
 					}
 
@@ -1086,8 +1287,8 @@ public class AG {
 	 */
 	public void mutacionPropio() {
 
-		//TODO: Por Hacer
-		
+		// TODO: Por Hacer
+
 		boolean mutado;
 		double prob;
 		Random generador = new Random();
@@ -1096,8 +1297,8 @@ public class AG {
 		for (int nPob = 0; nPob < _tamPoblacion; nPob++) {
 			mutado = false;
 			// para cada gen del cromosoma se prueba la mutacion
-			GenP2[] genes = (GenP2[])_poblacion[nPob].getGenes();
-			
+			GenP2[] genes = (GenP2[]) _poblacion[nPob].getGenes();
+
 			for (int nGen = 0; nGen < genes.length; nGen++) {
 				for (int pos = 0; pos < genes.length; pos++) {
 					// se genera un numero aleatorio en [0 1)
@@ -1105,10 +1306,10 @@ public class AG {
 
 					// mutan los genes con prob<prob_mut
 					if (prob < _probMutacion) {
-						
+
 						// Hacer lo que se nos ocurra
 					}
-						mutado = true;
+					mutado = true;
 				}
 			}
 

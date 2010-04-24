@@ -40,6 +40,8 @@ public class PanelOpcionesPractica2 extends JPanel{
 	private static final String NUM_ELITE_DEF = "0.01";
 	private static final String NUM_ESTIMADO_COPIAS_MEJOR_DEF = "1";
 	private static final String NUM_CIUDADES_MUT_INSERCION = "5";
+	private static final String TAM_TORNEO = "50";
+	private static final String BETA = "10";
 	
 	// ----- COMPONENTES ----- //
 	private JLabel _lblSeleccionVersion;
@@ -49,6 +51,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 	private JLabel _lblNumGeneraciones;
 	private JLabel _lblTamPoblacion;
 	private JLabel _lblProbCruce;
+	private JLabel _lblTamTorneo;
 	private JTextField _txtNumGeneraciones;
 	private JTextField _txtTamPoblacion;
 	private JTextField _txtProbCruce;
@@ -60,6 +63,8 @@ public class PanelOpcionesPractica2 extends JPanel{
 	private JTextField _txtPasoVariacion;
 	private JTextField _txtLimiteVariacion;
 	private JTextField _txtNumCiudadesMutInsercion;
+	private JTextField _txtTamTorneo;
+	private JTextField _txtBeta;
 	private JLabel _lblProbMutacion;
 	private JLabel _lblSeleccionElitismo;
 	private JLabel _lblPorcentajeElite;
@@ -69,6 +74,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 	private JLabel _lblPasoVariacion;
 	private JLabel _lblLimiteVariacion;
 	private JLabel _lblNumCiudadesMutInsercion;
+	private JLabel _lblBeta;
 	private JComboBox _cmbSeleccionVarParametros;
 	private JComboBox _cmbSeleccionVersion;
 	private JComboBox _cmbSeleccionCruce;
@@ -79,6 +85,35 @@ public class PanelOpcionesPractica2 extends JPanel{
 	 * Ventana grafica de la aplicacion.
 	 */
 	private Ventana _ventana;
+	
+	/**
+	 * Versiones disponibles para la lista desplegable correspondiente.
+	 */
+	String[] _versionesStrings = { "Version 1", "Version 2" };
+	
+	/**
+	 * Metodos de seleccion disponibles para la lista desplegable correspondiente.
+	 */
+	String[] _seleccionStrings = { "Ruleta", "Torneo", "Ranking" };
+	
+	/**
+	 * Metodos de cruce disponibles para la lista desplegable correspondiente.
+	 */
+	String[] _cruceStrings = { "PMX", "OX", "Variante OX", "Ciclos CX",
+			"ERX", "Cod. Ordinal", "Propio" };
+
+	/**
+	 * Metodos de mutacion disponibles para la lista desplegable correspondiente.
+	 */
+	String[] _mutacionStrings = { "Insercion", "Intercambio", "Inversion",
+	"Propio" };
+	
+	/**
+	 * Variacion de parametros disponibles para la lista desplegable correspondiente.
+	 */
+	String[] _variacionStrings = { "Ninguna",
+			"Numero Maximo de Generaciones", "Tamanio de Poblacion",
+			"Probabilidad de Cruce", "Probabilidad de Mutacion", "Elitismo" };
 	
 	/**
 	 * Crea las opciones del cuerpo del panel de opciones donde se situan todos
@@ -104,79 +139,93 @@ public class PanelOpcionesPractica2 extends JPanel{
 		constraints.gridy = 1;
 		add(_lblSeleccionSeleccion, constraints);
 
-		_lblSeleccionCruce = new JLabel("Metodo de Cruce:");
+		_lblTamTorneo = new JLabel("Tamanio del Torneo:");
+		_lblTamTorneo.setVisible(false);
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
 		constraints.gridy = 2;
+		add(_lblTamTorneo, constraints);
+		
+		_lblBeta = new JLabel("Beta:");
+		_lblBeta.setVisible(false);
+		constraints.anchor = GridBagConstraints.EAST;
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		add(_lblBeta, constraints);
+		
+		_lblSeleccionCruce = new JLabel("Metodo de Cruce:");
+		constraints.anchor = GridBagConstraints.EAST;
+		constraints.gridx = 0;
+		constraints.gridy = 3;
 		add(_lblSeleccionCruce, constraints);
 
 		_lblSeleccionMutacion = new JLabel("Metodo de Mutacion:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 3;
+		constraints.gridy = 4;
 		add(_lblSeleccionMutacion, constraints);
 
 		_lblNumGeneraciones = new JLabel("Numero de Generaciones:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 4;
+		constraints.gridy = 5;
 		add(_lblNumGeneraciones, constraints);
 
 		_lblTamPoblacion = new JLabel("Tamanio de la Poblacion:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 5;
+		constraints.gridy = 6;
 		add(_lblTamPoblacion, constraints);
 
 		_lblProbCruce = new JLabel("Probabilidad de Cruce:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 6;
+		constraints.gridy = 7;
 		add(_lblProbCruce, constraints);
 
 		_lblProbMutacion = new JLabel("Probabilidad de Mutacion:");
 		constraints.gridx = 0;
-		constraints.gridy = 7;
+		constraints.gridy = 8;
 		add(_lblProbMutacion, constraints);
 
 		_lblNumCiudadesMutInsercion = new JLabel("Numero de Ciudades para la Mutacion:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		add(_lblNumCiudadesMutInsercion, constraints);
 		
 		_lblSeleccionElitismo = new JLabel("Seleccion por Elitismo:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		add(_lblSeleccionElitismo, constraints);
 
 		_lblPorcentajeElite = new JLabel("Tamanio de la Elite:");
 		_lblPorcentajeElite.setVisible(false);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		constraints.insets = new Insets(0, 40, 0, 0);
 		add(_lblPorcentajeElite, constraints);
 
 		_lblSeleccionEscaladoSimple = new JLabel("Escalado Simple:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 10;
+		constraints.gridy = 11;
 		add(_lblSeleccionEscaladoSimple, constraints);
 
 		_lblNumEstimadoCopiasMejor = new JLabel("N¼ Estimado Copias del Mejor:");
 		_lblNumEstimadoCopiasMejor.setVisible(false);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 10;
+		constraints.gridy = 11;
 		constraints.insets = new Insets(0, 40, 0, 0);
 		add(_lblNumEstimadoCopiasMejor, constraints);
 
 		_lblVariacionParametros = new JLabel("Variacion de Parametros:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 11;
+		constraints.gridy = 12;
 		constraints.insets = new Insets(0, 0, 0, 0);
 		add(_lblVariacionParametros, constraints);
 
@@ -184,21 +233,17 @@ public class PanelOpcionesPractica2 extends JPanel{
 		_lblPasoVariacion.setVisible(false);
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 12;
+		constraints.gridy = 13;
 		add(_lblPasoVariacion, constraints);
 
 		_lblLimiteVariacion = new JLabel("Limite de la Variacion:");
 		_lblLimiteVariacion.setVisible(false);
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 13;
+		constraints.gridy = 14;
 		add(_lblLimiteVariacion, constraints);
 
-		// Creamos todos los cuadros de texto correspondientes
-
-		String[] versionesStrings = { "Version 1", "Version 2" };
-
-		_cmbSeleccionVersion = new JComboBox(versionesStrings);
+		_cmbSeleccionVersion = new JComboBox(_versionesStrings);
 		_cmbSeleccionVersion
 				.addActionListener(new java.awt.event.ActionListener() {
 
@@ -232,9 +277,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 		constraints.gridy = 0;
 		add(_cmbSeleccionVersion, constraints);
 
-		String[] seleccionStrings = { "Ruleta", "Torneo", "Ranking" };
-
-		_cmbSeleccionSeleccion = new JComboBox(seleccionStrings);
+		_cmbSeleccionSeleccion = new JComboBox(_seleccionStrings);
 		_cmbSeleccionSeleccion
 				.addActionListener(new java.awt.event.ActionListener() {
 					
@@ -246,10 +289,22 @@ public class PanelOpcionesPractica2 extends JPanel{
 						// Guardamos la decision correspondiente
 						if (seleccion.matches("Ruleta")) {
 							_ventana.setTipoSeleccion(TipoSeleccion.RULETA);
+							_lblTamTorneo.setVisible(false);
+							_txtTamTorneo.setVisible(false);
+							_lblBeta.setVisible(false);
+							_txtBeta.setVisible(false);
 						} else if (seleccion.matches("Torneo")) {
 							ventana.setTipoSeleccion(TipoSeleccion.TORNEO);
+							_lblTamTorneo.setVisible(true);
+							_txtTamTorneo.setVisible(true);
+							_lblBeta.setVisible(false);
+							_txtBeta.setVisible(false);
 							} else if (seleccion.matches("Ranking")) {
 								_ventana.setTipoSeleccion(TipoSeleccion.RANKING);
+								_lblTamTorneo.setVisible(false);
+								_txtTamTorneo.setVisible(false);
+								_lblBeta.setVisible(true);
+								_txtBeta.setVisible(true);
 						}
 
 					}
@@ -260,10 +315,21 @@ public class PanelOpcionesPractica2 extends JPanel{
 		constraints.gridy = 1;
 		add(_cmbSeleccionSeleccion, constraints);
 
-		String[] cruceStrings = { "PMX", "OX", "Variante OX", "Ciclos CX",
-				"ERX", "Cod. Ordinal", "Propio" };
-
-		_cmbSeleccionCruce = new JComboBox(cruceStrings);
+		_txtTamTorneo = new JTextField(TAM_TORNEO);
+		_txtTamTorneo.setColumns(5);
+		_txtTamTorneo.setVisible(false);
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		add(_txtTamTorneo, constraints);
+		
+		_txtBeta = new JTextField(BETA);
+		_txtBeta.setColumns(5);
+		_txtBeta.setVisible(false);
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		add(_txtBeta, constraints);
+		
+		_cmbSeleccionCruce = new JComboBox(_cruceStrings);
 		_cmbSeleccionCruce
 				.addActionListener(new java.awt.event.ActionListener() {
 					
@@ -294,13 +360,10 @@ public class PanelOpcionesPractica2 extends JPanel{
 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 2;
+		constraints.gridy = 3;
 		add(_cmbSeleccionCruce, constraints);
-
-		String[] mutacionStrings = { "Insercion", "Intercambio", "Inversion",
-				"Propio" };
-
-		_cmbSeleccionMutacion = new JComboBox(mutacionStrings);
+		
+		_cmbSeleccionMutacion = new JComboBox(_mutacionStrings);
 		_cmbSeleccionMutacion
 				.addActionListener(new java.awt.event.ActionListener() {
 					
@@ -332,38 +395,38 @@ public class PanelOpcionesPractica2 extends JPanel{
 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 3;
+		constraints.gridy = 4;
 		add(_cmbSeleccionMutacion, constraints);
 
 		_txtNumGeneraciones = new JTextField(NUM_GENERACIONES_DEF);
 		_txtNumGeneraciones.setColumns(5);
 		constraints.gridx = 1;
-		constraints.gridy = 4;
+		constraints.gridy = 5;
 		add(_txtNumGeneraciones, constraints);
 
 		_txtTamPoblacion = new JTextField(NUM_POBLACION_DEF);
 		_txtTamPoblacion.setColumns(5);
 		constraints.gridx = 1;
-		constraints.gridy = 5;
+		constraints.gridy = 6;
 		add(_txtTamPoblacion, constraints);
 
 		_txtProbCruce = new JTextField(PROB_CRUCE_DEF);
 		_txtProbCruce.setColumns(3);
 		constraints.gridx = 1;
-		constraints.gridy = 6;
+		constraints.gridy = 7;
 		add(_txtProbCruce, constraints);
 
 		_txtProbMutacion = new JTextField(PROB_MUTACION_DEF);
 		_txtProbMutacion.setColumns(3);
 		constraints.gridx = 1;
-		constraints.gridy = 7;
+		constraints.gridy = 8;
 		add(_txtProbMutacion, constraints);
 
 
 		_txtNumCiudadesMutInsercion = new JTextField(NUM_CIUDADES_MUT_INSERCION);
 		_txtNumCiudadesMutInsercion.setColumns(3);
 		constraints.gridx = 1;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		add(_txtNumCiudadesMutInsercion, constraints);
 		
 		_cmbSeleccionElitismo = new JCheckBox();
@@ -384,7 +447,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 				});
 
 		constraints.gridx = 1;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		constraints.insets = new Insets(0, 10, 0, 0);
 		add(_cmbSeleccionElitismo, constraints);
 
@@ -392,7 +455,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 		_txtPorcentajeElite.setColumns(5);
 		_txtPorcentajeElite.setVisible(false);
 		constraints.gridx = 1;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		constraints.insets = new Insets(0, 250, 0, 0);
 		add(_txtPorcentajeElite, constraints);
 
@@ -414,7 +477,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 				});
 
 		constraints.gridx = 1;
-		constraints.gridy = 10;
+		constraints.gridy = 11;
 		constraints.insets = new Insets(0, 10, 0, 0);
 		add(_cmbSeleccionEscaladoSimple, constraints);
 
@@ -423,15 +486,11 @@ public class PanelOpcionesPractica2 extends JPanel{
 		_txtNumEstimadoCopiasMejor.setColumns(5);
 		_txtNumEstimadoCopiasMejor.setVisible(false);
 		constraints.gridx = 1;
-		constraints.gridy = 10;
+		constraints.gridy = 11;
 		constraints.insets = new Insets(0, 250, 0, 0);
 		add(_txtNumEstimadoCopiasMejor, constraints);
 
-		String[] variacionStrings = { "Ninguna",
-				"Numero Maximo de Generaciones", "Tamanio de Poblacion",
-				"Probabilidad de Cruce", "Probabilidad de Mutacion", "Elitismo" };
-
-		_cmbSeleccionVarParametros = new JComboBox(variacionStrings);
+		_cmbSeleccionVarParametros = new JComboBox(_variacionStrings);
 		_cmbSeleccionVarParametros.setSelectedIndex(0);
 		_cmbSeleccionVarParametros
 				.addActionListener(new java.awt.event.ActionListener() {
@@ -471,7 +530,7 @@ public class PanelOpcionesPractica2 extends JPanel{
 				});
 
 		constraints.gridx = 1;
-		constraints.gridy = 11;
+		constraints.gridy = 12;
 		constraints.insets = new Insets(0, 0, 0, 0);
 		add(_cmbSeleccionVarParametros, constraints);
 
@@ -479,14 +538,14 @@ public class PanelOpcionesPractica2 extends JPanel{
 		_txtPasoVariacion.setColumns(5);
 		_txtPasoVariacion.setVisible(false);
 		constraints.gridx = 1;
-		constraints.gridy = 12;
+		constraints.gridy = 13;
 		add(_txtPasoVariacion, constraints);
 
 		_txtLimiteVariacion = new JTextField(NUM_ELITE_DEF);
 		_txtLimiteVariacion.setColumns(5);
 		_txtLimiteVariacion.setVisible(false);
 		constraints.gridx = 1;
-		constraints.gridy = 13;
+		constraints.gridy = 14;
 		add(_txtLimiteVariacion, constraints);
 
 		// Borde del panel
@@ -576,5 +635,14 @@ public class PanelOpcionesPractica2 extends JPanel{
 	 */
 	public JTextField getTxtNumCiudadesMutInsercion() {	
 		return _txtNumCiudadesMutInsercion;
+	}
+
+	/**
+	 * Devuelve el campo de texto de tamanio de Torneo de la interfaz grafica.
+	 * 
+	 * @return El campo de texto de tamanio de Torneo de la interfaz grafica.
+	 */
+	public JTextField getTxtTamTorneo() {
+		return _txtTamTorneo;
 	}
 }
