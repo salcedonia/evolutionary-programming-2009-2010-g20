@@ -10,7 +10,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 	/**
 	 * Genes del cromosoma. Un array de booleanos para cada gen.
 	 */
-	protected int[][] _genes;
+	protected Gen[] _genes;
 	
 	/**
 	 * Tipos de genes distintos del problema.
@@ -47,6 +47,18 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * Longitud total en bits del cromosoma.
 	 */
 	protected int _longitudCromosoma;
+	
+	/**
+	 * Inicializa los genes de tipo binario del cromosoma.
+	 */
+	public void inicializaCromosoma() {
+		
+		for (int i = 0; i < _numGenes; i++) {
+			
+			// Inicializamos el gen
+			_genes[i].inicializaGen();
+		}
+	}
 	
 	/**
 	 * Devuelve la aptitud del cromosoma.
@@ -153,7 +165,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * 
 	 * @return El array de genes.
 	 */
-	public int[][] getGenes() {
+	public Gen[] getGenes() {
 		
 		return _genes;
 	}
@@ -163,9 +175,21 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * 
 	 * @param genes Nuevo valor del array de genes a establecer.
 	 */
-	public void setGenes(int[][] genes) {
+	public void setGenes(Gen[] genes) {
 		
 		_genes = genes;
+	}
+	
+	/**
+	 * Obtiene el gen pedido con el indice pedido.
+	 * 
+	 * @param numGen Indice del gen pedido.
+	 * 
+	 * @return Gen del indice pedido.
+	 */
+	public Object getGen(int numGen) {
+		
+		return _genes[numGen];
 	}
 
 	/**
@@ -236,11 +260,6 @@ public abstract class Cromosoma implements Comparable<Object> {
 	}
 	
 	// ---------------METODOS ABSTRACTOS----------------//
-	
-	/**
-	 * Inicializa los genes de tipo binario del cromosoma.
-	 */
-	public abstract void inicializaCromosoma();
 		
 	/**
 	 * Evalua la calidad del cromosoma.
@@ -264,7 +283,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * @param nGen Numero del gen para calcular su fenotipo.
 	 * @return El fenotipo del gen.
 	 */
-	public abstract double fenotipo(int[] gen, int nGen);
+	public abstract double fenotipo(Gen gen, int nGen);
 	
 	/**
 	 * Devuelve una copia del objeto que invoca este metodo.

@@ -3,6 +3,7 @@ package cromosoma.practica2;
 import java.util.Random;
 
 import cromosoma.Cromosoma;
+import cromosoma.Gen;
 
 /**
  * Clase que implementa los metodos necesarios para la gestion del cromosoma
@@ -79,7 +80,7 @@ public class CromosomaViajante extends Cromosoma {
 	public CromosomaViajante() {
 
 		// Cada gen tiene un fenotipo
-		_numGenes = 1;
+		_numGenes = 27;
 
 		// Establecemos la longitud del cromosoma
 		_longitudCromosoma = 27;
@@ -88,7 +89,13 @@ public class CromosomaViajante extends Cromosoma {
 		_fenotipo = new double[_numGenes];
 
 		// Creamos el array de genes
-		_genes = new int[_numGenes][_longitudCromosoma];
+		_genes = new GenP2[_numGenes];
+		
+		for (int i = 0; i < _numGenes; i++) {
+			
+			_genes[i] = new GenP2();
+		}
+		
 	}
 
 	@Override
@@ -97,17 +104,15 @@ public class CromosomaViajante extends Cromosoma {
 		Random generador = new Random();
 
 		for (int i = 0; i < _numGenes; i++) {
-			for (int j = 0; j < _longitudCromosoma; j++) {
 
-				int aleatorio;
-				
-				do{
-					// Generamos un numero aleatorio entre 0 y 27, pero descartamos el 0
-					aleatorio = generador.nextInt(_longitudCromosoma + 1);	
-				}while (repetido(aleatorio, _genes[i]) || aleatorio == 0);
-				
-				_genes[i][j] = aleatorio;
-			}
+			int aleatorio;
+
+			do{
+				// Generamos un numero aleatorio entre 0 y 27, pero descartamos el 0
+				aleatorio = generador.nextInt(_longitudCromosoma + 1);	
+			}while (repetido(aleatorio, _genes) || aleatorio == 0);
+
+			_genes[i] = new GenP2(aleatorio);
 		}
 	}
 
@@ -121,15 +126,15 @@ public class CromosomaViajante extends Cromosoma {
 	 * 
 	 * @return Verdadero si ya esta y falso en caso contrario.
 	 */
-	private boolean repetido(int num, int[] genes) {
+	private boolean repetido(int num, Gen[] genes) {
 
 		boolean esta = false;
 		int i = 0;
 
 		// Mientras que no este y hayamos procesado todos los rellenos
-		while (!esta && genes[i] != 0) {
+		while (!esta && i < genes.length && ((Integer)genes[i].getGen() != 0)) {
 
-			if (num == genes[i])
+			if (num == (Integer)genes[i].getGen())
 				esta = true;
 			i++;
 		}
@@ -150,23 +155,22 @@ public class CromosomaViajante extends Cromosoma {
 	public double f() {
 
 		// Calculamos la distancia de Madrid a la primera ciudad elegida
-		int distancia = getDist(0, _genes[0][0]);
+		int distancia = getDist(0, (Integer)_genes[0].getGen());
 
 		// Calculamos las distancias entre las ciudades seleccionadas
-		for(int i = 0; i < _numGenes ; i++)
-			for (int nCiudad = 0; nCiudad < _longitudCromosoma; nCiudad++)
-				distancia += getDist(_genes[i][nCiudad], nCiudad + 1);
+		for (int nCiudad = 0; nCiudad < _numGenes; nCiudad++)
+			distancia += getDist((Integer)_genes[nCiudad].getGen(), nCiudad + 1);
 			
 		// Sumamos la distancia de la ultima ciudad elegida con Madrid
-		distancia += getDist(_genes[0][_longitudCromosoma-1], 0);
+		distancia += getDist((Integer)_genes[_longitudCromosoma-1].getGen(), 0);
 		
 		return distancia;
 	}
 
 	@Override
-	public double fenotipo(int[] gen, int nGen) {
+	public double fenotipo(Gen gen, int nGen) {
 
-		return gen[nGen];
+		return (Integer)gen.getGen();
 	}
 
 	@Override
@@ -187,11 +191,11 @@ public class CromosomaViajante extends Cromosoma {
 
 		// Copia del fenotipo y los genes
 		copia._fenotipo = new double[_numGenes];
-		copia._genes = new int[_numGenes][_longitudCromosoma];
+		copia._genes = new GenP2[_numGenes];
 		for (int i = 0; i < _numGenes; i++) {
 			copia._fenotipo[i] = _fenotipo[i];
 			for (int j = 0; j < _longitudCromosoma; j++) {
-				copia._genes[i][j] = _genes[i][j];
+				copia._genes[i] = (GenP2)_genes[i].clone();
 			}
 		}
 
@@ -204,8 +208,7 @@ public class CromosomaViajante extends Cromosoma {
 		String mensaje = "Madrid\n";
 
 		for (int i = 0; i < _numGenes; i++) {
-			for (int j = 0; j < _longitudCromosoma; j++)
-				mensaje += CIUDADES[_genes[i][j]] + "\n";
+				mensaje += CIUDADES[(Integer)_genes[i].getGen()] + "\n";
 		}
 		mensaje += "Madrid\n";
 
