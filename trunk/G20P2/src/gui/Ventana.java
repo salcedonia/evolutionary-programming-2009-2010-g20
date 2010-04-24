@@ -39,7 +39,7 @@ public class Ventana extends JFrame {
 	// CONSTANTES
 	private static final long serialVersionUID = 1L;
 	private static final int ALTO = 768;
-	private static final int ANCHO = 600;
+	private static final int ANCHO = 700;
 	private static final String TITULO = "Practica 2: AGS";
 	private static final String ICONO = "AGSIcono.gif";
 
@@ -336,9 +336,11 @@ public class Ventana extends JFrame {
 							.getPrecision(), _validadorDatos.getValorN(),
 					_elitismo, _escaladoSimple, _tipoCromosoma, _tipoProblema,
 					_tipoVersion, _tipoSeleccion, _tipoCruce, _tipoMutacion,
-					_tipoVista, _validadorDatos.getPorcentageElite(),
+					_tipoVista, _validadorDatos.getPorcentajeElite(),
 					_validadorDatos.getNumEstimadoCopiasMejor(),
-					_validadorDatos.getNumCiudadesMutInsercion());
+					_validadorDatos.getNumCiudadesMutInsercion(),
+					_validadorDatos.getTamTorneo(),
+					_validadorDatos.getBeta());
 
 			// Crea poblacion inicial de cromosomas
 			_AG.inicializa();
@@ -399,9 +401,11 @@ public class Ventana extends JFrame {
 							.getPrecision(), _validadorDatos.getValorN(),
 					_elitismo, _escaladoSimple, _tipoCromosoma, _tipoProblema,
 					_tipoVersion, _tipoSeleccion, _tipoCruce, _tipoMutacion,
-					_tipoVista, _validadorDatos.getPorcentageElite(),
+					_tipoVista, _validadorDatos.getPorcentajeElite(),
 					_validadorDatos.getNumEstimadoCopiasMejor(),
-					_validadorDatos.getNumCiudadesMutInsercion() 
+					_validadorDatos.getNumCiudadesMutInsercion(),
+					_validadorDatos.getTamTorneo(),
+					_validadorDatos.getBeta()
 					);
 
 			// Crea poblacion inicial de cromosomas
@@ -490,7 +494,7 @@ public class Ventana extends JFrame {
 				i = _validadorDatos.getValorN();
 				break;
 			case ELITISMO:
-				i = _validadorDatos.getPorcentageElite();
+				i = _validadorDatos.getPorcentajeElite();
 				break;
 			}
 
@@ -515,9 +519,11 @@ public class Ventana extends JFrame {
 									.getValorN(), _elitismo, _escaladoSimple,
 							_tipoCromosoma, _tipoProblema, _tipoVersion,
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
-							_tipoVista, _validadorDatos.getPorcentageElite(),
+							_tipoVista, _validadorDatos.getPorcentajeElite(),
 							_validadorDatos.getNumEstimadoCopiasMejor(),
-							_validadorDatos.getNumCiudadesMutInsercion());
+							_validadorDatos.getNumCiudadesMutInsercion(),
+							_validadorDatos.getTamTorneo(),
+							_validadorDatos.getBeta());
 					break;
 				case NUM_POBLACION:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -528,9 +534,11 @@ public class Ventana extends JFrame {
 									.getValorN(), _elitismo, _escaladoSimple,
 							_tipoCromosoma, _tipoProblema, _tipoVersion,
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
-							_tipoVista, _validadorDatos.getPorcentageElite(),
+							_tipoVista, _validadorDatos.getPorcentajeElite(),
 							_validadorDatos.getNumEstimadoCopiasMejor(),
-							_validadorDatos.getNumCiudadesMutInsercion());
+							_validadorDatos.getNumCiudadesMutInsercion(),
+							_validadorDatos.getTamTorneo(),
+							_validadorDatos.getBeta());
 					break;
 				case PROB_CRUCE:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -541,9 +549,11 @@ public class Ventana extends JFrame {
 									.getValorN(), _elitismo, _escaladoSimple,
 							_tipoCromosoma, _tipoProblema, _tipoVersion,
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
-							_tipoVista, _validadorDatos.getPorcentageElite(),
+							_tipoVista, _validadorDatos.getPorcentajeElite(),
 							_validadorDatos.getNumEstimadoCopiasMejor(),
-							_validadorDatos.getNumCiudadesMutInsercion());
+							_validadorDatos.getNumCiudadesMutInsercion(),
+							_validadorDatos.getTamTorneo(),
+							_validadorDatos.getBeta());
 					break;
 				case PROB_MUTACION:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -554,9 +564,11 @@ public class Ventana extends JFrame {
 									.getValorN(), _elitismo, _escaladoSimple,
 							_tipoCromosoma, _tipoProblema, _tipoVersion,
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
-							_tipoVista, _validadorDatos.getPorcentageElite(),
+							_tipoVista, _validadorDatos.getPorcentajeElite(),
 							_validadorDatos.getNumEstimadoCopiasMejor(),
-							_validadorDatos.getNumCiudadesMutInsercion());
+							_validadorDatos.getNumCiudadesMutInsercion(),
+							_validadorDatos.getTamTorneo(),
+							_validadorDatos.getBeta());
 					break;
 				case PRECISION:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -567,9 +579,11 @@ public class Ventana extends JFrame {
 									.getValorN(), _elitismo, _escaladoSimple,
 							_tipoCromosoma, _tipoProblema, _tipoVersion,
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
-							_tipoVista, _validadorDatos.getPorcentageElite(),
+							_tipoVista, _validadorDatos.getPorcentajeElite(),
 							_validadorDatos.getNumEstimadoCopiasMejor(),
-							_validadorDatos.getNumCiudadesMutInsercion());
+							_validadorDatos.getNumCiudadesMutInsercion(),
+							_validadorDatos.getTamTorneo(),
+							_validadorDatos.getBeta());
 					break;
 				case VALOR_N:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -581,9 +595,11 @@ public class Ventana extends JFrame {
 							_escaladoSimple, _tipoCromosoma, _tipoProblema,
 							_tipoVersion, _tipoSeleccion, _tipoCruce,
 							_tipoMutacion, _tipoVista, _validadorDatos
-									.getPorcentageElite(), _validadorDatos
+									.getPorcentajeElite(), _validadorDatos
 									.getNumEstimadoCopiasMejor(),
-									_validadorDatos.getNumCiudadesMutInsercion());
+									_validadorDatos.getNumCiudadesMutInsercion(),
+									_validadorDatos.getTamTorneo(),
+									_validadorDatos.getBeta());
 					break;
 				case ELITISMO:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -597,7 +613,9 @@ public class Ventana extends JFrame {
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
 							_tipoVista, i, _validadorDatos
 									.getNumEstimadoCopiasMejor(),
-									_validadorDatos.getNumCiudadesMutInsercion());
+									_validadorDatos.getNumCiudadesMutInsercion(),
+									_validadorDatos.getTamTorneo(),
+									_validadorDatos.getBeta());
 					break;
 				}
 
@@ -670,7 +688,7 @@ public class Ventana extends JFrame {
 				i = _validadorDatos.getValorN();
 				break;
 			case ELITISMO:
-				i = _validadorDatos.getPorcentageElite();
+				i = _validadorDatos.getPorcentajeElite();
 				break;
 			}
 
@@ -695,9 +713,11 @@ public class Ventana extends JFrame {
 									.getValorN(), _elitismo, _escaladoSimple,
 							_tipoCromosoma, _tipoProblema, _tipoVersion,
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
-							_tipoVista, _validadorDatos.getPorcentageElite(),
+							_tipoVista, _validadorDatos.getPorcentajeElite(),
 							_validadorDatos.getNumEstimadoCopiasMejor(),
-							_validadorDatos.getNumCiudadesMutInsercion());
+							_validadorDatos.getNumCiudadesMutInsercion(),
+							_validadorDatos.getTamTorneo(),
+							_validadorDatos.getBeta());
 					break;
 				case NUM_POBLACION:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -708,9 +728,11 @@ public class Ventana extends JFrame {
 									.getValorN(), _elitismo, _escaladoSimple,
 							_tipoCromosoma, _tipoProblema, _tipoVersion,
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
-							_tipoVista, _validadorDatos.getPorcentageElite(),
+							_tipoVista, _validadorDatos.getPorcentajeElite(),
 							_validadorDatos.getNumEstimadoCopiasMejor(),
-							_validadorDatos.getNumCiudadesMutInsercion());
+							_validadorDatos.getNumCiudadesMutInsercion(),
+							_validadorDatos.getTamTorneo(),
+							_validadorDatos.getBeta());
 					break;
 				case PROB_CRUCE:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -721,9 +743,11 @@ public class Ventana extends JFrame {
 									.getValorN(), _elitismo, _escaladoSimple,
 							_tipoCromosoma, _tipoProblema, _tipoVersion,
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
-							_tipoVista, _validadorDatos.getPorcentageElite(),
+							_tipoVista, _validadorDatos.getPorcentajeElite(),
 							_validadorDatos.getNumEstimadoCopiasMejor(),
-							_validadorDatos.getNumCiudadesMutInsercion());
+							_validadorDatos.getNumCiudadesMutInsercion(),
+							_validadorDatos.getTamTorneo(),
+							_validadorDatos.getBeta());
 					break;
 				case PROB_MUTACION:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -734,9 +758,11 @@ public class Ventana extends JFrame {
 									.getValorN(), _elitismo, _escaladoSimple,
 							_tipoCromosoma, _tipoProblema, _tipoVersion,
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
-							_tipoVista, _validadorDatos.getPorcentageElite(),
+							_tipoVista, _validadorDatos.getPorcentajeElite(),
 							_validadorDatos.getNumEstimadoCopiasMejor(),
-							_validadorDatos.getNumCiudadesMutInsercion());
+							_validadorDatos.getNumCiudadesMutInsercion(),
+							_validadorDatos.getTamTorneo(),
+							_validadorDatos.getBeta());
 					break;
 				case PRECISION:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -747,9 +773,11 @@ public class Ventana extends JFrame {
 									.getValorN(), _elitismo, _escaladoSimple,
 							_tipoCromosoma, _tipoProblema, _tipoVersion,
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
-							_tipoVista, _validadorDatos.getPorcentageElite(),
+							_tipoVista, _validadorDatos.getPorcentajeElite(),
 							_validadorDatos.getNumEstimadoCopiasMejor(),
-							_validadorDatos.getNumCiudadesMutInsercion());
+							_validadorDatos.getNumCiudadesMutInsercion(),
+							_validadorDatos.getTamTorneo(),
+							_validadorDatos.getBeta());
 					break;
 				case VALOR_N:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -761,9 +789,11 @@ public class Ventana extends JFrame {
 							_escaladoSimple, _tipoCromosoma, _tipoProblema,
 							_tipoVersion, _tipoSeleccion, _tipoCruce,
 							_tipoMutacion, _tipoVista, _validadorDatos
-									.getPorcentageElite(), _validadorDatos
+									.getPorcentajeElite(), _validadorDatos
 									.getNumEstimadoCopiasMejor(),
-									_validadorDatos.getNumCiudadesMutInsercion());
+									_validadorDatos.getNumCiudadesMutInsercion(),
+									_validadorDatos.getTamTorneo(),
+									_validadorDatos.getBeta());
 					break;
 				case ELITISMO:
 					// Creamos el objeto encargado del algoritmo genetico simple
@@ -777,7 +807,9 @@ public class Ventana extends JFrame {
 							_tipoSeleccion, _tipoCruce, _tipoMutacion,
 							_tipoVista, i, _validadorDatos
 									.getNumEstimadoCopiasMejor(),
-									_validadorDatos.getNumCiudadesMutInsercion());
+									_validadorDatos.getNumCiudadesMutInsercion(),
+									_validadorDatos.getTamTorneo(),
+									_validadorDatos.getBeta());
 					break;
 				}
 
@@ -1237,6 +1269,56 @@ public class Ventana extends JFrame {
 			break;
 
 		}
+		return null;
+	}
+	
+	/**
+	 * Devuelve el campo de texto del tamanio de Torneo para la mutacion por el
+	 * metodo de insercion del panelBodyOpciones.
+	 * 
+	 * @return El campo de texto del numero de ciudades para la mutacion por el
+	 * metodo de insercion del panelBodyOpciones.
+	 */
+	public JTextField getTxtTamTorneo() {
+
+		switch (_tipoVista) {
+
+		case PRACTICA1:
+			// No tiene
+			break;
+		case PRACTICA2:
+			return ((PanelOpcionesPractica2) _panelBodyOpciones)
+					.getTxtTamTorneo();
+		case PRACTICA3: // Por hacer
+			break;
+
+		}
+
+		return null;
+	}
+	
+	/**
+	 * Devuelve el campo de texto de la beta para el metodo de seleccion de Ranking
+	 * del panelBodyOpciones.
+	 * 
+	 * @return El campo de texto del numero de ciudades para la mutacion por el
+	 * metodo de insercion del panelBodyOpciones.
+	 */
+	public JTextField getTxtBeta() {
+
+		switch (_tipoVista) {
+
+		case PRACTICA1:
+			// No tiene
+			break;
+		case PRACTICA2:
+			return ((PanelOpcionesPractica2) _panelBodyOpciones)
+					.getTxtTamTorneo();
+		case PRACTICA3: // Por hacer
+			break;
+
+		}
+
 		return null;
 	}
 	
