@@ -597,7 +597,7 @@ public class AG {
 					k = punto_cruce1;
 					while (libre && k <= punto_cruce2) {
 						
-						if ((Integer)hijo1[j1].getGen() == (Integer)hijo2[k].getGen())
+						if ( ((Integer)hijo1[j1].getGen()).equals((Integer)hijo2[k].getGen()))
 							libre = false;
 						k++;
 					}
@@ -616,7 +616,7 @@ public class AG {
 					libre = true;
 					k = punto_cruce1;
 					while (libre && k <= punto_cruce2) {
-						if ( (Integer)hijo2[j2].getGen() == (Integer)hijo1[k].getGen())
+						if ( ((Integer)hijo2[j2].getGen()).equals((Integer)hijo1[k].getGen()))
 							libre = false;
 						k++;
 					}
