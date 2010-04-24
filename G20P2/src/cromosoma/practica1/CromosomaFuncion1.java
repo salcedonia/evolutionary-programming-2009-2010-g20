@@ -1,8 +1,7 @@
 package cromosoma.practica1;
 
-import java.util.Random;
-
 import cromosoma.Cromosoma;
+import cromosoma.Gen;
 import utils.Matematicas;
 
 /**
@@ -52,7 +51,7 @@ public class CromosomaFuncion1 extends Cromosoma{
 				
 		_longitudGen = new int[_numGenes];
 		_fenotipo = new double[_numGenes];
-		_genes = new int[_numGenes][];
+		_genes = new GenP1[_numGenes];
 		setLongitudCromosoma(0);
 		// Calculamos la longitud de los genes
 		for (int i = 0; i < _numGenes; i++) {
@@ -60,7 +59,7 @@ public class CromosomaFuncion1 extends Cromosoma{
 			_longitudGen[i] = calcularLongGen(i,tolerancia);
 			setLongitudCromosoma(getLongitudCromosoma() + _longitudGen[i]);
 			// Creamos el array de genes del tamanio adecuado
-			_genes[i] = new int[_longitudGen[i]];
+			_genes[i] = new GenP1(_longitudGen[i]);
 		}
 	}
 	
@@ -70,63 +69,18 @@ public class CromosomaFuncion1 extends Cromosoma{
 		for (int i = 0; i < _numGenes; i++) {
 			
 			// Inicializamos el gen
-			inicializaGen(i);
-		}
-	}
-
-	/**
-	 * Inicializa aleatoriamente el vector de genes de tipo binario.
-	 * 
-	 * @param nGen Numero de gen a inicializar.
-	 */
-	private void inicializaGen(int nGen) {
-
-		Random generador = new Random();
-		   
-		for (int i = 0; i < _genes[nGen].length; i++) {
-			
-			// Generamos un numero aleatorio entre 0.0 y 0.1
-			double aleatorio = generador.nextDouble();
-			
-			if(aleatorio < 0.5)
-				_genes[nGen][i] = 0;
-		    else
-				_genes[nGen][i] = 1;	
+			_genes[i].inicializaGen();
 		}
 	}
 	
-	/**
-	 * Halla el valor decimal de un número binario a partir de un vector de 
-	 * booleanos.
-	 * 
-	 * @param gen Gen a convertir en decimal.
-	 * 
-	 * @return El valor decimal del numero binario codificado en el vector de 
-	 * booleanos.
-	 */
-	public double bin_dec(int[] gen) {
+	@Override
+	public double fenotipo(Gen gen, int nGen) {
 		
-		double valorDecimal = 0, potencia_2 = 1;
-		for (int i = 0; i < gen.length; i++) {
-			if (gen[i]==1) {
-				valorDecimal += potencia_2;
-			}
-			potencia_2 *= 2;
-		}
-		return valorDecimal;
-	}
-	
-	/**
-	 * Calcula el fenotipo de un gen.
-	 * 
-	 * @param gen Gen a calcular su fenotipo.
-	 * @param nGen Numero del gen para calcular su fenotipo.
-	 * @return El fenotipo del gen.
-	 */
-	public double fenotipo(int[] gen, int nGen) {
+		GenP1 genP1 = (GenP1) gen;
+		
 		return _xMin[nGen] + (_xMax[nGen] - _xMin[nGen]) * 
-		bin_dec(gen) / (Math.pow(2, gen.length) - 1);
-	} 
+		genP1.bin_dec() / (Math.pow(2, genP1.getLongitudGen()) - 1);
+	}
 	
 	/**
 	 * Evalua la calidad del cromosoma.
@@ -135,7 +89,7 @@ public class CromosomaFuncion1 extends Cromosoma{
 	 */
 	public double evalua() {
 		for (int i = 0; i < _numGenes; i++) {
-			_fenotipo[i] = fenotipo(_genes[i],i);
+			_fenotipo[i] = fenotipo((GenP1)_genes[i],i);
 		}
 		return f(); // valor de la funcion a optimizar
 	}
@@ -188,13 +142,10 @@ public class CromosomaFuncion1 extends Cromosoma{
 		
 		// Copia del fenotipo y los genes
 		copia._fenotipo = new double[_numGenes];
-		copia._genes = new int[_numGenes][];
+		copia._genes = new GenP1[_numGenes];
 		for (int i = 0; i < _numGenes; i++) {
 			copia._fenotipo[i] = _fenotipo[i];
-			copia._genes[i] = new int[_longitudGen[i]];
-			for (int j = 0; j < _longitudGen[i]; j++) {
-				copia._genes[i][j] = _genes[i][j];
-			}
+			copia._genes[i] = (GenP1)_genes[i].clone();
 		}		
 		
 		return copia;
