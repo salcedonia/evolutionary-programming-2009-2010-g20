@@ -23,7 +23,9 @@ import cromosoma.practica1.CromosomaFuncion4;
 import cromosoma.practica1.CromosomaFuncion5;
 import cromosoma.practica1.GenP1;
 import cromosoma.practica2.CromosomaViajante;
+import cromosoma.practica2.CromosomaViajanteV2;
 import cromosoma.practica2.GenP2;
+import cromosoma.practica2.GenP2V2;
 
 /**
  * Clase que implementa los metodos necesarios para el algoritmo genetico
@@ -1070,7 +1072,7 @@ public class AG {
 				break;
 
 			case VERSION2:
-				mutacionInsercion();
+				mutacionVersion2();
 				break;
 			}
 			break;
@@ -1286,9 +1288,7 @@ public class AG {
 	 * nuestro propio metodo.
 	 */
 	public void mutacionPropio() {
-
-		// TODO: Por Hacer
-
+		
 		boolean mutado;
 		double prob;
 		Random generador = new Random();
@@ -1297,18 +1297,163 @@ public class AG {
 		for (int nPob = 0; nPob < _tamPoblacion; nPob++) {
 			mutado = false;
 			// para cada gen del cromosoma se prueba la mutacion
-			GenP2[] genes = (GenP2[]) _poblacion[nPob].getGenes();
+			GenP2[] genes = (GenP2[])_poblacion[nPob].getGenes();
+			
+			prob = generador.nextDouble();
+			
+			// mutan los genes con prob<prob_mut
+			if (prob < _probMutacion) {
+				
+				// Selecciona dos rutas (las rutas son solo entre 2 ciudades)
+				int[] rutas = seleccionaRutas(); // contienen los indices de comienzo de cada ruta
+				
+				// Genera los 4 cromosomas
+				GenP2[] mejor = obtenMejor(genes,rutas);
+				
+				// Se queda con el mejor y sustituye al original
+				_poblacion[nPob].setGenes(mejor);
+				
+				mutado = true;
+			}
 
-			for (int nGen = 0; nGen < genes.length; nGen++) {
-				for (int pos = 0; pos < genes.length; pos++) {
-					// se genera un numero aleatorio en [0 1)
-					prob = generador.nextDouble();
+			// Si ha cambiado entonces lo volvemos a evaluar
+			if (mutado)
+				_poblacion[nPob].setAptitud(_poblacion[nPob].evalua());
+		}
+	}
+	
+	/**
+	 * Selecciona al azar dos rutas entre 2 ciudades, disjuntas.
+	 * 
+	 * @param genes Cromosoma sobre el que elegir las rutas.
+	 * @param rutas Las rutas 
+	 */
+	private int[] seleccionaRutas() {
+		
+		int[] rutas = new int[2]; // contienen los indices de comienzo de cada ruta
+		
+		Random generador = new Random();
+		
+		// Comienzo de la ruta 1
+		rutas[0] = generador.nextInt(_poblacion[0].getLongitudCromosoma()-1);
+		
+		// Comienzo de la ruta 2 pero con ciudades diferentes de la primera
+		do {
+			rutas[1] = generador.nextInt(_poblacion[0].getLongitudCromosoma());
+		} while ((rutas[1] == rutas[0]) || (rutas[1] == rutas[0] +1) || 
+				(rutas[1]+1 == rutas[0]) || (rutas[1] + 1 == rutas[0]));
+		
+				
+		return rutas;
+	}
+	
+	/**
+	 * Intercambia el par de ciudades de dos rutas.
+	 * 
+	 * @param rutas El comienzo de cada ruta.
+	 */
+	private GenP2[] obtenMejor(GenP2[] genes, int[] rutas) {
+		
+		CromosomaViajante[] cromosomas = new CromosomaViajante[4];
+		for (int i = 0; i < 4; i++) {
+			cromosomas[i] = new CromosomaViajante();
+		}
+		
+		// Crea los cuatro cromosomas posibles de variar cada par
+		// de ciudades entre si
+		GenP2[] genes1 = genes.clone();
+		intercambiaGen(genes1,rutas[0],rutas[1]);
+		intercambiaGen(genes1,rutas[0]+1,rutas[1]+1);
+		cromosomas[0].setGenes(genes1);
 
-					// mutan los genes con prob<prob_mut
-					if (prob < _probMutacion) {
+		GenP2[] genes2 = genes1.clone();
+		intercambiaGen(genes2,rutas[0],rutas[0]+1);
+		cromosomas[1].setGenes(genes2);
+		
+		GenP2[] genes3 = genes1.clone();
+		intercambiaGen(genes2,rutas[1],rutas[1]+1);
+		cromosomas[2].setGenes(genes3);
+		
+		GenP2[] genes4 = genes2.clone();
+		intercambiaGen(genes2,rutas[1],rutas[1]+1);
+		cromosomas[3].setGenes(genes4);
+		
+		CromosomaViajante elMejor = cromosomas[0];
+		double mejor = cromosomas[0].evalua();
+		
+		for (int i = 1; i < 4; i++) {
+			
+			 if ( cromosomas[i].evalua() < mejor) {
+				 elMejor = cromosomas[i];
+			 }
+		}
+		
+		return (GenP2[])elMejor.getGenes();
+			
+	}
+	
+	/**
+	 * Intercambia los genes de 2 posiciones.
+	 * 
+	 * @param genes Cromosoma sobre cuyos genes cambiar.
+	 * @param pos1 Posicion del gen 1.
+	 * @param pos2 Posicion del gen 2.
+	 */
+	private void intercambiaGen(GenP2[] genes, int pos1, int pos2) {
+		
+		GenP2 aux = genes[pos1];
+		
+		genes[pos1] = genes[pos2];
+		genes[pos2] = aux;
+		
+	}
+	
+	/**
+	 * Realiza la mutacion de los individuos seleccionados en la poblacion 
+	 * para la version 2 de la practica 2. Mutacion por inversion modificada.
+	 */
+	public void mutacionVersion2() {
+		
+		boolean mutado;
+		double prob;
+		Random generador = new Random();
 
-						// Hacer lo que se nos ocurra
+		// para cada cromosoma de la poblacion
+		for (int nPob = 0; nPob < _tamPoblacion; nPob++) {
+			mutado = false;
+			// para cada gen del cromosoma se prueba la mutacion
+			GenP2V2[] genes = (GenP2V2[])_poblacion[nPob].getGenes();
+
+			for (int pos = 0; pos < genes.length; pos++) {
+				// se genera un numero aleatorio en [0 1)
+				prob = generador.nextDouble();
+
+				// mutan los genes con prob<prob_mut
+				if (prob < _probMutacion) {
+
+					int punto_cruce1 = 0, punto_cruce2 = 0, aux;
+
+					do {
+						// Se cruzan los individuos en funcion de dos puntos al azar
+						// Donde el primero siempre es menor que el segundo
+						punto_cruce1 = generador.nextInt(_poblacion[0]
+						                                            .getLongitudCromosoma());
+						punto_cruce2 = generador.nextInt(_poblacion[0]
+						                                            .getLongitudCromosoma());
+					} while (punto_cruce1 >= punto_cruce2);
+
+					for (int i = punto_cruce1; i <= punto_cruce1
+					+ ((punto_cruce2 - punto_cruce1) / 2); i++) {
+						
+						double prob2 = generador.nextDouble();
+						if (prob2 < _probMutacion) mutaDia(genes[i]);
+						
+						aux = (Integer) genes[i].getGen();
+
+						genes[i] = (GenP2V2) genes[punto_cruce2 + punto_cruce1 - i].clone();
+						genes[punto_cruce2 + punto_cruce1 - i].setGen(aux);
 					}
+
 					mutado = true;
 				}
 			}
@@ -1317,6 +1462,19 @@ public class AG {
 			if (mutado)
 				_poblacion[nPob].setAptitud(_poblacion[nPob].evalua());
 		}
+	}
+	
+	private void mutaDia(GenP2V2 gen) {
+		
+		Random generador = new Random();
+		int nuevoDia = 0;
+		
+		do {
+			nuevoDia = generador.nextInt(6)+1;
+		} while (!CromosomaViajanteV2.diaValido((Integer)gen.getGen(),nuevoDia));
+		
+		gen.setDia(nuevoDia);
+		
 	}
 
 	/**
@@ -1570,10 +1728,19 @@ public class AG {
 				break;
 
 			case PRACTICA2:
+				
 				// Creamos el cromosoma para el tipo
-				_poblacion[j] = new CromosomaViajante();
+				
+				switch (_tipoVersion) {
 
-				break;
+				case VERSION1:
+					_poblacion[j] = new CromosomaViajante();
+					break;
+				case VERSION2:
+					_poblacion[j] = new CromosomaViajanteV2();
+					break;
+				}
+				break;	
 
 			case PRACTICA3:
 				break;
