@@ -67,7 +67,7 @@ public class CromosomaViajante extends Cromosoma {
 	/**
 	 * Array de Ciudades.
 	 */
-	final static String[] CIUDADES = { "Madrid", "Albacete", "Alicante",
+	public static String[] CIUDADES = { "Madrid", "Albacete", "Alicante",
 			"Almeria", "Avila", "Badajoz", "Barcelona", "Bilbao", "Burgos",
 			"Caceres", "Cadiz", "Castellon", "Ciudad Real", "Cordoba",
 			"A Corunia", "Cuenca", "Gerona", "Granada", "Guadalajara",
@@ -179,7 +179,6 @@ public class CromosomaViajante extends Cromosoma {
 		CromosomaViajante copia = new CromosomaViajante();
 		copia._adaptacion = _adaptacion;
 		copia._numGenes = _numGenes;
-		;
 
 		// Copia de atributos de la clase padre
 		copia.setAptitud(_aptitud);
@@ -225,7 +224,7 @@ public class CromosomaViajante extends Cromosoma {
 	 * 
 	 * @return La distancia que hay desde la ciudad i hasta la ciudad j.
 	 */
-	private static int getDist(int i, int j) {
+	protected static int getDist(int i, int j) {
 		if (i == j)
 			return 0;
 		if (j > i)
