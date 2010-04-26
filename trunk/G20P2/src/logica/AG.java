@@ -986,21 +986,83 @@ public class AG {
 	private void cruceCodificacionOrdinal(Cromosoma padre, Cromosoma madre,
 			int punto_cruce1, int punto_cruce2) {
 
-		// TODO: Por hacer
-
+		Random generador = new Random();
+		
+		// Obtener codificación de los cromosomas
+		GenP2[] padreCodificado = codifica((GenP2[])padre.getGenes());
+		GenP2[] madreCodificada = codifica((GenP2[])madre.getGenes());
+		
+		
 		// se inicializan los hijos copiando los valores en los dos hijos
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
 		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
-			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
+			hijo1[i] = (GenP2) ((GenP2) padreCodificado[i]).clone();
+			hijo2[i] = (GenP2) ((GenP2) madreCodificada[i]).clone();
 		}
+		
+		// Cruzar en un punto de cruce
+		int punto_cruce = (int) (generador.nextDouble() * _poblacion[0]
+		                                         			.getLongitudCromosoma());
+		int nGen = punto_cruce; // contador para el numero de gen recorrido
 
+		while ((nGen < padre.getNumGenes())) {
+
+			hijo1[nGen].setGen(madreCodificada[nGen].getGen());
+			hijo2[nGen].setGen(padreCodificado[nGen].getGen());
+			nGen++;
+		}
+		
+		// Traducir la codificacion
+		GenP2[] hijo1Traducido = codifica(hijo1);
+		GenP2[] hijo2Traducido = codifica(hijo2);
+		
 		// se evaluan y sustituyen a los padres
-		padre.setGenes(hijo1);
+		padre.setGenes(hijo1Traducido);
 		padre.setAptitud(padre.evalua());
-		madre.setGenes(hijo2);
+		madre.setGenes(hijo2Traducido);
 		madre.setAptitud(madre.evalua());
+	}
+	
+	/**
+	 * Codifica segun la posicion de cada elemento en una lista dinamica
+	 * con los numeros de cada ciudad, eliminando los numeros segun se asignan.
+	 * 
+	 * @param c Cromosoma a codificar.
+	 * @return Los genes codificados.
+	 */
+	private GenP2[] codifica(GenP2[] c) {
+		
+		GenP2[] codificado = new GenP2[c.length];
+		
+		// Crea la lista con los numeros de las ciudades en orden creciente
+		ArrayList<Integer> listaDinamica = new ArrayList<Integer>();
+		for (int i = 1; i <= c.length; i++)
+			listaDinamica.add(i);
+			
+		GenP2[] padre = c;
+		for (int i = 0; i < c.length; i++) {
+			
+			int ciudad = (Integer) padre[i].getGen();
+			
+			boolean encontrado = false;
+			Iterator<Integer> it = listaDinamica.iterator();
+			int j = 1;
+			while ((!encontrado) && it.hasNext()) {
+				
+				int ciudadLista = it.next();
+				if (ciudadLista == ciudad) {
+					encontrado = true;
+					it.remove();
+					codificado[i] = new GenP2(j);
+				}
+				j++;
+				
+			}
+			
+		}
+		
+		return codificado;
 	}
 
 	/**
