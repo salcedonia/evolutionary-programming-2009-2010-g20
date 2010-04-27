@@ -159,11 +159,12 @@ public class CromosomaViajante extends Cromosoma {
 
 		// Calculamos las distancias entre las ciudades seleccionadas
 		for (int nCiudad = 0; nCiudad < _numGenes; nCiudad++)
-			distancia += getDist((Integer)_genes[nCiudad].getGen(), nCiudad + 1);
-			
-		// Sumamos la distancia de la ultima ciudad elegida con Madrid
-		distancia += getDist((Integer)_genes[_longitudCromosoma-1].getGen(), 0);
-		
+			if(nCiudad == _numGenes-1)
+				// Sumamos la distancia de la ultima ciudad elegida con Madrid
+				distancia += getDist((Integer)_genes[_longitudCromosoma-1].getGen(), 0);
+			else
+				distancia += getDist((Integer)_genes[nCiudad].getGen(), (Integer)_genes[nCiudad + 1].getGen());
+					
 		return distancia;
 	}
 
