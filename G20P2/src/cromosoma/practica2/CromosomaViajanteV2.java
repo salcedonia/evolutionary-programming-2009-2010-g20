@@ -213,22 +213,28 @@ public class CromosomaViajanteV2 extends Cromosoma {
 
 		// Calculamos la distancia de Madrid a la primera ciudad elegida
 		int distancia = CromosomaViajante.getDist(0, (Integer)_genes[0].getGen());
-		int dias = GenP2V2.numDias( ((GenP2V2)_genes[0]).getDia(), 1);
+		int dias = GenP2V2.numDias( 1,((GenP2V2)_genes[0]).getDia());
 
 		// Calculamos las distancias entre las ciudades seleccionadas
 		for (int nCiudad = 0; nCiudad < _numGenes; nCiudad++) {
-			distancia += CromosomaViajante.getDist((Integer)_genes[nCiudad].getGen(), nCiudad + 1);
+			if(nCiudad == _numGenes-1)
+				// Sumamos la distancia de la ultima ciudad elegida con Madrid
+				distancia += CromosomaViajante.getDist((Integer)_genes[_longitudCromosoma-1].getGen(), 0);
+			else
+				distancia += CromosomaViajante.getDist((Integer)_genes[nCiudad].getGen(), (Integer)_genes[nCiudad + 1].getGen());
 			if (nCiudad > 0) dias += GenP2V2.numDias( ((GenP2V2)_genes[nCiudad]).getDia(), ((GenP2V2)_genes[nCiudad-1]).getDia());
 		}
 			
 		// Sumamos la distancia de la ultima ciudad elegida con Madrid
 		distancia += CromosomaViajante.getDist((Integer)_genes[_longitudCromosoma-1].getGen(), 0);
 		
-		dias++; // Para ir a Madrid de nuevo
-		
-		double total = 60 * dias + (0.5 * distancia);
-		
-		return total;
+		// Para ir a Madrid de nuevo
+		if ( ((GenP2V2)_genes[_numGenes -1]).getDia() == 5) {
+			dias += 3;
+		}
+		else dias++;
+				
+		return 60 * dias + (0.5 * distancia);
 	}
 
 	@Override

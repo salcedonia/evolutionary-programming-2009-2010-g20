@@ -872,11 +872,32 @@ public class AG {
 			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
 		}
 
-		// se evaluan y sustituyen a los padres
-		padre.setGenes(hijo1);
-		padre.setAptitud(padre.evalua());
-		madre.setGenes(hijo2);
-		madre.setAptitud(madre.evalua());
+		boolean encontrado = false;
+		ArrayList<Integer> fijosPadre = new ArrayList<Integer>();
+		
+		// Fijamos el primer elemento del primer hijo
+		fijosPadre.add((Integer)((GenP2)padre.getGen(0)).getGen());
+		fijosPadre.add((Integer)((GenP2)madre.getGen(0)).getGen());
+		
+		// Empezamos a buscar por la posicion del primer fijo en el padre
+		int pos = devuelvePos((GenP2[])padre.getGenes(), (Integer)((GenP2)madre.getGen(0)).getGen());
+		
+		// Se repite hasta el primer ciclo
+		while(!encontrado){
+			
+			if((Integer)((GenP2)madre.getGen(pos)).getGen() == (Integer)((GenP2)padre.getGen(0)).getGen())
+				encontrado = true;
+			else
+			    // Fijamos los siguientes
+			    fijosPadre.add((Integer)((GenP2)madre.getGen(pos)).getGen());
+		}
+		
+		//fijosPadre.con
+//		// se evaluan y sustituyen a los padres
+//		padre.setGenes(hijo1);
+//		padre.setAptitud(padre.evalua());
+//		madre.setGenes(hijo2);
+//		madre.setAptitud(madre.evalua());
 		
 //		boolean encontrado = false;
 //		int posSig, pos;
@@ -929,14 +950,36 @@ public class AG {
 //			if ((Integer)hijo2[j].getGen() == -1)
 //				hijo2[j].setGen((Integer)padre.getGenes()[j].getGen());
 //		}
-//
-//		// se evaluan y sustituyen a los padres
-//		padre.setGenes(hijo1);
-//		padre.setAptitud(padre.evalua());
-//		madre.setGenes(hijo2);
-//		madre.setAptitud(madre.evalua());
+
+		// se evaluan y sustituyen a los padres
+		padre.setGenes(hijo1);
+		padre.setAptitud(padre.evalua());
+		madre.setGenes(hijo2);
+		madre.setAptitud(madre.evalua());
 	}
 
+	/**
+	 * 
+	 * @param a
+	 * @param elem
+	 * @return
+	 */
+	private int devuelvePos(GenP2[] a, int elem){
+		
+		boolean encontrado = false;
+		int pos=0;
+		
+		while(!encontrado){
+			
+			if(elem == (Integer)(a[pos].getGen()))
+				encontrado = true;
+			else
+				pos++;
+		}
+		
+		return pos;
+	}
+	
 	/**
 	 * Cruza los cromosomas padre y madre por el punto de cruce segun el metodo
 	 * ERX.
@@ -1014,8 +1057,8 @@ public class AG {
 		}
 		
 		// Traducir la codificacion
-		GenP2[] hijo1Traducido = codifica(hijo1);
-		GenP2[] hijo2Traducido = codifica(hijo2);
+		GenP2[] hijo1Traducido = descodifica(hijo1);
+		GenP2[] hijo2Traducido = descodifica(hijo2);
 		
 		// se evaluan y sustituyen a los padres
 		padre.setGenes(hijo1Traducido);
@@ -1055,6 +1098,7 @@ public class AG {
 					encontrado = true;
 					it.remove();
 					codificado[i] = new GenP2(j);
+
 				}
 				j++;
 				
@@ -1065,6 +1109,35 @@ public class AG {
 		return codificado;
 	}
 
+	/**
+	 * Descodifica segun la posicion de cada elemento en una lista dinamica
+	 * con los numeros de cada ciudad, eliminando los numeros segun se asignan.
+	 * 
+	 * @param c Cromosoma a codificar.
+	 * @return Los genes codificados.
+	 */
+	private GenP2[] descodifica(GenP2[] c) {
+		
+		GenP2[] descodificado = new GenP2[c.length];
+		
+		// Crea la lista con los numeros de las ciudades en orden creciente
+		ArrayList<Integer> listaDinamica = new ArrayList<Integer>();
+		for (int i = 1; i <= c.length; i++)
+			listaDinamica.add(i);
+			
+		GenP2[] padre = c;
+		for (int i = 0; i < c.length; i++) {
+			
+			int ciudad = (Integer) padre[i].getGen();
+			
+			descodificado[i] = new GenP2(listaDinamica.get(ciudad-1));
+			
+			listaDinamica.remove(ciudad-1);		
+		}
+		
+		return descodificado;
+	}
+	
 	/**
 	 * Cruza los cromosomas padre y madre por el punto de cruce segun el metodo
 	 * nuestro.
@@ -1402,8 +1475,9 @@ public class AG {
 		// Comienzo de la ruta 2 pero con ciudades diferentes de la primera
 		do {
 			rutas[1] = generador.nextInt(_poblacion[0].getLongitudCromosoma());
-		} while ((rutas[1] == rutas[0]) || (rutas[1] == rutas[0] +1) || 
-				(rutas[1]+1 == rutas[0]) || (rutas[1] + 1 == rutas[0]));
+		} while (((rutas[1] == rutas[0]) || (rutas[1] == rutas[0] +1) || 
+				(rutas[1]+1 == rutas[0]) || (rutas[1] + 1 == rutas[0])) 
+				&& (rutas[1] < 26));
 		
 				
 		return rutas;
