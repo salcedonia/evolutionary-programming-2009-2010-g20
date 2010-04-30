@@ -187,7 +187,7 @@ public abstract class Cromosoma implements Comparable<Object> {
 	 * 
 	 * @return Gen del indice pedido.
 	 */
-	public Object getGen(int numGen) {
+	public Gen getGen(int numGen) {
 		
 		return _genes[numGen];
 	}

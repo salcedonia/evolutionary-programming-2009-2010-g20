@@ -11,6 +11,8 @@ import cromosoma.Gen;
  */
 public class GenP1 extends Gen {
 	
+	private boolean[] _gen;
+	
 	/**
 	 * Constructora por defecto.
 	 */
@@ -112,6 +114,18 @@ public class GenP1 extends Gen {
 			((boolean[])copia._gen)[i] = genP1[i];
 		
 		return copia;
+	}
+
+	@Override
+	public Object getGen() {
+		// TODO Auto-generated method stub
+		return _gen;
+	}
+
+	@Override
+	public void setGen(Object gen) {
+		
+		_gen = (boolean[]) gen;
 	}
 	
 }

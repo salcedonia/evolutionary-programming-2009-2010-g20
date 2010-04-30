@@ -9,6 +9,8 @@ import cromosoma.Gen;
  */
 public class GenP2 extends Gen {
 
+	protected int _gen;
+	
 	/**
 	 * Constructora por defecto.
 	 */
@@ -40,6 +42,19 @@ public class GenP2 extends Gen {
 		
 		// En este caso se inicializa con la constructora
 
+	}
+
+	@Override
+	public Object getGen() {
+		// TODO Auto-generated method stub
+		return _gen;
+	}
+
+	@Override
+	public void setGen(Object gen) {
+
+		_gen = (Integer) gen;
+		
 	}
 
 }

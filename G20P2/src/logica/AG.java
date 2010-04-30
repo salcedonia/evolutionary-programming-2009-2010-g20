@@ -12,8 +12,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import utils.ListaOrdenada;
+import utils.TablaConectividad;
 
 import cromosoma.Cromosoma;
 import cromosoma.practica1.CromosomaFuncion1;
@@ -669,59 +672,51 @@ public class AG {
 	 */
 	private void crucePMX(Cromosoma padre, Cromosoma madre, int punto_cruce1,
 			int punto_cruce2) {
+		
+		// Descendientes
+		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
+		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
 
-		boolean encontrado;
-		int aux, j;
+		// Arrays de parejas
+		ArrayList<Integer> fijosPadre = new ArrayList<Integer>();
+		ArrayList<Integer> fijosMadre = new ArrayList<Integer>();
 
 		// Se intercambian los posiciones dentro del intervalo
-		for (int i = punto_cruce1; i <= punto_cruce2; i++) {
+		for (int i = punto_cruce1; i < punto_cruce2; i++) {
 
-			GenP2 genPadre = (GenP2) padre.getGen(i);
-			GenP2 genMadre = (GenP2) madre.getGen(i);
-
-			aux = (Integer) genPadre.getGen();
-			genPadre.setGen(genMadre.getGen());
-			genMadre.setGen(aux);
-
+			hijo1[i] = (GenP2) madre.getGen(i).clone();
+			hijo2[i] = (GenP2) padre.getGen(i).clone();
+			fijosPadre.add( (Integer) madre.getGen(i).getGen());
+			fijosMadre.add( (Integer) padre.getGen(i).getGen());
 		}
 
-		for (int i = 0; i < padre.getLongitudCromosoma(); i++) {
+		for (int i = 0; i < padre.getNumGenes(); i++) {
 
 			// Se eliminan los repetidos fuera del intervalo
-			if (i < punto_cruce1 || i > punto_cruce2) {
-				encontrado = false;
-				j = punto_cruce1;
+			if (i < punto_cruce1 || i >= punto_cruce2) {
 
-				// Buscamos los repetidos por el cruce
-				while (!encontrado && j <= punto_cruce2) {
+				// Si un valor no está en la subcadena
+				// intercambiada, se copia igual
+				int aux = (Integer) padre.getGen(i).getGen();
+				if (!fijosPadre.contains(aux))
+					hijo1[i] = (GenP2) padre.getGen(i).clone();
+				else
+					hijo1[i] = (GenP2) padre.getGen( devuelvePos( (GenP2[])madre.getGenes(), (Integer) padre.getGen(i).getGen()) ).clone();
 
-					GenP2 genPadreI = (GenP2) padre.getGen(i);
-					GenP2 genMadreI = (GenP2) madre.getGen(i);
-
-					GenP2 genPadreJ = (GenP2) padre.getGen(j);
-					GenP2 genMadreJ = (GenP2) madre.getGen(j);
-
-					if (((Integer) genPadreI.getGen())
-							.equals((Integer) genPadreJ.getGen())) {
-						genPadreI.setGen(genMadreJ.getGen());
-						encontrado = true;
-					}
-
-					if (((Integer) genMadreI.getGen())
-							.equals((Integer) genMadreJ.getGen())) {
-						genMadreI.setGen(genPadreJ.getGen());
-						encontrado = true;
-					}
-
-					if (encontrado)
-						i--;
-					j++;
-				}
+				// Se sustituye por el valor que tenga dicha
+				// subcadena en el otro padre.
+				int aux2 = (Integer) madre.getGen(i).getGen();
+				if (!fijosMadre.contains(aux2))
+					hijo2[i] = (GenP2) madre.getGen(i).clone();
+				else
+					hijo2[i] = (GenP2) madre.getGen( devuelvePos( (GenP2[])padre.getGenes(), (Integer) padre.getGen(i).getGen()) ).getGen();
 			}
 		}
 
 		// se evaluan y sustituyen a los padres
+		padre.setGenes(hijo1);
 		padre.setAptitud(padre.evalua());
+		madre.setGenes(hijo2);
 		madre.setAptitud(madre.evalua());
 	}
 
@@ -741,79 +736,76 @@ public class AG {
 	private void cruceOX(Cromosoma padre, Cromosoma madre, int punto_cruce1,
 			int punto_cruce2) {
 
-		boolean encontrado, libre;
-		int aux, j1, j2, k;
-
 		// se inicializan los hijos copiando los valores en los dos hijos
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
-		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
-			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
+
+		int j1, j2;
+
+		ArrayList<Integer> fijosPadre = new ArrayList<Integer>();
+		ArrayList<Integer> fijosMadre = new ArrayList<Integer>();
+
+		for (int i = punto_cruce1; i < punto_cruce2; i++) {
+
+			// Intercambiamos los elementos en el segmento
+			hijo1[i] = (GenP2) madre.getGen(i).clone();
+			hijo2[i] = (GenP2) padre.getGen(i).clone();
+
+			// Rellenamos los elementos fijos para no repetir
+			fijosPadre.add((Integer) madre.getGen(i).getGen());
+			fijosMadre.add((Integer) padre.getGen(i).getGen());
 		}
 
-		// Intercambiamos los elementos del intervalo
-		for (int pos = punto_cruce1; pos <= punto_cruce2; pos++) {
+		// Para los valores que faltan en los hijos se copian los
+		// valores de los padres comenzando a partir de la zona
+		// copiada y respetando el orden:
 
-			GenP2 genPadre = (GenP2) padre.getGen(pos);
-			GenP2 genMadre = (GenP2) madre.getGen(pos);
+		j1 = (punto_cruce2) % padre.getNumGenes();
 
-			aux = (Integer) genPadre.getGen();
-			genPadre.setGen(genMadre.getGen());
-			genMadre.setGen(aux);
-		}
+		// Partimos del segundo punto de cruce por ejemplo
+		for (int pos = punto_cruce2 % padre.getNumGenes(); pos < punto_cruce1
+				|| pos >= punto_cruce2; pos = (pos + 1) % padre.getNumGenes()) {
 
-		j1 = (punto_cruce2 + 1) % padre.getLongitudCromosoma();
-		j2 = (punto_cruce2 + 1) % madre.getLongitudCromosoma();
-
-		for (int pos = (punto_cruce2 + 1) % padre.getLongitudCromosoma(); pos < punto_cruce1
-				|| pos > punto_cruce2; pos = (pos + 1)
-				% padre.getLongitudCromosoma()) {
-
-			encontrado = false;
-			while (!encontrado) {
-
-				libre = true;
-				k = punto_cruce1;
-				while (libre && k <= punto_cruce2) {
-
-					if (((Integer) hijo1[j1].getGen())
-							.equals((Integer) hijo2[k].getGen()))
-						libre = false;
-					k++;
-				}
-
-				if (libre) {
-					((GenP2) padre.getGen(pos)).setGen(hijo1[j1].getGen());
-					encontrado = true;
-				}
-
-				j1 = (j1 + 1) % padre.getLongitudCromosoma();
+			// Buscamos el siguiente que no este en el intervalo o que no haya
+			// sido cambiado
+			int aux = (Integer) padre.getGen(j1).getGen();
+			while (fijosPadre.contains(aux)) {
+				j1 = (j1 + 1) % padre.getNumGenes();
+				aux = (Integer) padre.getGen(j1).getGen();
 			}
+				
 
-			encontrado = false;
-			while (!encontrado) {
-
-				libre = true;
-				k = punto_cruce1;
-				while (libre && k <= punto_cruce2) {
-					if (((Integer) hijo2[j2].getGen())
-							.equals((Integer) hijo1[k].getGen()))
-						libre = false;
-					k++;
-				}
-
-				if (libre) {
-					((GenP2) madre.getGen(pos)).setGen(hijo2[j2].getGen());
-					encontrado = true;
-				}
-
-				j2 = (j2 + 1) % madre.getLongitudCromosoma();
-			}
+			// Ponemos el siguiente disponible
+			hijo1[pos] = (GenP2) padre.getGen(j1).clone();
+			// Aniadimos al vector para que sepa que ya no esta disponible
+			fijosPadre.add( (Integer) padre.getGen(j1).getGen());
 		}
+
+		j2 = (punto_cruce2) % madre.getNumGenes();
+
+		for (int pos = punto_cruce2 % madre.getNumGenes(); pos < punto_cruce1
+				|| pos >= punto_cruce2; pos = (pos + 1) % madre.getNumGenes()) {
+			// Buscamos el siguiente que no este en el intervalo o que no haya
+			// sido cambiado
+			int aux = (Integer) madre.getGen(j2).getGen();
+			while (fijosMadre.contains(aux)) {
+				j2 = (j2 + 1) % madre.getNumGenes();
+				aux = (Integer) madre.getGen(j2).getGen();
+			}
+				
+
+			// Ponemos el siguiente disponible
+			hijo2[pos] = (GenP2) madre.getGen(j2).clone();
+			// Aniadimos al vector para que sepa que ya no esta disponible
+			fijosMadre.add( (Integer) madre.getGen(j2).getGen());
+		}
+
+		System.out.println("Cruce OX: \n");
 
 		// se evaluan y sustituyen a los padres
+		padre.setGenes(hijo1);
 		padre.setAptitud(padre.evalua());
+		madre.setGenes(hijo2);
 		madre.setAptitud(madre.evalua());
 	}
 
@@ -833,13 +825,91 @@ public class AG {
 	private void cruceVarianteOX(Cromosoma padre, Cromosoma madre,
 			int punto_cruce1, int punto_cruce2) {
 
-		// se inicializan los hijos copiando los valores en los dos hijos
+		/*// se inicializan los hijos copiando los valores en los dos hijos
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
 		for (int i = 0; i < padre.getNumGenes(); i++) {
 			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
 			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
 		}
+
+		// se evaluan y sustituyen a los padres
+		padre.setGenes(hijo1);
+		padre.setAptitud(padre.evalua());
+		madre.setGenes(hijo2);
+		madre.setAptitud(madre.evalua());*/
+		
+		
+		// Descendientes
+		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
+		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
+
+		// Se eligen un numero n aleatorio de cantidad de posiciones a
+		// intercambiar
+		//Random generador = new Random();
+		//int n = generador.nextInt(padre.length);
+
+		// Array de posiciones aleatorias seleccionadas ordenadas para el padre
+		SortedSet<Integer> orden = new TreeSet<Integer>();
+		ArrayList<Integer> posOrdenadasPadre = new ArrayList<Integer>();
+		ArrayList<Integer> posOrdenadasMadre = new ArrayList<Integer>();
+		
+		// Generamos dicho array
+//		for (int i = 0; i < n; i++) {
+//
+//			int num = 0;
+//
+//			// Seleccionamos posiciones al azar y sin repetidos
+//			do {
+//				num = generador.nextInt(padre.length);
+//			} while (orden.contains(num));
+//
+//			orden.add(num);
+//		}
+
+		orden.add(2);
+		orden.add(3);
+		orden.add(5);
+		orden.add(8);
+		
+		// Generamos el orden con respecto al otro progenitor
+		Iterator<Integer> iterador = orden.iterator();
+		while (iterador.hasNext()){
+			
+			int valor = (Integer) iterador.next();
+			posOrdenadasPadre.add(devuelvePos( (GenP2[]) madre.getGenes(), (Integer) padre.getGen(valor).getGen()));
+			posOrdenadasMadre.add(devuelvePos( (GenP2[]) padre.getGenes(), (Integer) madre.getGen(valor).getGen()));
+		}
+		
+		// Ahora recorremos las ordenadas
+		Iterator<Integer> iteradorP = posOrdenadasPadre.iterator();
+		Iterator<Integer> iteradorM = posOrdenadasMadre.iterator();
+		
+		// Generamos los hijos
+		for (int pos = 0; pos < padre.getNumGenes(); pos++) {
+
+			// Si no esta entre las seleccionadas se copia lo que tenga la madre
+			if (!posOrdenadasPadre.contains(pos))
+				hijo1[pos] = (GenP2) madre.getGen(pos).clone();
+			else {
+				// Respetando el orden, recuperamos siempre el primer elemento
+				// de la lista
+				if(iteradorP.hasNext())
+					hijo1[pos] = (GenP2) madre.getGen((Integer) iteradorP.next()).clone();
+			}
+			
+			// Si no esta entre las seleccionadas se copia lo que tenga la madre
+			if (!posOrdenadasMadre.contains(pos))
+				hijo2[pos] = (GenP2) padre.getGen(pos).clone();
+			else {
+				// Respetando el orden, recuperamos siempre el primer elemento
+				// de la lista
+				if(iteradorM.hasNext())
+					hijo2[pos] = (GenP2) padre.getGen((Integer) iteradorM.next());
+			}
+		}
+		
+		System.out.println("Cruce OX Con Variacion: \n");
 
 		// se evaluan y sustituyen a los padres
 		padre.setGenes(hijo1);
@@ -867,90 +937,75 @@ public class AG {
 		// se inicializan los hijos copiando los valores en los dos hijos
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
+
+		// Copiamos los padres en los hijos
 		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
-			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
+			hijo1[i] = (GenP2) padre.getGen(i).clone();
+			hijo2[i] = (GenP2) madre.getGen(i).clone();
 		}
 
 		boolean encontrado = false;
 		ArrayList<Integer> fijosPadre = new ArrayList<Integer>();
-		
+		ArrayList<Integer> fijosMadre = new ArrayList<Integer>();
+
+		int inicioCiclo = 0;
 		// Fijamos el primer elemento del primer hijo
-		fijosPadre.add((Integer)((GenP2)padre.getGen(0)).getGen());
-		fijosPadre.add((Integer)((GenP2)madre.getGen(0)).getGen());
-		
+		fijosPadre.add((Integer) padre.getGen(inicioCiclo).getGen());
+		fijosPadre.add((Integer) madre.getGen(inicioCiclo).getGen());
+
 		// Empezamos a buscar por la posicion del primer fijo en el padre
-		int pos = devuelvePos((GenP2[])padre.getGenes(), (Integer)((GenP2)madre.getGen(0)).getGen());
-		
+		int posHijo1 = devuelvePos( (GenP2[]) padre.getGenes(), (Integer) madre.getGen(inicioCiclo).getGen());
+
 		// Se repite hasta el primer ciclo
-		while(!encontrado){
-			
-			if((Integer)((GenP2)madre.getGen(pos)).getGen() == (Integer)((GenP2)padre.getGen(0)).getGen())
+		while (!encontrado) {
+
+			if (madre.getGen(posHijo1).getGen().equals(padre.getGen(inicioCiclo).getGen()))
 				encontrado = true;
-			else
-			    // Fijamos los siguientes
-			    fijosPadre.add((Integer)((GenP2)madre.getGen(pos)).getGen());
+			else {
+				// Fijamos los siguientes
+				fijosPadre.add((Integer) madre.getGen(posHijo1).getGen());
+
+				// Calculamos el siguiente valor a evaluar
+				posHijo1 = devuelvePos( (GenP2[]) padre.getGenes(), (Integer) madre.getGen(posHijo1).getGen());
+			}
+		}
+
+		// Empezamos a buscar por la posicion del primer fijo en el padre
+		int posHijo2 = devuelvePos( (GenP2[]) madre.getGenes(), (Integer) padre.getGen(inicioCiclo).getGen());
+
+		// Fijamos el primer elemento del segundo hijo
+		fijosMadre.add((Integer) madre.getGen(inicioCiclo).getGen());
+		fijosMadre.add((Integer) padre.getGen(inicioCiclo).getGen());
+
+		encontrado = false;
+
+		// Se repite hasta el primer ciclo
+		while (!encontrado) {
+
+			if (padre.getGen(posHijo2).getGen().equals(madre.getGen(inicioCiclo).getGen()))
+				encontrado = true;
+			else {
+				// Fijamos los siguientes
+				fijosMadre.add((Integer) padre.getGen(posHijo2).getGen());
+
+				// Calculamos el siguiente valor a evaluar
+				posHijo2 = devuelvePos( (GenP2[]) madre.getGenes(), (Integer) padre.getGen(posHijo2).getGen());
+			}
+		}
+
+		// Ahora recorremos el padre para generar los dos hijos
+		for (int i = 0; i < padre.getNumGenes(); i++) {
+
+			// Ponemos el que tenga la madre, si no, significa que esta fijo
+			// y no lo tocamos
+			int aux = (Integer) hijo1[i].getGen();
+			if (!fijosPadre.contains(aux))
+				hijo1[i] = (GenP2) madre.getGen(i).clone();
+
+			if (!fijosMadre.contains(hijo2[i]))
+				hijo2[i] = (GenP2) padre.getGen(i).clone();
 		}
 		
-		//fijosPadre.con
-//		// se evaluan y sustituyen a los padres
-//		padre.setGenes(hijo1);
-//		padre.setAptitud(padre.evalua());
-//		madre.setGenes(hijo2);
-//		madre.setAptitud(madre.evalua());
-		
-//		boolean encontrado = false;
-//		int posSig, pos;
-//
-//		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
-//		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
-//		for (int i = 0; i < padre.getNumGenes(); i++) {
-//			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
-//			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
-//		}
-//
-//		for (int i = 0; i < hijo1.length; i++) {
-//			hijo1[i].setGen(-1);
-//			hijo2[i].setGen(-1);
-//		}
-//
-//		hijo1[0].setGen((Integer)padre.getGenes()[0].getGen());
-//		posSig = (Integer)hijo2[0].getGen();
-//
-//		while (posSig != (Integer)hijo1[0].getGen()) {
-//			pos = 0;
-//			while (!encontrado) {
-//
-//				if ((Integer)padre.getGenes()[pos].getGen() == posSig) {
-//					hijo1[pos].setGen((Integer)padre.getGenes()[pos].getGen());
-//					posSig = (Integer)madre.getGenes()[pos].getGen();
-//					encontrado = true;
-//				}
-//				pos++;
-//			}
-//		}
-//
-//		hijo2[0].setGen((Integer)madre.getGenes()[0].getGen());
-//		posSig = (Integer)hijo1[0].getGen();
-//		while (posSig != (Integer)hijo2[0].getGen()) {
-//			pos = 0;
-//			while (!encontrado) {
-//				if ((Integer)madre.getGenes()[pos].getGen() == posSig) {
-//					hijo2[pos].setGen((Integer)madre.getGenes()[pos].getGen());
-//					posSig = (Integer)padre.getGenes()[pos].getGen();
-//					encontrado = true;
-//				}
-//				pos++;
-//			}
-//		}
-//
-//		for (int j = 0; j < hijo1.length; j++) {
-//			if ((Integer)hijo1[j].getGen() == -1)
-//				hijo1[j].setGen((Integer)madre.getGenes()[j].getGen());
-//			if ((Integer)hijo2[j].getGen() == -1)
-//				hijo2[j].setGen((Integer)padre.getGenes()[j].getGen());
-//		}
-
 		// se evaluan y sustituyen a los padres
 		padre.setGenes(hijo1);
 		padre.setAptitud(padre.evalua());
@@ -995,17 +1050,15 @@ public class AG {
 	 */
 	private void cruceERX(Cromosoma padre, Cromosoma madre, int punto_cruce1,
 			int punto_cruce2) {
-
-		// TODO: Por hacer
-
-		// se inicializan los hijos copiando los valores en los dos hijos
-		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
-		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
-		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
-			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
-		}
-
+		
+		TablaConectividad tablaC = new TablaConectividad((GenP2[])padre.getGenes(),(GenP2[])madre.getGenes());
+		
+		// Genera hijo 1
+		GenP2[] hijo1 = combinaRuta((GenP2[])padre.getGenes(),tablaC);
+		
+		// Genera hijo 2
+		GenP2[] hijo2 = combinaRuta((GenP2[])madre.getGenes(),tablaC);
+		
 		// se evaluan y sustituyen a los padres
 		padre.setGenes(hijo1);
 		padre.setAptitud(padre.evalua());
@@ -1013,6 +1066,53 @@ public class AG {
 		madre.setAptitud(madre.evalua());
 	}
 
+	/**
+	 * Realiza la combinacion de rutas a partir de los genes de un progenitor.
+	 * 
+	 * @param progenitor Genes a partir de los cuales hacer la recombinacion.
+	 * @return La ruta recombinada.
+	 */
+	private GenP2[] combinaRuta(GenP2[] progenitor,TablaConectividad tablaC) {
+		
+		GenP2[] hijo = new GenP2[progenitor.length];
+		Random generador = new Random();
+		
+		boolean genesValidos = false;
+		int ciudadActual = (Integer) progenitor[0].getGen();
+		
+		while (!genesValidos) {
+			
+			int i = 0;
+			genesValidos = true;
+			
+			while (i < progenitor.length) {
+				ArrayList<Integer> vecinosCercanos = tablaC.calculaMenorRuta(ciudadActual);
+				
+				if (vecinosCercanos.size() == 0) {
+					i = progenitor.length; // generación inválida
+					genesValidos = false;
+				}
+				else {
+					if (vecinosCercanos.size() > 1) {
+						// random para escoger
+						int ciudadAzar = generador.nextInt(vecinosCercanos.size());
+						
+						ciudadActual = vecinosCercanos.get(ciudadAzar);
+					}
+					else ciudadActual = vecinosCercanos.get(0);
+					
+
+					hijo[i] = new GenP2(ciudadActual);
+				}
+				
+				i++;
+			}
+			
+		}
+		
+		return hijo;
+	}
+		
 	/**
 	 * Cruza los cromosomas padre y madre por el punto de cruce segun el metodo
 	 * con condificacion ordinal.
