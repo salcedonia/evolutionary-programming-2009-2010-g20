@@ -92,7 +92,7 @@ public class GenP2V2 extends GenP2 {
 		
 		GenP2V2 copia = new GenP2V2();
 		
-		copia._gen = new Integer((Integer)_gen);
+		copia._gen = _gen;
 		copia._dia = _dia;
 		
 		return copia;

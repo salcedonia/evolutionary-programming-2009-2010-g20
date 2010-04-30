@@ -7,30 +7,22 @@ package cromosoma;
  */
 public abstract class Gen {
 
-	/**
-	 * Gen para las clases que implementen esta clase.
-	 */
-	protected Object _gen;
+	// ---------------METODOS ABSTRACTOS----------------//
 	
 	/**
 	 * Modifica el array booleano del gen.
 	 * 
 	 * @param gen Array de booleanos del gen.
 	 */
-	public void setGen(Object gen) {
-		_gen = gen;
-	}
+	public abstract void setGen(Object gen);
 
 	/**
 	 * Obtiene el array del gen.
 	 * 
 	 * @return El array de booleanos del gen.
 	 */
-	public Object getGen() {
-		return _gen;
-	}
+	public abstract Object getGen();
 	
-	// ---------------METODOS ABSTRACTOS----------------//
 	/**
 	 * Inicializa aleatoriamente gen.
 	 */

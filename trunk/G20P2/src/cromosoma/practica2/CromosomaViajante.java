@@ -232,4 +232,7 @@ public class CromosomaViajante extends Cromosoma {
 			return getDist(j, i);
 		return DISTANCIAS[i][j];
 	}
+	
 }
+
+
