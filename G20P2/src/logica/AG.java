@@ -590,7 +590,7 @@ public class AG {
 				break;
 
 			case VERSION2:
-				crucePMX(padre, madre, punto_cruce1, punto_cruce2);
+				cruceVersion2(padre, madre, punto_cruce1, punto_cruce2);
 				break;
 			}
 			break;
@@ -698,18 +698,21 @@ public class AG {
 				// Si un valor no está en la subcadena
 				// intercambiada, se copia igual
 				int aux = (Integer) padre.getGen(i).getGen();
-				if (!fijosPadre.contains(aux))
-					hijo1[i] = (GenP2) padre.getGen(i).clone();
-				else
-					hijo1[i] = (GenP2) padre.getGen( devuelvePos( (GenP2[])madre.getGenes(), (Integer) padre.getGen(i).getGen()) ).clone();
-
+				
+				while (fijosPadre.contains(aux))					
+					aux = (Integer) padre.getGen( devuelvePos( (GenP2[])madre.getGenes(), aux) ).getGen();
+				
+				hijo1[i] = new GenP2(aux);
+				
 				// Se sustituye por el valor que tenga dicha
 				// subcadena en el otro padre.
-				int aux2 = (Integer) madre.getGen(i).getGen();
-				if (!fijosMadre.contains(aux2))
-					hijo2[i] = (GenP2) madre.getGen(i).clone();
-				else
-					hijo2[i] = (GenP2) madre.getGen( devuelvePos( (GenP2[])padre.getGenes(), (Integer) padre.getGen(i).getGen()) ).getGen();
+				
+				aux = (Integer) madre.getGen(i).getGen();
+				
+				while (fijosMadre.contains(aux))
+					aux = (Integer) madre.getGen( devuelvePos( (GenP2[])padre.getGenes(), aux) ).getGen();
+				
+				hijo2[i] = new GenP2(aux);
 			}
 		}
 
@@ -825,29 +828,14 @@ public class AG {
 	private void cruceVarianteOX(Cromosoma padre, Cromosoma madre,
 			int punto_cruce1, int punto_cruce2) {
 
-		/*// se inicializan los hijos copiando los valores en los dos hijos
-		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
-		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
-		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
-			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
-		}
-
-		// se evaluan y sustituyen a los padres
-		padre.setGenes(hijo1);
-		padre.setAptitud(padre.evalua());
-		madre.setGenes(hijo2);
-		madre.setAptitud(madre.evalua());*/
-		
-		
 		// Descendientes
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
 
 		// Se eligen un numero n aleatorio de cantidad de posiciones a
 		// intercambiar
-		//Random generador = new Random();
-		//int n = generador.nextInt(padre.length);
+		Random generador = new Random();
+		int n = generador.nextInt(padre.getNumGenes());
 
 		// Array de posiciones aleatorias seleccionadas ordenadas para el padre
 		SortedSet<Integer> orden = new TreeSet<Integer>();
@@ -855,22 +843,17 @@ public class AG {
 		ArrayList<Integer> posOrdenadasMadre = new ArrayList<Integer>();
 		
 		// Generamos dicho array
-//		for (int i = 0; i < n; i++) {
-//
-//			int num = 0;
-//
-//			// Seleccionamos posiciones al azar y sin repetidos
-//			do {
-//				num = generador.nextInt(padre.length);
-//			} while (orden.contains(num));
-//
-//			orden.add(num);
-//		}
+		for (int i = 0; i < n; i++) {
 
-		orden.add(2);
-		orden.add(3);
-		orden.add(5);
-		orden.add(8);
+			int num = 0;
+
+			// Seleccionamos posiciones al azar y sin repetidos
+			do {
+				num = generador.nextInt(padre.getNumGenes());
+			} while (orden.contains(num));
+
+			orden.add(num);
+		}
 		
 		// Generamos el orden con respecto al otro progenitor
 		Iterator<Integer> iterador = orden.iterator();
@@ -905,7 +888,7 @@ public class AG {
 				// Respetando el orden, recuperamos siempre el primer elemento
 				// de la lista
 				if(iteradorM.hasNext())
-					hijo2[pos] = (GenP2) padre.getGen((Integer) iteradorM.next());
+					hijo2[pos] = (GenP2) padre.getGen((Integer) iteradorM.next()).clone();
 			}
 		}
 		
@@ -1002,7 +985,8 @@ public class AG {
 			if (!fijosPadre.contains(aux))
 				hijo1[i] = (GenP2) madre.getGen(i).clone();
 
-			if (!fijosMadre.contains(hijo2[i]))
+			aux = (Integer) hijo2[i].getGen();
+			if (!fijosMadre.contains(aux))
 				hijo2[i] = (GenP2) padre.getGen(i).clone();
 		}
 		
@@ -1054,10 +1038,10 @@ public class AG {
 		TablaConectividad tablaC = new TablaConectividad((GenP2[])padre.getGenes(),(GenP2[])madre.getGenes());
 		
 		// Genera hijo 1
-		GenP2[] hijo1 = combinaRuta((GenP2[])padre.getGenes(),tablaC);
+		GenP2[] hijo1 = combinaRuta((GenP2[])padre.getGenes(),tablaC, (Integer) madre.getGen(0).getGen());
 		
 		// Genera hijo 2
-		GenP2[] hijo2 = combinaRuta((GenP2[])madre.getGenes(),tablaC);
+		GenP2[] hijo2 = combinaRuta((GenP2[])madre.getGenes(),tablaC, (Integer) padre.getGen(0).getGen());
 		
 		// se evaluan y sustituyen a los padres
 		padre.setGenes(hijo1);
@@ -1072,25 +1056,31 @@ public class AG {
 	 * @param progenitor Genes a partir de los cuales hacer la recombinacion.
 	 * @return La ruta recombinada.
 	 */
-	private GenP2[] combinaRuta(GenP2[] progenitor,TablaConectividad tablaC) {
+	private GenP2[] combinaRuta(GenP2[] progenitor,TablaConectividad tablaC, int primeroPareja) {
 		
 		GenP2[] hijo = new GenP2[progenitor.length];
 		Random generador = new Random();
 		
+		boolean conMinimoCamino = false;
 		boolean genesValidos = false;
-		int ciudadActual = (Integer) progenitor[0].getGen();
+		int numIntentos = 0;
 		
 		while (!genesValidos) {
 			
-			int i = 0;
+			int ciudadActual = primeroPareja;
+			hijo[0] = new GenP2(ciudadActual);
+			ArrayList<Integer> listaDinamica = new ArrayList<Integer>();
+			listaDinamica.add(ciudadActual);
+			
+			int i = 1;
 			genesValidos = true;
 			
-			while (i < progenitor.length) {
-				ArrayList<Integer> vecinosCercanos = tablaC.calculaMenorRuta(ciudadActual);
+			while ((genesValidos) && (i < progenitor.length)) {
+				
+				ArrayList<Integer> vecinosCercanos = tablaC.calculaMenorRutaPosible(ciudadActual, listaDinamica, conMinimoCamino);
 				
 				if (vecinosCercanos.size() == 0) {
-					i = progenitor.length; // generación inválida
-					genesValidos = false;
+					genesValidos = false; // generación inválida
 				}
 				else {
 					if (vecinosCercanos.size() > 1) {
@@ -1103,12 +1093,29 @@ public class AG {
 					
 
 					hijo[i] = new GenP2(ciudadActual);
+					listaDinamica.add(ciudadActual);
+					
+					i++;
+					
 				}
 				
-				i++;
+				
+			}
+			
+			numIntentos++;
+			
+			if (numIntentos == 300) {
+				
+				// Hace lo mismo, pero no coge el camino con menos conectividad (que da mas porcentage de conseguir
+				// una ruta exitosa, que en algunos casos le hace bloquearse. De esta manera elige al azar entre los
+				// camino disponibles y consigue encontrar una combinacion correcta.
+				conMinimoCamino = false;
+				
 			}
 			
 		}
+		
+		// System.out.println("Número de pasos: "+ numIntentos);
 		
 		return hijo;
 	}
@@ -1254,23 +1261,186 @@ public class AG {
 	private void crucePropio(Cromosoma padre, Cromosoma madre,
 			int punto_cruce1, int punto_cruce2) {
 
-		// TODO: Por hacer
-
 		// se inicializan los hijos copiando los valores en los dos hijos
 		GenP2[] hijo1 = new GenP2[padre.getNumGenes()];
 		GenP2[] hijo2 = new GenP2[madre.getNumGenes()];
-		for (int i = 0; i < padre.getNumGenes(); i++) {
-			hijo1[i] = (GenP2) ((GenP2) padre.getGen(i)).clone();
-			hijo2[i] = (GenP2) ((GenP2) madre.getGen(i)).clone();
-		}
 
+		// ArrayList auxiliar para almacenar la ruta entre los puntos de cruce
+		ArrayList<Integer> rutaCruce = new ArrayList<Integer>();
+		
+		for (int i = punto_cruce1; i < punto_cruce2; i++)
+			rutaCruce.add((Integer) padre.getGen(i).getGen());
+		
+		
+		// Se crea el hijo saltando las ciudades de rutaCruce y poniendo las demas en el orden
+		// en que aparecen. Cuando encuentra el primer elemento de la ruta de cruce,
+		// pone toda la ruta de cruce seguida en el hijo.
+		
+		int i = 0;
+		int elemHijo1 = 0;
+		while (i < padre.getNumGenes()) {
+			
+			int ciudadContador = (Integer) madre.getGen(i).getGen();
+			if (!rutaCruce.contains(ciudadContador)) {
+				hijo1[elemHijo1] = new GenP2(ciudadContador);
+				elemHijo1++;
+			}
+			else {
+				if ((rutaCruce.size() > 0) && (ciudadContador == rutaCruce.get(0))) {
+					
+					Iterator<Integer> itRC = rutaCruce.iterator();
+					while (itRC.hasNext()) {
+						
+						hijo1[elemHijo1] = new GenP2(itRC.next());
+						elemHijo1++;
+						
+					}
+					
+				}
+			}
+			i++;
+		}
+		
+		// se hace lo mismo con el otro cromosoma
+		rutaCruce = new ArrayList<Integer>();
+		for (int j = punto_cruce1; j < punto_cruce2; j++)
+			rutaCruce.add((Integer) madre.getGen(j).getGen());
+		
+		i = 0;
+		int elemHijo2 = 0;
+		while (i < madre.getNumGenes()) {
+			
+			int ciudadContador = (Integer) padre.getGen(i).getGen();
+			if (!rutaCruce.contains(ciudadContador)) {
+				hijo2[elemHijo2] = new GenP2(ciudadContador);
+				elemHijo2++;
+			}
+			else {
+				if ((rutaCruce.size() > 0) && (ciudadContador == rutaCruce.get(0))) {
+					
+					Iterator<Integer> itRC = rutaCruce.iterator();
+					while (itRC.hasNext()) {
+						
+						hijo2[elemHijo2] = new GenP2(itRC.next());
+						elemHijo2++;
+						
+					}
+					
+				}
+			}
+			i++;
+		}
+		
 		// se evaluan y sustituyen a los padres
 		padre.setGenes(hijo1);
 		padre.setAptitud(padre.evalua());
 		madre.setGenes(hijo2);
 		madre.setAptitud(madre.evalua());
 	}
+	
+	/**
+	 * Cruza los cromosomas padre y madre por el punto de cruce segun el metodo
+	 * nuestro para la version 2.
+	 * 
+	 * @param padre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param madre
+	 *            Uno de los cromosomas a cruzar.
+	 * @param punto_cruce1
+	 *            El 1er punto de cruce para cruzar los cromosomas.
+	 * @param punto_cruce2
+	 *            El 2do punto de cruce para cruzar los cromosomas.
+	 */
+	private void cruceVersion2(Cromosoma padre, Cromosoma madre,
+			int punto_cruce1, int punto_cruce2) {
 
+		TablaConectividad tablaC = new TablaConectividad((GenP2[])padre.getGenes(),(GenP2[])madre.getGenes());
+		
+		// Genera hijo 1
+		GenP2V2[] hijo1 = combinaRutaV2((GenP2V2[])padre.getGenes(),tablaC, (Integer) madre.getGen(0).getGen());
+		
+		// Genera hijo 2
+		GenP2V2[] hijo2 = combinaRutaV2((GenP2V2[])madre.getGenes(),tablaC, (Integer) padre.getGen(0).getGen());
+		
+		// se evaluan y sustituyen a los padres
+		padre.setGenes(hijo1);
+		padre.setAptitud(padre.evalua());
+		madre.setGenes(hijo2);
+		madre.setAptitud(madre.evalua());
+	}
+	
+
+	/**
+	 * Realiza la combinacion de rutas a partir de los genes de un progenitor.
+	 * 
+	 * @param progenitor Genes a partir de los cuales hacer la recombinacion.
+	 * @return La ruta recombinada.
+	 */
+	private GenP2V2[] combinaRutaV2(GenP2V2[] progenitor,TablaConectividad tablaC, int primeroPareja) {
+		
+		GenP2V2[] hijo = new GenP2V2[progenitor.length];
+		Random generador = new Random();
+		
+		boolean conMinimoCamino = false;
+		boolean genesValidos = false;
+		int numIntentos = 0;
+		
+		while (!genesValidos) {
+			
+			int ciudadActual = primeroPareja;
+			int diaAux = progenitor[devuelvePos(progenitor, ciudadActual)].getDia();
+			hijo[0] = new GenP2V2(ciudadActual, diaAux);
+			ArrayList<Integer> listaDinamica = new ArrayList<Integer>();
+			listaDinamica.add(ciudadActual);
+			
+			int i = 1;
+			genesValidos = true;
+			
+			while ((genesValidos) && (i < progenitor.length)) {
+				
+				ArrayList<Integer> vecinosCercanos = tablaC.calculaMenorRutaPosible(ciudadActual, listaDinamica, conMinimoCamino);
+				
+				if (vecinosCercanos.size() == 0) {
+					genesValidos = false; // generación inválida
+				}
+				else {
+					if (vecinosCercanos.size() > 1) {
+						// random para escoger
+						int ciudadAzar = generador.nextInt(vecinosCercanos.size());
+						
+						ciudadActual = vecinosCercanos.get(ciudadAzar);
+					}
+					else ciudadActual = vecinosCercanos.get(0);
+					
+					diaAux = progenitor[devuelvePos(progenitor, ciudadActual)].getDia();
+					hijo[i] = new GenP2V2(ciudadActual,diaAux);
+					listaDinamica.add(ciudadActual);
+					
+					i++;
+					
+				}
+				
+				
+			}
+			
+			numIntentos++;
+			
+			if (numIntentos == 300) {
+				
+				// Hace lo mismo, pero no coge el camino con menos conectividad (que da mas porcentage de conseguir
+				// una ruta exitosa, que en algunos casos le hace bloquearse. De esta manera elige al azar entre los
+				// camino disponibles y consigue encontrar una combinacion correcta.
+				conMinimoCamino = false;
+				
+			}
+			
+		}
+		
+		// System.out.println("Número de pasos: "+ numIntentos);
+		
+		return hijo;
+	}
+	
 	// ------------------- METODOS DE MUTACION --------------------//
 
 	/**
@@ -1451,7 +1621,7 @@ public class AG {
 							.getLongitudCromosoma());
 
 					aux = (Integer) genes[pos1].getGen();
-					genes[pos1] = (GenP2) genes[pos2].clone();
+					genes[pos1].setGen((Integer) genes[pos2].getGen());
 					genes[pos2].setGen(aux);
 
 					mutado = true;
@@ -1574,11 +1744,9 @@ public class AG {
 		
 		// Comienzo de la ruta 2 pero con ciudades diferentes de la primera
 		do {
-			rutas[1] = generador.nextInt(_poblacion[0].getLongitudCromosoma());
-		} while (((rutas[1] == rutas[0]) || (rutas[1] == rutas[0] +1) || 
-				(rutas[1]+1 == rutas[0]) || (rutas[1] + 1 == rutas[0])) 
-				&& (rutas[1] < 26));
-		
+			rutas[1] = generador.nextInt(_poblacion[0].getLongitudCromosoma() - 1);
+		} while (rutas[1] == rutas[0] || rutas[1] == rutas[0] +1 || 
+				rutas[1]+1 == rutas[0] || rutas[1] + 1 == rutas[0]);
 				
 		return rutas;
 	}
