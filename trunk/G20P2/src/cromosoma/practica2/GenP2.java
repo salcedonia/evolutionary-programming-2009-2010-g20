@@ -24,7 +24,7 @@ public class GenP2 extends Gen {
 	 */
 	public GenP2(int ciudad) {
 		
-		_gen = new Integer(ciudad);
+		_gen = ciudad;
 	}
 	
 	@Override
@@ -32,7 +32,7 @@ public class GenP2 extends Gen {
 		
 		GenP2 copia = new GenP2();
 		
-		copia._gen = new Integer((Integer)_gen);
+		copia._gen = _gen;
 		
 		return copia;
 	}

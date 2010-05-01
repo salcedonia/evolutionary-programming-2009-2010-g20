@@ -1,7 +1,6 @@
 package utils;
 
 import java.util.ArrayList;
-
 import cromosoma.practica2.GenP2;
 
 /**
@@ -24,62 +23,83 @@ public class TablaConectividad {
 				
 		for (int i = 0; i < padre.length; i++) {
 			
-			_tabla[i] = new int[4];
+			int ciudadContador = (Integer) padre[i].getGen() - 1;
+			
+			_tabla[ciudadContador] = new int[4];
 			
 			if (i+1 < padre.length)
-				_tabla[i][0] = (Integer) padre[i+1].getGen();
+				_tabla[ciudadContador][0] = (Integer) padre[i+1].getGen();
 			else 
-				_tabla[i][0] = (Integer) padre[0].getGen();
+				_tabla[ciudadContador][0] = (Integer) padre[0].getGen();
 				
 			if (i-1 >= 0)
-				_tabla[i][1] = (Integer) padre[i-1].getGen();
+				_tabla[ciudadContador][1] = (Integer) padre[i-1].getGen();
 			else
-				_tabla[i][1] = (Integer) padre[padre.length].getGen();
+				_tabla[ciudadContador][1] = (Integer) padre[padre.length-1].getGen();
 			
 			// Se mira si es diferente la tercera conectividad (desde madre)
 			int temp;
-			if (i+1 < padre.length)
-				temp = (Integer) madre[i+1].getGen();
+			int ciudadContadorMadre = devuelvePos(madre, ciudadContador + 1);
+			
+			if (ciudadContadorMadre+1 < padre.length)
+				temp = (Integer) madre[ ciudadContadorMadre + 1].getGen();
 			else 
 				temp = (Integer) madre[0].getGen();
 			
-			if ((temp != _tabla[i][0]) && (temp != _tabla[i][1]))
-				_tabla[i][2] = temp;
-			else _tabla[i][2] = -1;
+			if ((temp != _tabla[ciudadContador][0]) && (temp != _tabla[ciudadContador][1]))
+				_tabla[ciudadContador][2] = temp;
+			else _tabla[ciudadContador][2] = -1;
 			
 			// Se mira si es diferente la cuarta conectividad (desde madre)
-			if (i-1 >= 0)
-				temp = (Integer) madre[i-1].getGen();
+			if (ciudadContadorMadre-1 >= 0)
+				temp = (Integer) madre[ciudadContadorMadre-1].getGen();
 			else
-				temp = (Integer) madre[padre.length].getGen();
+				temp = (Integer) madre[padre.length-1].getGen();
 				
-			if (temp != _tabla[i][0] && temp != _tabla[i][1] && temp != _tabla[i][2])
-				_tabla[i][3] = temp;
-			else _tabla[i][3] = -1;
+			if (temp != _tabla[ciudadContador][0] && temp != _tabla[ciudadContador][1] && temp != _tabla[ciudadContador][2])
+				_tabla[ciudadContador][3] = temp;
+			else _tabla[ciudadContador][3] = -1;
 			
 		}
 		
 	}
 	
-	public ArrayList<Integer> calculaMenorRuta(int ciudad) {
+	public ArrayList<Integer> calculaMenorRutaPosible(int ciudad, ArrayList<Integer> ciudadesIncluidas, boolean conMinimoCamino) {
 		
-		int[] rutas = _tabla[ciudad];
-		ArrayList<Integer> retVal = new ArrayList<Integer>();		
-		int minimo = numConexiones(rutas[0]);
+		int[] rutas = _tabla[ciudad-1];
+		ArrayList<Integer> retVal = new ArrayList<Integer>();	
 		
-		for (int i = 1; i < rutas.length; i++) {
+		if (!conMinimoCamino) {
 			
-			int nC = numConexiones(rutas[i]);
-			
-			if (minimo > nC) {
+			for (int i = 0; i < rutas.length; i++) {
 				
-				minimo = nC;
-				retVal = new ArrayList<Integer>();
-				retVal.add(i);
+				if ((rutas[i] != -1) && (!ciudadesIncluidas.contains(rutas[i]))) 
+					retVal.add(rutas[i]);
 			}
-			else if (minimo == nC) {
-				retVal.add(i);
+		}
+		else {
+			
+				
+			int minimo = Integer.MAX_VALUE;
+			
+			for (int i = 0; i < rutas.length; i++) {
+				
+				if ((rutas[i] != -1) && (!ciudadesIncluidas.contains(rutas[i]))) {
+					int nC = numConexiones(rutas[i]);
+					
+					if (minimo > nC) {
+						
+						minimo = nC;
+						retVal = new ArrayList<Integer>();
+						retVal.add(rutas[i]);
+					}
+					else if (minimo == nC) {
+						retVal.add(rutas[i]);
+					}
+				}
 			}
+		
+			
 		}
 		
 		return retVal;
@@ -89,12 +109,34 @@ public class TablaConectividad {
 		
 		int numConexiones = 0;
 		
-		for (int i = 0; i < _tabla[ciudad].length; i++) {
+		for (int i = 0; i < _tabla[ciudad-1].length; i++) {
 			
-			if (_tabla[ciudad][i] != -1) numConexiones++;
+			if (_tabla[ciudad-1][i] != -1) numConexiones++;
 		}
 		
 		return numConexiones;
+	}
+	
+	/**
+	 * 
+	 * @param a
+	 * @param elem
+	 * @return
+	 */
+	private int devuelvePos(GenP2[] a, int elem){
+		
+		boolean encontrado = false;
+		int pos=0;
+		
+		while(!encontrado){
+			
+			if(elem == (Integer)(a[pos].getGen()))
+				encontrado = true;
+			else
+				pos++;
+		}
+		
+		return pos;
 	}
 	
 }
