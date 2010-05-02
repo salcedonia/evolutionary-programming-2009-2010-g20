@@ -382,7 +382,7 @@ public class Ventana extends JFrame {
 
 			// Mostramos el resultado en el cuadro de texto de informe.
 			_panelResultados.imprimeResultadoConsola(_tipoVista,
-					_tipoCromosoma, _AG.getElMejorGlobal().toString(), _AG
+					_tipoCromosoma, _tipoVersion, _AG.getElMejorGlobal().toString(), _AG
 							.getElMejorGlobal().f());
 
 			// Volvemos a activar el boton
@@ -448,7 +448,7 @@ public class Ventana extends JFrame {
 
 			// Mostramos el resultado en el cuadro de texto de informe.
 			_panelResultados.imprimeResultadoConsola(_tipoVista,
-					_tipoCromosoma, _AG.getElMejorGlobal().toString(), _AG
+					_tipoCromosoma, _tipoVersion, _AG.getElMejorGlobal().toString(), _AG
 							.getElMejorGlobal().f());
 
 			// Volvemos a activar el boton
@@ -648,7 +648,7 @@ public class Ventana extends JFrame {
 				_panelResultados.aniadirTexto("\nEjecucion " + nEjecucion
 						+ " - Parametro Variable: " + i + "\n");
 				_panelResultados.imprimeResultadoConsola(_tipoVista,
-						_tipoCromosoma, _AG.getElMejorGlobal().toString(), _AG
+						_tipoCromosoma, _tipoVersion, _AG.getElMejorGlobal().toString(), _AG
 								.getElMejorGlobal().f());
 
 				_panelFuncion.guardaDatosEjecucion(_AG);
@@ -842,7 +842,7 @@ public class Ventana extends JFrame {
 				_panelResultados.aniadirTexto("\nEjecucion " + nEjecucion
 						+ " - Parametro Variable: " + i + "\n");
 				_panelResultados.imprimeResultadoConsola(_tipoVista,
-						_tipoCromosoma, _AG.getElMejorGlobal().toString(), _AG
+						_tipoCromosoma, _tipoVersion, _AG.getElMejorGlobal().toString(), _AG
 								.getElMejorGlobal().f());
 
 				_panelFuncion.guardaDatosEjecucion(_AG);
