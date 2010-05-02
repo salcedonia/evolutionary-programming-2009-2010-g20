@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 
 import gui.Ventana;
 import gui.tipos.TipoCromosoma;
+import gui.tipos.TipoVersion;
 import gui.tipos.TipoVista;
 
 import javax.swing.BorderFactory;
@@ -88,7 +89,7 @@ public class PanelResultados extends JPanel {
 	 *            El valor del mejor individuo.
 	 */
 	public void imprimeResultadoConsola(TipoVista tipoVista,
-			TipoCromosoma tipoCromosoma, String elMejor, double valor) {
+			TipoCromosoma tipoCromosoma, TipoVersion tipoVersion, String elMejor, double valor) {
 
 		switch (tipoVista) {
 
@@ -124,8 +125,17 @@ public class PanelResultados extends JPanel {
 
 		case PRACTICA2:
 			
-			_txtInforme.append("La minima ruta es " + valor + " km " +
-					"con la siguiente ruta: \n" + elMejor);
+			switch (tipoVersion) {
+			case VERSION1: 
+				_txtInforme.append("La minima ruta es " + valor + " km " +
+						"con la siguiente ruta: \n" + elMejor);
+				break;
+			case VERSION2:
+				_txtInforme.append("La minima ruta es " + valor + " euros " +
+						"con la siguiente ruta: \n" + elMejor);
+				break;
+			}
+			
 
 			break;
 

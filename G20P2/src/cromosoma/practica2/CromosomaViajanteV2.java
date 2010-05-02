@@ -41,6 +41,9 @@ public class CromosomaViajanteV2 extends Cromosoma {
 			{ 6, 7 },
 			{ 1, 6, 7 } };
 	
+	private int diasTotales = 0;
+	private int  distanciaTotal = 0;
+	
 	/**
 	 * Constructor de la clase CromosomaViajante.
 	 */
@@ -234,6 +237,9 @@ public class CromosomaViajanteV2 extends Cromosoma {
 		}
 		else dias++;
 				
+		distanciaTotal = distancia;
+		diasTotales = dias;
+		
 		return 60 * dias + (0.5 * distancia);
 	}
 
@@ -246,7 +252,9 @@ public class CromosomaViajanteV2 extends Cromosoma {
 	@Override
 	public String toString() {
 
-		String mensaje = "Madrid - Lunes - Dia: 0\n";
+		f();
+		String mensaje = "Distancia: "+ distanciaTotal + " - Dias: " + diasTotales + "\n";
+		mensaje += "Madrid - Lunes - Dia: 0\n";
 		int dias = GenP2V2.numDias( ((GenP2V2)_genes[0]).getDia(), 1);
 
 		for (int i = 0; i < _numGenes; i++) {
