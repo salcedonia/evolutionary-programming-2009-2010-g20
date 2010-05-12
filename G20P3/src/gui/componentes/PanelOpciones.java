@@ -3,6 +3,7 @@ package gui.componentes;
 import gui.Ventana;
 import gui.tipos.TipoInicializacion;
 import gui.tipos.TipoMutacion;
+import gui.tipos.TipoSeleccion;
 import gui.tipos.TipoVariacion;
 
 import java.awt.GridBagConstraints;
@@ -45,6 +46,7 @@ public class PanelOpciones extends JPanel{
 	private JLabel _lblTamPoblacion;
 	private JLabel _lblProbCruce;
 	private JLabel _lblProbMutacion;
+	private JLabel _lblSeleccionTipoSeleccion;
 	private JLabel _lblSeleccionInicializacion;
 	private JLabel _lblSeleccionMutacion;
 	private JLabel _lblSseleccionIf;
@@ -63,12 +65,17 @@ public class PanelOpciones extends JPanel{
 	private JTextField _txtLimiteVariacion;
 	private JSpinner _spiProbCruce;
 	private JSpinner _spiProbMutacion;
-	private JCheckBox _cmbSeleccionIf;
-	private JCheckBox _cmbSeleccionElitismo;
-	private JCheckBox _cmbSeleccionEscaladoSimple;
+	private JCheckBox _chkSeleccionIf;
+	private JCheckBox _chkSeleccionElitismo;
+	private JCheckBox _chkSeleccionEscaladoSimple;
+	private JComboBox _cmbSeleccionTipoSeleccion;
 	private JComboBox _cmbSeleccionInicializacion;
 	private JComboBox _cmbSeleccionMutacion;
 	private JComboBox _cmbSeleccionVarParametros;
+	
+	// --------- STRINGS PARA LOS COMBOBOX -------------//
+	
+	private String[] _seleccionStrings = { "Ruleta", "Torneo", "Ranking"};
 	
 	private String[] _inicializacionStrings = { "Creciente", "Completa", "Ramped And Half"};
 	
@@ -122,42 +129,48 @@ public class PanelOpciones extends JPanel{
 		constraints.gridy = 3;
 		add(_lblProbMutacion, constraints);
 
-		_lblSeleccionInicializacion = new JLabel("Tipo de Inicializacion:");
+		_lblSeleccionTipoSeleccion = new JLabel("Metodo de Seleccion:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
 		constraints.gridy = 4;
+		add(_lblSeleccionTipoSeleccion, constraints);
+		
+		_lblSeleccionInicializacion = new JLabel("Tipo de Inicializacion:");
+		constraints.anchor = GridBagConstraints.EAST;
+		constraints.gridx = 0;
+		constraints.gridy = 5;
 		add(_lblSeleccionInicializacion, constraints);
 		
 		_lblSeleccionMutacion = new JLabel("Tipo de Mutacion:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 5;
+		constraints.gridy = 6;
 		add(_lblSeleccionMutacion, constraints);
 				
 		_lblSseleccionIf = new JLabel("IF:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 6;
+		constraints.gridy = 7;
 		add(_lblSseleccionIf, constraints);
 		
 		_lblSeleccionElitismo = new JLabel("Seleccion por Elitismo:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 7;
+		constraints.gridy = 8;
 		add(_lblSeleccionElitismo, constraints);
 
 		_lblPorcentajeElite = new JLabel("Tamanio de la Elite:");
 		_lblPorcentajeElite.setVisible(false);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 7;
+		constraints.gridy = 8;
 		constraints.insets = new Insets(0,30,0,0);
 		add(_lblPorcentajeElite, constraints);
 		
 		_lblSeleccionEscaladoSimple = new JLabel("Escalado Simple:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		constraints.insets = new Insets(0,0,0,0);
 		add(_lblSeleccionEscaladoSimple, constraints);
 		
@@ -165,14 +178,14 @@ public class PanelOpciones extends JPanel{
 		_lblNumEstimadoCopiasMejor.setVisible(false);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		constraints.insets = new Insets(0,30,0,0);
 		add(_lblNumEstimadoCopiasMejor, constraints);
 
 		_lblVariacionParametros = new JLabel("Variacion de parametros:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		constraints.insets = new Insets(0,0,0,0);
 		add(_lblVariacionParametros, constraints);
 
@@ -180,14 +193,14 @@ public class PanelOpciones extends JPanel{
 		_lblPasoVariacion.setVisible(false);
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 10;
+		constraints.gridy = 11;
 		add(_lblPasoVariacion, constraints);
 
 		_lblLimiteVariacion = new JLabel("Limite de la variacion:");
 		_lblLimiteVariacion.setVisible(false);
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
-		constraints.gridy = 11;
+		constraints.gridy = 12;
 		add(_lblLimiteVariacion, constraints);
 
 		_txtNumGeneraciones = new JTextField(NUM_GENERACIONES_DEF);
@@ -220,6 +233,31 @@ public class PanelOpciones extends JPanel{
 		constraints.ipadx = 10;
 		add(_spiProbMutacion, constraints);
 
+		_cmbSeleccionTipoSeleccion = new JComboBox(_seleccionStrings);
+		_cmbSeleccionTipoSeleccion.setSelectedIndex(0);
+		_cmbSeleccionTipoSeleccion
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent e) {
+
+						JComboBox cb = (JComboBox) e.getSource();
+						String seleccion = (String) cb.getSelectedItem();
+
+						// Guardamos la decision correspondiente
+						if (seleccion.matches("Ruleta"))
+							_ventana.setTipoSeleccion(TipoSeleccion.RULETA);
+						else if (seleccion.matches("Torneo"))
+								_ventana.setTipoSeleccion(TipoSeleccion.TORNEO);
+							else if (seleccion.matches("Ranking"))
+								_ventana.setTipoSeleccion(TipoSeleccion.RANKING);
+					}
+				});
+
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.gridx = 1;
+		constraints.gridy = 4;
+		constraints.insets = new Insets(0,0,0,0);
+		add(_cmbSeleccionTipoSeleccion, constraints);
+		
 		_cmbSeleccionInicializacion = new JComboBox(_inicializacionStrings);
 		_cmbSeleccionInicializacion.setSelectedIndex(0);
 		_cmbSeleccionInicializacion
@@ -241,7 +279,7 @@ public class PanelOpciones extends JPanel{
 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 4;
+		constraints.gridy = 5;
 		constraints.insets = new Insets(0,0,0,0);
 		add(_cmbSeleccionInicializacion, constraints);
 		
@@ -266,13 +304,13 @@ public class PanelOpciones extends JPanel{
 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 5;
+		constraints.gridy = 6;
 		constraints.insets = new Insets(0,0,0,0);
 		add(_cmbSeleccionMutacion, constraints);
 						
-		_cmbSeleccionIf = new JCheckBox();
-		_cmbSeleccionIf.setSelected(false);
-		_cmbSeleccionIf
+		_chkSeleccionIf = new JCheckBox();
+		_chkSeleccionIf.setSelected(false);
+		_chkSeleccionIf
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(java.awt.event.ActionEvent e) {
 
@@ -284,13 +322,13 @@ public class PanelOpciones extends JPanel{
 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 6;
+		constraints.gridy = 7;
 		constraints.ipadx = 0;
-		add(_cmbSeleccionIf, constraints);
+		add(_chkSeleccionIf, constraints);
 		
-		_cmbSeleccionElitismo = new JCheckBox();
-		_cmbSeleccionElitismo.setSelected(false);
-		_cmbSeleccionElitismo
+		_chkSeleccionElitismo = new JCheckBox();
+		_chkSeleccionElitismo.setSelected(false);
+		_chkSeleccionElitismo
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(java.awt.event.ActionEvent e) {
 
@@ -304,22 +342,22 @@ public class PanelOpciones extends JPanel{
 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 7;
+		constraints.gridy = 8;
 		constraints.ipadx = 0;
-		add(_cmbSeleccionElitismo, constraints);
+		add(_chkSeleccionElitismo, constraints);
 
 		_txtPorcentajeElite = new JTextField(NUM_ELITE_DEF);
 		_txtPorcentajeElite.setColumns(3);
 		_txtPorcentajeElite.setVisible(false);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 7;
+		constraints.gridy = 8;
 		constraints.insets = new Insets(0,225,0,0);
 		add(_txtPorcentajeElite, constraints);
 		
-		_cmbSeleccionEscaladoSimple = new JCheckBox();
-		_cmbSeleccionEscaladoSimple.setSelected(false);
-		_cmbSeleccionEscaladoSimple
+		_chkSeleccionEscaladoSimple = new JCheckBox();
+		_chkSeleccionEscaladoSimple.setSelected(false);
+		_chkSeleccionEscaladoSimple
 				.addActionListener(new java.awt.event.ActionListener() {
 
 					public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -335,9 +373,9 @@ public class PanelOpciones extends JPanel{
 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		constraints.insets = new Insets(0,0,0,0);
-		add(_cmbSeleccionEscaladoSimple, constraints);
+		add(_chkSeleccionEscaladoSimple, constraints);
 		
 		_txtNumEstimadoCopiasMejor = new JTextField(
 				NUM_ESTIMADO_COPIAS_MEJOR_DEF);
@@ -345,7 +383,7 @@ public class PanelOpciones extends JPanel{
 		_txtNumEstimadoCopiasMejor.setVisible(false);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 8;
+		constraints.gridy = 9;
 		constraints.insets = new Insets(0,225,0,0);
 		add(_txtNumEstimadoCopiasMejor, constraints);
 
@@ -389,7 +427,7 @@ public class PanelOpciones extends JPanel{
 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 9;
+		constraints.gridy = 10;
 		constraints.insets = new Insets(0,0,0,0);
 		add(_cmbSeleccionVarParametros, constraints);
 
@@ -397,7 +435,7 @@ public class PanelOpciones extends JPanel{
 		_txtPasoVariacion.setVisible(false);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 10;
+		constraints.gridy = 11;
 		constraints.ipadx = 20;
 		add(_txtPasoVariacion, constraints);
 
@@ -405,7 +443,7 @@ public class PanelOpciones extends JPanel{
 		_txtLimiteVariacion.setVisible(false);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
-		constraints.gridy = 11;
+		constraints.gridy = 12;
 		constraints.ipadx = 20;
 		add(_txtLimiteVariacion, constraints);
 
@@ -415,39 +453,76 @@ public class PanelOpciones extends JPanel{
 				0, 0, 0)));
 	}
 
-
+    /**
+     * Devuelve el campo de texto del numero de generaciones.
+     * 
+     * @return El campo de texto del numero de generaciones.
+     */
 	public JTextField getTxtNumGeneraciones() {
 		return _txtNumGeneraciones;
 	}
 
-
+	/**
+	 * Devuelve el campo de texto del tamanio de la poblacion.
+	 * 
+	 * @return El campo de texto del tamanio de la poblacion.
+ 	 */
 	public JTextField getTxtTamPoblacion() {
 		return _txtTamPoblacion;
 	}
 
-
+	/**
+	 * Devuelve el Spinner de la probabilidad de Cruce.
+	 * 
+	 * @return El Spinner de la probabilidad de Cruce.
+	 */
 	public JSpinner getSpiProbCruce() {
 		return _spiProbCruce;
 	}
 
-
+	/**
+	 * Devuelve el Spinner de la probabilidad de Mutacion.
+	 * 
+	 * @return el Spinner de la probabilidad de Mutacion.
+	 */
 	public JSpinner getSpiProbMutacion() {
 		return _spiProbMutacion;
 	}
 
+	/**
+	 * Devuelve el campo de texto con el porcentaje de la elite.
+	 * 
+	 * @return El campo de texto con el porcentaje de la elite.
+	 */
 	public JTextField getTxtPorcentajeElite() {
 		return _txtPorcentajeElite;
 	}
 
-
+	/**
+	 * Devuelve el campo de texto con el paso de la variacion de parametros.
+	 * 
+	 * @return El campo de texto con el paso de la variacion de parametros.
+	 */
 	public JTextField getTxtPasoVariacion() {
 		return _txtPasoVariacion;
 	}
 
+	/**
+	 * Devuelve el campo de texto con el limite de la variacion de parametros.
+	 * 
+	 * @return El campo de texto con el limite de la variacion de parametros.
+	 */
 	public JTextField getTxtLimiteVariacion() {
 		return _txtLimiteVariacion;
 	}
 
+	/**
+	 * Devuelve el campo de texto con el numero de copias estimado del mejor para el
+	 * escalado simple.
+	 * 
+	 * @return El campo de texto con el numero de copias estimado del mejor para el 
+	 * escalado simple.
+	 */
 	public JTextField getTxtNumEstimadoCopiasMejor() {
 		return _txtNumEstimadoCopiasMejor;
 	}
