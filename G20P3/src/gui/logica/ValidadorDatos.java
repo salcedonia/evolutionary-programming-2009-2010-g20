@@ -2,7 +2,6 @@ package gui.logica;
 
 import gui.Ventana;
 import gui.tipos.TipoVariacion;
-import gui.tipos.TipoVista;
 
 import javax.swing.JOptionPane;
 
@@ -40,16 +39,6 @@ public class ValidadorDatos {
 	private double _probMutacion;
 
 	/**
-	 * Precision del algoritmo.
-	 */
-	private double _precision;
-
-	/**
-	 * Valor de N del algoritmo.
-	 */
-	private int _valorN;
-
-	/**
 	 * Porcentage de la elite respecto a la poblacion.
 	 */
 	private double _porcentajeElite;
@@ -68,22 +57,6 @@ public class ValidadorDatos {
 	 * Numero de copias estimadas para el mejor individuo en el Escalado Simple.
 	 */
 	private int _numEstimadoCopiasMejor;
-
-	/**
-	 * Numero de ciudades seleccionadas para ser mutadas por el metodo de
-	 * insercion.
-	 */
-	private int _numCiudadesMutInsercion;
-
-	/**
-	 * Tamanio del metodo de seleccion de Torneo.
-	 */
-	private int _tamTorneo;
-
-	/**
-	 * Parametro para el metodo de seleccion por Ranking.
-	 */
-	private double _beta;
 
 	/**
 	 * Constructor de la clase Validador de Datos.
@@ -108,179 +81,13 @@ public class ValidadorDatos {
 	 * @return Verdadero si todos los parametros son validos y falso en caso
 	 *         contrario.
 	 */
-	public boolean parametrosOk(TipoVariacion variacion, TipoVista tipoVista) {
+	public boolean parametrosOk(TipoVariacion variacion) {
 
-		switch (tipoVista) {
-
-		case PRACTICA1:
-			return numGeneracionesOk() && tamPoblacionOk() && probCruceOk()
-					&& probMutacionOk() && precisionOk() && valorNOk()
-					&& porcentageEliteOk() && pasoVariacionOk()
+		return numGeneracionesOk() && tamPoblacionOk()
+					&& porcentajeEliteOk() && pasoVariacionOk()
 					&& limiteVariacionOk() && VariacionOk(variacion)
 					&& NumEstimadoCopiasMejorOk();
-		case PRACTICA2:
-			return numGeneracionesOk() && tamPoblacionOk() && probCruceOk()
-					&& probMutacionOk() && porcentageEliteOk()
-					&& pasoVariacionOk() && limiteVariacionOk()
-					&& VariacionOk(variacion) && NumEstimadoCopiasMejorOk()
-					&& NumCiudadesMutInsercionOk() && TamTorneoOk() && betaOk();
-		case PRACTICA3:
-			break;
-		}
 
-		return true;
-	}
-
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de Beta
-	 * para la seleccion por Ranking. Cuando ha comprobado que el resultado es
-	 * optimo entonces guarda el valor en la variable entera correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	private boolean betaOk() {
-
-		int beta;
-
-		try {
-
-			if (_ventana.getTxtBeta().getText().matches("")) {
-				JOptionPane
-						.showMessageDialog(
-								_ventana,
-								"!Debe introducir la Beta para el Metodo de Seleccion por Ranking!",
-								"Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			} else {
-				beta = Integer.parseInt(_ventana
-						.getTxtNumCiudadesMutInsercion().getText());
-
-				if (beta < 0) {
-					JOptionPane
-							.showMessageDialog(
-									_ventana,
-									"!La Beta para el Metodo de Seleccion por Ranking tiene que ser un numero entero positivo!",
-									"Error en los datos",
-									JOptionPane.ERROR_MESSAGE);
-					return false;
-				} else
-					// Guardamos el resultado de la validacion
-					_beta = beta;
-			}
-		} catch (NumberFormatException e) {
-
-			JOptionPane
-					.showMessageDialog(
-							_ventana,
-							"!La Beta para el Metodo de Seleccion por Ranking tiene que ser un numero entero!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de
-	 * Tamanio de Torneo para la seleccion por Torneo. Cuando ha comprobado que
-	 * el resultado es optimo entonces guarda el valor en la variable entera
-	 * correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	private boolean TamTorneoOk() {
-
-		int tamTorneo;
-
-		try {
-
-			if (_ventana.getTxtTamTorneo().getText().matches("")) {
-				JOptionPane
-						.showMessageDialog(
-								_ventana,
-								"!Debe introducir el Tamanio del Torneo para el Metodo de Seleccion!",
-								"Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			} else {
-				tamTorneo = Integer.parseInt(_ventana
-						.getTxtNumCiudadesMutInsercion().getText());
-
-				if (tamTorneo < 0 || tamTorneo > _tamPoblacion) {
-					JOptionPane
-							.showMessageDialog(
-									_ventana,
-									"!El Tamanio del Torneo para el Metodo de Seleccion tiene que ser un numero entero positivo y <= Tamanio de la Poblacion!",
-									"Error en los datos",
-									JOptionPane.ERROR_MESSAGE);
-					return false;
-				} else
-					// Guardamos el resultado de la validacion
-					_tamTorneo = tamTorneo;
-			}
-		} catch (NumberFormatException e) {
-
-			JOptionPane
-					.showMessageDialog(
-							_ventana,
-							"!Tamanio del Torneo para el Metodo de Seleccion tiene que ser un numero entero!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de
-	 * numero de Ciudades para la mutacion por insercion. Cuando ha comprobado
-	 * que el resultado es optimo entonces guarda el valor en la variable entera
-	 * correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	private boolean NumCiudadesMutInsercionOk() {
-
-		int numCiudadesMutInsercion;
-
-		try {
-
-			if (_ventana.getTxtNumCiudadesMutInsercion().getText().matches("")) {
-				JOptionPane
-						.showMessageDialog(
-								_ventana,
-								"!Debe introducir el Numero de Ciudades para la Mutacion por Insercion!",
-								"Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			} else {
-				numCiudadesMutInsercion = Integer.parseInt(_ventana
-						.getTxtNumCiudadesMutInsercion().getText());
-
-				if (numCiudadesMutInsercion < 0 || numCiudadesMutInsercion > 27) {
-					JOptionPane
-							.showMessageDialog(
-									_ventana,
-									"!El Numero de Ciudades para la Mutacion por Insercion tiene que ser un numero entero positivo y <= 27!",
-									"Error en los datos",
-									JOptionPane.ERROR_MESSAGE);
-					return false;
-				} else
-					// Guardamos el resultado de la validacion
-					_numCiudadesMutInsercion = numCiudadesMutInsercion;
-			}
-		} catch (NumberFormatException e) {
-
-			JOptionPane
-					.showMessageDialog(
-							_ventana,
-							"!Numero de Ciudades para la Mutacion por Insercion tiene que ser un numero entero!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
@@ -376,7 +183,7 @@ public class ValidadorDatos {
 
 		return true;
 	}
-
+	
 	/**
 	 * Evalua la validez de los datos introducidos en el cuadro de texto de
 	 * Probablidad de Cruce. Cuando ha comprobado que el resultado es optimo
@@ -390,14 +197,15 @@ public class ValidadorDatos {
 
 		try {
 
-			if (_ventana.getTxtProbCruce().getText().matches("")) {
+			String valor = _ventana.getSpiProbCruce().getModel().getValue().toString();
+			
+			if (valor.matches("")) {
 				JOptionPane.showMessageDialog(_ventana,
 						"!Debe introducir la Probabilidad de Cruce!",
 						"Error en los datos", JOptionPane.ERROR_MESSAGE);
 				return false;
 			} else {
-				probCruce = Double.parseDouble(_ventana.getTxtProbCruce()
-						.getText());
+				probCruce = Double.parseDouble(valor);
 
 				if (probCruce >= 0 && probCruce <= 1) {
 					// Guardamos el resultado de la validacion
@@ -439,14 +247,15 @@ public class ValidadorDatos {
 
 		try {
 
-			if (_ventana.getTxtProbMutacion().getText().matches("")) {
+			String valor = _ventana.getSpiProbMutacion().getModel().getValue().toString();
+			
+			if (valor.matches("")) {
 				JOptionPane.showMessageDialog(_ventana,
 						"!Debe introducir la Probabilidad de Mutacion!",
 						"Error en los datos", JOptionPane.ERROR_MESSAGE);
 				return false;
 			} else {
-				probMutacion = Double.parseDouble(_ventana.getTxtProbMutacion()
-						.getText());
+				probMutacion = Double.parseDouble(valor);
 
 				if (probMutacion >= 0 && probMutacion <= 1) {
 					// Guardamos el resultado de la validacion
@@ -474,108 +283,16 @@ public class ValidadorDatos {
 
 		return true;
 	}
-
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de
-	 * Precision. Cuando ha comprobado que el resultado es optimo entonces
-	 * guarda el valor en la variable real correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	public boolean precisionOk() {
-
-		double precision;
-
-		try {
-
-			if (_ventana.getTxtPrecision().getText().matches("")) {
-				JOptionPane.showMessageDialog(_ventana,
-						"!Debe introducir la Precision!", "Error en los datos",
-						JOptionPane.ERROR_MESSAGE);
-				return false;
-			} else {
-				precision = Double.parseDouble(_ventana.getTxtPrecision()
-						.getText());
-
-				if (precision >= 0 && precision <= 1) {
-					// Guardamos el resultado de la validacion
-					_precision = precision;
-				} else {
-					JOptionPane
-							.showMessageDialog(
-									_ventana,
-									"!La Precision tiene que ser un numero entero positivo entre 0 y 1!",
-									"Error en los datos",
-									JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-			}
-		} catch (NumberFormatException e) {
-
-			JOptionPane.showMessageDialog(_ventana,
-					"!La Precision tiene que ser un numero entero!",
-					"Error en los datos", JOptionPane.ERROR_MESSAGE);
-
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de
-	 * Valor de N. Cuando ha comprobado que el resultado es optimo entonces
-	 * guarda el valor en la variable entera correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	public boolean valorNOk() {
-
-		int valorN;
-
-		try {
-
-			if (_ventana.getTxtValorN().getText().matches("")) {
-				JOptionPane.showMessageDialog(_ventana,
-						"!Debe introducir el Valor de N!",
-						"Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			} else {
-				valorN = Integer.parseInt(_ventana.getTxtValorN().getText());
-
-				if (valorN < 0) {
-					JOptionPane
-							.showMessageDialog(
-									_ventana,
-									"!El Valor de N tiene que ser un numero entero positivo!",
-									"Error en los datos",
-									JOptionPane.ERROR_MESSAGE);
-					return false;
-				} else
-					// Guardamos el resultado de la validacion
-					_valorN = valorN;
-			}
-		} catch (NumberFormatException e) {
-
-			JOptionPane.showMessageDialog(_ventana,
-					"!El Valor de N tiene que ser un numero entero!",
-					"Error en los datos", JOptionPane.ERROR_MESSAGE);
-
-			return false;
-		}
-
-		return true;
-	}
-
+	
 	/**
 	 * Evalua la validez de los datos introducidos en el campo de texto del
 	 * porcentage de elite.
 	 * 
 	 * @return Verdadero si el dato introducido es correcto.
 	 */
-	public boolean porcentageEliteOk() {
+	public boolean porcentajeEliteOk() {
 
-		double porcentageElite;
+		double porcentajeElite;
 
 		try {
 			if (_ventana.getTxtPorcentajeElite().getText().matches("")) {
@@ -584,10 +301,10 @@ public class ValidadorDatos {
 						"Error en los datos", JOptionPane.ERROR_MESSAGE);
 				return false;
 			} else {
-				porcentageElite = Double.parseDouble(_ventana
+				porcentajeElite = Double.parseDouble(_ventana
 						.getTxtPorcentajeElite().getText());
 
-				if ((porcentageElite < 0) || (porcentageElite > 1)) {
+				if ((porcentajeElite < 0) || (porcentajeElite > 1)) {
 					JOptionPane
 							.showMessageDialog(
 									_ventana,
@@ -597,7 +314,7 @@ public class ValidadorDatos {
 					return false;
 				} else
 					// Guardamos el resultado de la validación
-					_porcentajeElite = porcentageElite;
+					_porcentajeElite = porcentajeElite;
 			}
 		} catch (NumberFormatException e) {
 			JOptionPane.showMessageDialog(_ventana,
@@ -732,12 +449,6 @@ public class ValidadorDatos {
 			break;
 		case PROB_MUTACION:
 			varCorrecta = _probMutacion < _limiteVariacion;
-			break;
-		case PRECISION:
-			varCorrecta = _precision < _limiteVariacion;
-			break;
-		case VALOR_N:
-			varCorrecta = _valorN < _limiteVariacion;
 			break;
 		case ELITISMO:
 			varCorrecta = _porcentajeElite < _limiteVariacion;
@@ -875,42 +586,6 @@ public class ValidadorDatos {
 	}
 
 	/**
-	 * Devuelve la precision.
-	 * 
-	 * @return La precision.
-	 */
-	public double getPrecision() {
-		return _precision;
-	}
-
-	/**
-	 * Establece la precision a valor precision.
-	 * 
-	 * @param precision Nuevo valor a establecer.
-	 */
-	public void setPrecision(double precision) {
-		_precision = precision;
-	}
-
-	/**
-	 * Devuelve el numero de copias estimadas del mejor individuo.
-	 * 
-	 * @return El numero de copias estimadas del mejor individuo.
-	 */
-	public int getValorN() {
-		return _valorN;
-	}
-
-	/**
-	 * Establece el numero de copias estimadas del mejor individuo a valor valorN.
-	 * 
-	 * @param valorN Nuevo valor a establecer.
-	 */
-	public void setValorN(int valorN) {
-		_valorN = valorN;
-	}
-
-	/**
 	 * Devuelve el porcentaje de la elite.
 	 * 
 	 * @return El porcentaje de la elite.
@@ -971,32 +646,5 @@ public class ValidadorDatos {
 	 */
 	public int getNumEstimadoCopiasMejor() {
 		return _numEstimadoCopiasMejor;
-	}
-
-	/**
-	 * Devuelve el numero de ciudades para la mutacion de insercion.
-	 * 
-	 * @return El numero de ciudades para la mutacion de insercion.
-	 */
-	public int getNumCiudadesMutInsercion() {
-		return _numCiudadesMutInsercion;
-	}
-
-	/**
-	 * Devuelve el tamanio del Torneo.
-	 * 
-	 * @return El tamanio del Torneo.
-	 */
-	public int getTamTorneo() {
-		return _tamTorneo;
-	}
-
-	/**
-	 * Devuelve el parametro beta para el metodo de seleccion por Ranking.
-	 * 
-	 * @return El parametro beta para el metodo de seleccion por Ranking.
-	 */
-	public double getBeta() {
-		return _beta;
 	}
 }

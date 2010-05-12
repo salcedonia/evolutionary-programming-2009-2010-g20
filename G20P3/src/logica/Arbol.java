@@ -6,15 +6,16 @@ import utils.Aleatorio;
 
 public class Arbol {
 	
-	 private String nombre;
-	 private Arbol hd;
-	 private Arbol hi;
-	 private Arbol padre;
-	 private int profundidad;
-	 private int numNodos;
-	 private boolean hoja;
-	 private boolean raiz;
-	 private boolean esHi;
+	 private String _nombre;
+	 private Arbol _hijoDerecho;
+	 private Arbol _hijoIzquierdo;
+	 private Arbol _padre;
+	 private int _profundidad;
+	 private int _numNodos;
+	 private boolean _esHoja;
+	 private boolean _esRaiz;
+	 private boolean _esHijoIzquierdo;
+	 private boolean _esHijoDerecho;
 	 private int profTotal;
 	 private int numInstrucciones;
 
@@ -26,14 +27,14 @@ public class Arbol {
 	}
 	//----------------------------------------------------------------
 	public Arbol(){
-		nombre=null;
-		hd = null;
-		hi = null;
-		profundidad = 0;
-		numNodos = 1;
-		hoja = false;
-		raiz = true;
-		esHi = false;
+		_nombre=null;
+		_hijoDerecho = null;
+		_hijoIzquierdo = null;
+		_profundidad = 0;
+		_numNodos = 1;
+		_esHoja = false;
+		_esRaiz = true;
+		_esHijoIzquierdo = false;
 	}
 	//----------------------------------------------------------------
 
@@ -42,27 +43,27 @@ public class Arbol {
 			    
 	           int nuevaProf = prof+1;
 			    boolean  rnd = Aleatorio.boolRandom();
-			    profundidad=prof;
-			    padre = pater;
-			    esHi = esHizq;
-			    raiz = esRaiz;
-			    if (padre == null) raiz = true;
-			    numNodos = 1;
-			    if ((rnd) || (profundidad + 1 == hmax))
+			    _profundidad=prof;
+			    _padre = pater;
+			    _esHijoIzquierdo = esHizq;
+			    _esRaiz = esRaiz;
+			    if (_padre == null) _esRaiz = true;
+			    _numNodos = 1;
+			    if ((rnd) || (_profundidad + 1 == hmax))
 			    {
 			      int intRand = Aleatorio.intRandom(0,cjtoTerms.size()-1);
-			      nombre = cjtoTerms.get(intRand);
-			      hoja = true;
+			      _nombre = cjtoTerms.get(intRand);
+			      _esHoja = true;
 			    }
 			    else
 			    {
 			      int intRand2 = Aleatorio.intRandom(0,cjtoFuns.size()-1);	
-			      nombre = cjtoFuns.get(intRand2);
-			      hi = new Arbol(cjtoFuns, cjtoTerms, hmax, nuevaProf, this, true, false);
-			      numNodos = numNodos + hi.getNumNodos();
-			      hd = new Arbol(cjtoFuns, cjtoTerms, hmax, nuevaProf, this, false, false);
-			      numNodos = numNodos + hd.getNumNodos();
-			      hoja = false;
+			      _nombre = cjtoFuns.get(intRand2);
+			      _hijoIzquierdo = new Arbol(cjtoFuns, cjtoTerms, hmax, nuevaProf, this, true, false);
+			      _numNodos = _numNodos + _hijoIzquierdo.getNumNodos();
+			      _hijoDerecho = new Arbol(cjtoFuns, cjtoTerms, hmax, nuevaProf, this, false, false);
+			      _numNodos = _numNodos + _hijoDerecho.getNumNodos();
+			      _esHoja = false;
 			  
 			    }
 	}
@@ -72,7 +73,7 @@ public class Arbol {
 	}
 	private int getNumNodos() {
 		
-		return numNodos;
+		return _numNodos;
 	}
 
 	public Arbol nodoAleatorio() {

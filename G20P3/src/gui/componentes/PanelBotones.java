@@ -67,8 +67,7 @@ public class PanelBotones extends JPanel {
 		_btnComenzar.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 
-				if (_validadorDatos.parametrosOk(_ventana.getTipoVariacion(),
-						_ventana.getTipoVista())) {
+				if (_validadorDatos.parametrosOk(_ventana.getTipoVariacion())) {
 
 					// Hacemos la ejecucion del algoritmo en otro hilo de
 					// ejecucion
@@ -98,8 +97,10 @@ public class PanelBotones extends JPanel {
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 1;
+		constraints.weightx = 1.0;
+		constraints.weighty = 0.5;
+		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.fill = GridBagConstraints.NONE;
-
 		add(_btnComenzar, constraints);
 
 		// Barra de Progreso
@@ -107,14 +108,14 @@ public class PanelBotones extends JPanel {
 		_barraProgreso.setValue(0);
 		_barraProgreso.setStringPainted(true);
 		_barraProgreso.setPreferredSize(new Dimension(350, 20));
-
-		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 1;
-		constraints.fill = GridBagConstraints.NONE;
-
+		constraints.weightx = 1.0;
+		constraints.weighty = 0.5;
+		constraints.anchor = GridBagConstraints.CENTER;
+		constraints.fill = GridBagConstraints.BOTH;
 		add(_barraProgreso, constraints);
 
 		// Borde del panel

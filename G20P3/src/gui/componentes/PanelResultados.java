@@ -4,10 +4,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import gui.Ventana;
-import gui.tipos.TipoCromosoma;
-import gui.tipos.TipoVersion;
-import gui.tipos.TipoVista;
-
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -52,21 +48,19 @@ public class PanelResultados extends JPanel {
 	public PanelResultados(Ventana ventana) {
 
 		_ventana = ventana;
-
 		setLayout(new GridBagLayout());
 
 		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		constraints.fill = GridBagConstraints.BOTH;
-
+		
 		_txtInforme = new JTextArea(5, 40);
 		_txtInforme.setEditable(false);
-
 		_scrPanelInforme = new JScrollPane(_txtInforme);
 		_scrPanelInforme.setAutoscrolls(true);
 		constraints.gridx = 0;
-		constraints.gridy = 1;
+		constraints.gridy = 0;
+		constraints.weightx = 1.0;
+		constraints.weighty = 1.0;
+		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.fill = GridBagConstraints.BOTH;
 		add(_scrPanelInforme, constraints);
 
@@ -88,61 +82,12 @@ public class PanelResultados extends JPanel {
 	 * @param valor
 	 *            El valor del mejor individuo.
 	 */
-	public void imprimeResultadoConsola(TipoVista tipoVista,
-			TipoCromosoma tipoCromosoma, TipoVersion tipoVersion, String elMejor, double valor) {
+	public void imprimeResultadoConsola(String elMejor, double valor) {
 
-		switch (tipoVista) {
-
-		case PRACTICA1:
-			switch (tipoCromosoma) {
-
-			case FUNCION1:
-				// Mostramos el mejor individuo
-				_txtInforme.append("El Mejor Valor es:\n" + elMejor + "\n\n");
-				_txtInforme.append("Alcanza un Maximo de: " + valor);
-				break;
-			case FUNCION2:
-				_txtInforme.append("Los Mejores Valores son:\n" + elMejor
-						+ "\n\n");
-				_txtInforme.append("Alcanza un Maximo de: " + valor);
-				break;
-			case FUNCION3:
-				_txtInforme.append("El Mejor Valor es:\n" + elMejor + "\n\n");
-				_txtInforme.append("Alcanza un Minimo de: " + valor);
-				break;
-			case FUNCION4:
-				_txtInforme.append("Los Mejores Valores son:\n" + elMejor
-						+ "\n\n");
-				_txtInforme.append("Alcanza un Minimo de: " + valor);
-				break;
-			case FUNCION5:
-				_txtInforme.append("Los Mejores Valores son: \n\n" + elMejor
-						+ "\n");
-				_txtInforme.append("Alcanza un Minimo de: " + valor);
-				break;
-			}
-			break;
-
-		case PRACTICA2:
-			
-			switch (tipoVersion) {
-			case VERSION1: 
-				_txtInforme.append("La minima ruta es " + valor + " km " +
-						"con la siguiente ruta: \n" + elMejor);
-				break;
-			case VERSION2:
-				_txtInforme.append("La minima ruta es " + valor + " euros " +
-						"con la siguiente ruta: \n" + elMejor);
-				break;
-			}
-			
-
-			break;
-
-		case PRACTICA3:
-			break;
-		}
-		_ventana.repaint();
+		// Mostramos el mejor individuo
+		_txtInforme.append("El Mejor Individuo es:\n" + elMejor + "\n\n");
+		_txtInforme.append("Alcanza un valor de: " + valor);
+	    _ventana.repaint();
 	}
 
 	/**

@@ -28,14 +28,6 @@ public enum TipoVariacion {
 	 */
 	PROB_MUTACION,
 	/**
-	 * Sobre la Precision.
-	 */
-	PRECISION, 
-	/**
-	 * Sobre el valor del parametro N.
-	 */
-	VALOR_N, 
-	/**
 	 * Sobre el elitismo.
 	 */
 	ELITISMO

@@ -94,19 +94,12 @@ public class PanelFuncion extends Plot2DPanel{
 		addPlotable(titulo);
 		
 		// Eje de abscisas (Numero de Generacion)
-		// Cambios en la posicion y el angulo
-		getAxis(0).setLightLabelAngle(-Math.PI / 4);
-		getAxis(0).setLabelPosition(0.5, -0.15);
 		// fuente para el nombre del eje
 		getAxis(0).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
 		// fuente para la numeracion del eje
 		getAxis(0).setLightLabelFont(new Font(Font.SANS_SERIF,Font.BOLD,14));
  
 		// Eje de ordenadas (Aptitud)
-		// Cambios en la posicion y el angulo
-		getAxis(1).setLightLabelAngle(-Math.PI / 4);
-		getAxis(1).setLabelPosition(-0.15, 0.5);
-		getAxis(1).setLabelAngle(-Math.PI / 2);
 		// fuente para el nombre del eje
 		getAxis(1).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
 		// fuente para la numeracion del eje

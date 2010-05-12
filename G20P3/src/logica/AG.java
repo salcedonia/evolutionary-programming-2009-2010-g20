@@ -41,7 +41,6 @@ public class AG {
 	 * Posicion del mejor cromosoma.
 	 */
 	private int _posMejor;
-
 	/**
 	 * Probabilidad de cruce.
 	 */
@@ -79,7 +78,7 @@ public class AG {
 	/**
 	 * Numero estimado de copias del mejor individuo de la poblacion.
 	 */
-	private int _P;
+	private int _numEstimadoCopiasMejor;
 
 	/**
 	 * Tipo de metodo de Mutacion del AGS.
@@ -89,12 +88,12 @@ public class AG {
 	/**
 	 * Porcentaje de cruce para los nodos funcion.
 	 */
-	private double _porcentajeCruceFuncion;
+	private double _porcentajeCruceFuncion = 0.9;
 
 	/**
 	 * Porcentaje de cruce para los nodos terminales.
 	 */
-	private double _porcentajeCruceTerminal;
+	private double _porcentajeCruceTerminal = 0.1;
 
 	/**
 	 * Indica si se aplica la funcion if o no.
@@ -104,15 +103,18 @@ public class AG {
 	/**
 	 * Profundidad Inicial de los arboles.
 	 */
-	private int _profundidadInicial;
+	private int _profundidadInicial = 30;
 
 	/**
 	 * Profundidad del cruce de los arboles.
 	 */
-	private int _profundidadCruces;
+	private int _profundidadCruces = 20;
 
+	/**
+	 * Tipo de inicializacion de los individuos.
+	 */
 	private TipoInicializacion _tipoInicializacion;
-	
+
 	/**
 	 * Constructor de la clase AG.
 	 * 
@@ -124,71 +126,59 @@ public class AG {
 	 *            Probabilidad de Cruce.
 	 * @param probMutacion
 	 *            Probabilidad de Mutacion.
-	 * @param tolerancia
-	 *            Tolerancia del algoritmo.
-	 * @param valorN
-	 *            Valor de N.
+	 * @param tipoInicializacion
+	 *            Tipo de Inicializacion.
+	 * @param tipoMutacion
+	 *            Tipo de metodo de Mutacion.
+	 * @param ifSeleccionado
+	 *            Uso de IF.
 	 * @param elitismo
 	 *            Uso de elitismo en el algoritmo.
 	 * @param escaladoSimple
 	 *            Uso de escalado simple en el algoritmo.
-	 * @param tipoCromosoma
-	 *            Tipo de cromosoma empleado.
-	 * @param tipoProblema
-	 *            Tipo de problema empleado.
-	 * @param tipoVersion
-	 *            Tipo de version empleada.
-	 * @param tipoSeleccion
-	 *            Tipo de seleccion empleada.
-	 * @param tipoCruce
-	 *            Tipo de cruce empleado.
 	 * @param tipoMutacion
 	 *            Tipo de mutacion empleada.
 	 * @param tipoVista
 	 *            Tipo de vista empleada en la ventana grafica.
 	 * @param tamElite
 	 *            Tamanio maximo de miembros de elite.
-	 * @param P
+	 * @param numEstimadoCopiasMejor
 	 *            Numero estimado de copias del mejor individuo de la poblacion.
-	 * @param numCiudadesMutInsercion
-	 *            Numero de ciudades seleccionadas para la mutacion por
-	 *            insercion.
-	 * @param tamTorneo
-	 *            Tamanio para el metodo de seleccion por Torneo.
-	 * @param beta
-	 *            Parametro para el metodo de seleccion por Ranking.
 	 */
 	public AG(int numMaxGeneraciones, int tamPoblacion, double probCruce,
-			double probMutacion, double tolerancia, int valorN,
+			double probMutacion, TipoInicializacion tipoInicializacion, 
+			TipoMutacion tipoMutacion, boolean ifSeleccionado, 
 			boolean elitismo, boolean escaladoSimple,
-			TipoMutacion tipoMutacion, double tamElite, int P,
-			double porcentajeCruceFuncion, double porcentajeCruceTerminal,
-			boolean ifSeleccionado, int profundidadInicial,
-			int profundidadCruces, TipoInicializacion tipoInicializacion) {
+			double tamElite, int numEstimadoCopiasMejor) {
 
+		// Guardamos todos los parametros
 		_numMaxGeneraciones = numMaxGeneraciones;
 		_tamPoblacion = tamPoblacion;
 		_probCruce = probCruce;
 		_probMutacion = probMutacion;
+		_tipoInicializacion = tipoInicializacion;		
+		_tipoMutacion = tipoMutacion;
+		_ifSeleccionado = ifSeleccionado;
 		_elitismo = elitismo;
 		_escaladoSimple = escaladoSimple;
-		_tipoMutacion = tipoMutacion;
-		_P = P;
-		_porcentajeCruceFuncion = porcentajeCruceFuncion;
-		_porcentajeCruceTerminal = porcentajeCruceTerminal;
-		_ifSeleccionado = ifSeleccionado;
-		_profundidadInicial = profundidadInicial;
-		_profundidadCruces = profundidadCruces;
-		_tipoInicializacion = tipoInicializacion;
+		_numEstimadoCopiasMejor = numEstimadoCopiasMejor;
 
 		// Calcula el numero de cromosomas de la elite
+		calculaTamanioElite(tamElite);
+	}
+
+	/**
+	 * Calcula el tamanio de la elite.
+	 * 
+	 * @param tamElite
+	 *            Tamanio de la elite introducido por el usuario.
+	 */
+	private void calculaTamanioElite(double tamElite) {
 		if (_elitismo) {
 			_tamElite = (int) (tamElite * _tamPoblacion);
 		} else
 			_tamElite = 0;
 	}
-
-	// -------------------- METODOS DE CRUCE ----------------------//
 
 	/**
 	 * Realiza la seleccion de individuos de la poblacion.
@@ -282,23 +272,28 @@ public class AG {
 	 */
 	public void mutacion() {
 
-		switch(_tipoMutacion){
-		
-		case TERMINAL_SIMPLE: mutacionTerminalSimple(); break;
-		case FUNCIONAL_SIMPLE: mutacionFuncionalSimple(); break;
-		case ARBOL: mutacionArbol(); break;
-		
+		switch (_tipoMutacion) {
+
+		case TERMINAL_SIMPLE:
+			mutacionTerminalSimple();
+			break;
+		case FUNCIONAL_SIMPLE:
+			mutacionFuncionalSimple();
+			break;
+		case ARBOL:
+			mutacionArbol();
+			break;
 		}
 	}
 
 	private void mutacionArbol() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void mutacionFuncionalSimple() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void mutacionTerminalSimple() {
@@ -330,7 +325,7 @@ public class AG {
 		double aptitud_mejor = 0;
 		double sumadaptacion = 0; // suma de la adaptacion
 
-		revisaAdaptacionMaximiza();
+		calcularAdaptacion();
 
 		// Escalamos la adaptacion segun la formula f(x)=a*g()+b
 		if (_escaladoSimple)
@@ -378,8 +373,8 @@ public class AG {
 
 			// La adapacion del mejor debe ser P * Media
 			if (_escaladoSimple)
-				_poblacion[_posMejor].setAdaptacion(_P * getAptitudMedia());
-
+				_poblacion[_posMejor].setAdaptacion(_numEstimadoCopiasMejor
+						* getAptitudMedia());
 		}
 	}
 
@@ -391,7 +386,7 @@ public class AG {
 	private double a() {
 
 		// ((P-1) * Media) / (fmax - Media)
-		return ((_P - 1) * getAptitudMedia())
+		return ((_numEstimadoCopiasMejor - 1) * getAptitudMedia())
 				/ (_poblacion[_posMejor].getAptitud() - getAptitudMedia());
 	}
 
@@ -407,10 +402,9 @@ public class AG {
 	}
 
 	/**
-	 * Ajusta el valor de adaptacion de cada cromosoma de la poblacion para el
-	 * caso de maximizacion.
+	 * Ajusta el valor de adaptacion de cada cromosoma de la poblacion.
 	 */
-	private void revisaAdaptacionMaximiza() {
+	private void calcularAdaptacion() {
 
 		double fmin = Double.MAX_VALUE;
 
@@ -449,13 +443,13 @@ public class AG {
 	 * aleatoriamente.
 	 */
 	public void inicializa() {
-		
+
 		// Creamos la poblacion del tamanio especificado
 		_poblacion = new Individuo[_tamPoblacion];
-		
+
 		// Establecemos el tipo de inicializacion
 		Individuo.setTipoInicializacion(_tipoInicializacion);
-		
+
 		for (int j = 0; j < _tamPoblacion; j++) {
 
 			_poblacion[j] = new Individuo();
