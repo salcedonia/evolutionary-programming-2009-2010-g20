@@ -2,25 +2,19 @@ package logica;
 
 import gui.tipos.TipoInicializacion;
 
-public class Individuo implements Comparable {
+public class Individuo implements Comparable<Object> {
 
-	private Arbol arbol;
-	private int hmax;
-	private double aptitud;
-	private double evaluacion;
-	private double puntuacion;
-	private double punt_acu;
-	private final String[] cjtoTerms = { "A0", "A1", "D0", "D1", "D2", "D3" };
-	private final String[] cjtoFuns = { "AND", "OR", "NOT", "IF" };
-	private int numFunciones;
-	private int numLiterales;
+	private Arbol _arbol;
+	private int _hmax;
+	private double _aptitud;
+	private double _evaluacion;
+	private double _puntuacion;
+	private double _punt_acumulada;
+	private final String[] _terminos = { "A0", "A1", "D0", "D1", "D2", "D3" };
+	private final String[] _funciones = { "AND", "OR", "NOT", "IF" };
+	private int _numFunciones;
+	private int _numLiterales;
 	private static TipoInicializacion _tipoInicializacion;
-
-	public static void setTipoInicializacion(
-			TipoInicializacion tipoInicializacion) {
-
-		_tipoInicializacion = tipoInicializacion;
-	}
 
 	public Individuo(Individuo individuo) {
 		// TODO Auto-generated constructor stub
@@ -184,5 +178,22 @@ public class Individuo implements Comparable {
 	public void setAptitud(double evalua) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public double f() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	/**
+	 * Establece el tipo de inicializacion que tienen que hacer los individuos de forma estatica
+	 * al principio de la ejecucion del AGS.
+	 * 
+	 * @param tipoInicializacion
+	 */
+	public static void setTipoInicializacion(
+			TipoInicializacion tipoInicializacion) {
+
+		_tipoInicializacion = tipoInicializacion;
 	}
 }
