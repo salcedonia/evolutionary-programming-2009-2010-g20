@@ -8,6 +8,7 @@ import gui.componentes.PanelResultados;
 import gui.logica.ValidadorDatos;
 import gui.tipos.TipoInicializacion;
 import gui.tipos.TipoMutacion;
+import gui.tipos.TipoSeleccion;
 import gui.tipos.TipoVariacion;
 
 import java.awt.Component;
@@ -89,6 +90,10 @@ public class Ventana extends JFrame {
 	private PanelResultados _panelResultados;
 
 	// ----------TIPOS-------------//
+	/**
+	 * Tipo de metodo de seleccion usado.
+	 */
+	private TipoSeleccion _tipoSeleccion = TipoSeleccion.RULETA;
 	/**
 	 * Tipo de variacion de parametros
 	 */
@@ -281,8 +286,8 @@ public class Ventana extends JFrame {
 		// Creamos el objeto encargado del algoritmo genetico simple
 		_AG = new AG(_validadorDatos.getNumGeneraciones(), _validadorDatos
 				.getTamPoblacion(), _validadorDatos.getProbCruce(),
-				_validadorDatos.getProbMutacion(), _tipoInicializacion,
-				_tipoMutacion, _ifSeleccionado, _elitismo,
+				_validadorDatos.getProbMutacion(), _tipoSeleccion,
+				_tipoInicializacion, _tipoMutacion, _ifSeleccionado, _elitismo,
 				_escaladoSimple, _validadorDatos.getPorcentajeElite(),
 				_validadorDatos.getNumEstimadoCopiasMejor());
 
@@ -372,7 +377,7 @@ public class Ventana extends JFrame {
 				// Creamos el objeto encargado del algoritmo genetico simple
 				_AG = new AG((int) i, _validadorDatos.getTamPoblacion(),
 						_validadorDatos.getProbCruce(), _validadorDatos
-								.getProbMutacion(), _tipoInicializacion,
+								.getProbMutacion(), _tipoSeleccion, _tipoInicializacion,
 						_tipoMutacion, _ifSeleccionado,
 						_elitismo, _escaladoSimple, _validadorDatos
 								.getPorcentajeElite(), _validadorDatos
@@ -382,7 +387,7 @@ public class Ventana extends JFrame {
 				// Creamos el objeto encargado del algoritmo genetico simple
 				_AG = new AG(_validadorDatos.getNumGeneraciones(), (int) i,
 						_validadorDatos.getProbCruce(), _validadorDatos
-								.getProbMutacion(), _tipoInicializacion,
+								.getProbMutacion(), _tipoSeleccion, _tipoInicializacion,
 						_tipoMutacion, _ifSeleccionado,
 						_elitismo, _escaladoSimple, _validadorDatos
 								.getPorcentajeElite(), _validadorDatos
@@ -392,7 +397,7 @@ public class Ventana extends JFrame {
 				// Creamos el objeto encargado del algoritmo genetico simple
 				_AG = new AG(_validadorDatos.getNumGeneraciones(),
 						_validadorDatos.getTamPoblacion(), i, _validadorDatos
-								.getProbMutacion(), _tipoInicializacion,
+								.getProbMutacion(), _tipoSeleccion, _tipoInicializacion,
 						_tipoMutacion, _ifSeleccionado,
 						_elitismo, _escaladoSimple, _validadorDatos
 								.getPorcentajeElite(), _validadorDatos
@@ -402,7 +407,7 @@ public class Ventana extends JFrame {
 				// Creamos el objeto encargado del algoritmo genetico simple
 				_AG = new AG(_validadorDatos.getNumGeneraciones(),
 						_validadorDatos.getTamPoblacion(), _validadorDatos
-								.getProbCruce(), i, _tipoInicializacion,
+								.getProbCruce(), i, _tipoSeleccion, _tipoInicializacion,
 						_tipoMutacion, _ifSeleccionado,
 						_elitismo, _escaladoSimple, _validadorDatos
 								.getPorcentajeElite(), _validadorDatos
@@ -413,7 +418,7 @@ public class Ventana extends JFrame {
 				_AG = new AG(_validadorDatos.getNumGeneraciones(),
 						_validadorDatos.getTamPoblacion(), _validadorDatos
 								.getProbCruce(), _validadorDatos
-								.getProbMutacion(), _tipoInicializacion,
+								.getProbMutacion(), _tipoSeleccion, _tipoInicializacion,
 						_tipoMutacion, _ifSeleccionado,
 						_elitismo, _escaladoSimple, i, _validadorDatos
 								.getNumEstimadoCopiasMejor());
@@ -494,6 +499,17 @@ public class Ventana extends JFrame {
 		_tipoMutacion = tipoMutacion;
 	}
 
+	/**
+	 * Establece el tipo de metodo de seleccion a usar en el AGS.
+	 * 
+	 * @param tipoSeleccion
+	 *            Tipo de metodo de seleccion a usar.
+	 */
+	public void setTipoSeleccion(TipoSeleccion tipoSeleccion) {
+
+		_tipoSeleccion = tipoSeleccion;
+	}
+	
 	/**
 	 * Establece el etilismo a valor elitismo.
 	 * 

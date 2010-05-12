@@ -2,10 +2,13 @@ package logica;
 
 import gui.tipos.TipoInicializacion;
 import gui.tipos.TipoMutacion;
+import gui.tipos.TipoSeleccion;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
+
 import utils.Aleatorio;
 import utils.ListaOrdenada;
 
@@ -111,10 +114,25 @@ public class AG {
 	private int _profundidadCruces = 20;
 
 	/**
+	 * Tipo de metodo de seleccion.
+	 */
+	private TipoSeleccion _tipoSeleccion;
+
+	/**
 	 * Tipo de inicializacion de los individuos.
 	 */
 	private TipoInicializacion _tipoInicializacion;
-
+	
+	/**
+	 * Beta para el metodo de seleccion de ranking.
+	 */
+	private double _beta = 1.5;
+	
+	/**
+	 * Por defecto le ponemos 3.
+	 */
+	private int _tamTorneo = 3;
+	
 	/**
 	 * Constructor de la clase AG.
 	 * 
@@ -146,7 +164,8 @@ public class AG {
 	 *            Numero estimado de copias del mejor individuo de la poblacion.
 	 */
 	public AG(int numMaxGeneraciones, int tamPoblacion, double probCruce,
-			double probMutacion, TipoInicializacion tipoInicializacion, 
+			double probMutacion, TipoSeleccion tipoSeleccion, 
+			TipoInicializacion tipoInicializacion, 
 			TipoMutacion tipoMutacion, boolean ifSeleccionado, 
 			boolean elitismo, boolean escaladoSimple,
 			double tamElite, int numEstimadoCopiasMejor) {
@@ -156,6 +175,7 @@ public class AG {
 		_tamPoblacion = tamPoblacion;
 		_probCruce = probCruce;
 		_probMutacion = probMutacion;
+		_tipoSeleccion = tipoSeleccion;
 		_tipoInicializacion = tipoInicializacion;		
 		_tipoMutacion = tipoMutacion;
 		_ifSeleccionado = ifSeleccionado;
@@ -167,6 +187,24 @@ public class AG {
 		calculaTamanioElite(tamElite);
 	}
 
+
+	/**
+	 * Inicializa la poblacion a evaluar. Crea los cromosomas y los inicializa
+	 * aleatoriamente.
+	 */
+	public void inicializa() {
+
+		// Creamos la poblacion del tamanio especificado
+		_poblacion = new Individuo[_tamPoblacion];
+
+		for (int j = 0; j < _tamPoblacion; j++) {
+
+			_poblacion[j] = new Individuo(_tipoInicializacion, _ifSeleccionado);
+			_poblacion[j].inicializaIndividuo();
+			_poblacion[j].setAptitud(_poblacion[j].evalua());
+		}
+	}
+	
 	/**
 	 * Calcula el tamanio de la elite.
 	 * 
@@ -185,9 +223,227 @@ public class AG {
 	 */
 	public void seleccion() {
 
-		// TODO: Hacerlo
+		// Para esta practica tenemos varios metodos de seleccion
+		switch (_tipoSeleccion) {
+
+		case RULETA:
+			seleccionRuleta();
+			break;
+		case TORNEO:
+			seleccionTorneo();
+			break;
+		case RANKING:
+			seleccionRanking();
+			break;
+		}
 	}
 
+	/**
+	 * Metodo de seleccion por ruleta. Se seleccionan los cromosomas
+	 * supervivientes para la reproduccion.
+	 */
+	private void seleccionRuleta() {
+
+		// Seleccionados para sobrevivir
+		int[] sel_super = new int[_tamPoblacion];
+		double prob; // probabilidad de seleccion
+		int pos_super; // posicion del superviviente
+		Random generador = new Random();
+		for (int i = 0; i < _tamPoblacion; i++) {
+			prob = generador.nextDouble();
+			pos_super = 0;
+
+			while ((prob > _poblacion[pos_super].getPuntuacionAcumulada())
+					&& (pos_super < _tamPoblacion))
+				pos_super++;
+			sel_super[i] = pos_super;
+		}
+
+		// se genera la poblacion intermedia
+		Individuo[] nuevaPoblacion = new Individuo[_tamPoblacion];
+		for (int i = 0; i < _tamPoblacion; i++) {
+			nuevaPoblacion[i] = (Individuo) _poblacion[sel_super[i]].clone();
+		}
+
+		// Ahora nuestra poblacion intermedia es nuestra poblacion.
+		_poblacion = nuevaPoblacion;
+	}
+
+	/**
+	 * Metodo de seleccion por Torneo. Se seleccionan los cromosomas
+	 * supervivientes para la reproduccion.
+	 */
+	private void seleccionTorneo() {
+
+		int[] random;// , random2, random3;
+		Individuo[] nuevo = new Individuo[_tamPoblacion];
+		Random generador = new Random();
+
+		// int tamTorneo = valorNtorneo;
+		random = new int[_tamTorneo];
+		for (int i = 0; i < _tamPoblacion; i++) {
+
+			for (int j = 0; j < _tamTorneo; j++)
+				random[j] = generador.nextInt(_tamPoblacion);
+
+			int mejor = random[0];
+			for (int j = 1; j < _tamTorneo; j++) {
+
+				if (_poblacion[random[j]].getAptitud() < _poblacion[mejor]
+						.getAptitud()) {
+					mejor = random[j];
+				}
+			}
+
+			nuevo[i] = (Individuo) _poblacion[mejor].clone();
+		}
+
+		_poblacion = nuevo;
+	}
+
+	/**
+	 * Metodo de seleccion por Ranking. Se seleccionan los cromosomas
+	 * supervivientes para la reproduccion.
+	 */
+	private void seleccionRanking() {
+
+		// Ordenamos por QuickSort la poblacion
+		ordenaPoblacion();
+
+		Individuo[] futurosPadres = new Individuo[_tamPoblacion];
+		futurosPadres[0] = (Individuo) _poblacion[0].clone();
+		futurosPadres[1] = (Individuo) _poblacion[1].clone();
+		int numPadres = 2;
+
+		double[] segmentosFitness = rankPoblacion();
+		double segmentoEntero = segmentosFitness[segmentosFitness.length - 1];
+
+		while (numPadres < _tamPoblacion) {
+
+			double x = (double) (Math.random() * segmentoEntero);
+			if (x <= segmentosFitness[0]) {
+
+				// El primer individuo fue seleccionado
+				futurosPadres[numPadres] = (Individuo) _poblacion[0].clone();
+				numPadres++;
+			} else
+				for (int i = 1; i < _tamPoblacion; i++)
+					if (x > segmentosFitness[i - 1] && x <= segmentosFitness[i]) {
+
+						// El i-esimo individuo fue seleccionado
+						futurosPadres[numPadres] = (Individuo) _poblacion[i]
+								.clone();
+						numPadres++;
+					}
+		}
+
+		_poblacion = futurosPadres;
+	}
+
+	/**
+	 * Devuelve el Ranking de la poblacion.
+	 * 
+	 * @return El ranking de la poblacion.
+	 */
+	private double[] rankPoblacion() {
+
+		double[] segmentosFitness = new double[_tamPoblacion];
+
+		for (int i = 0; i < segmentosFitness.length; i++) {
+			double probIEsimo = (double) i / _tamPoblacion;
+			probIEsimo = probIEsimo * 2 * (_beta - 1);
+			probIEsimo = _beta - probIEsimo;
+			probIEsimo = (double) probIEsimo * ((double) 1 / _tamPoblacion);
+			if (i != 0)
+				segmentosFitness[i] = segmentosFitness[i - 1] + probIEsimo;
+			else
+				segmentosFitness[i] = probIEsimo;
+		}
+		return segmentosFitness;
+	}
+
+	/**
+	 * Ordena la poblacion por el metodo de QuickSort.
+	 */
+	private void ordenaPoblacion() {
+		quickSort(_poblacion, 0, _poblacion.length - 1);
+	}
+
+	/**
+	 * Ordena el array a por el metodo de QuickSort.
+	 * 
+	 * @param a
+	 *            Array a ordenar.
+	 * @param izquierda
+	 *            Indice por la izquierda.
+	 * @param derecha
+	 *            Indice por la derecha.
+	 */
+	public void quickSort(Individuo[] a, int izquierda, int derecha) {
+		if (derecha <= izquierda)
+			return;
+		int i = particion(a, izquierda, derecha);
+		quickSort(a, izquierda, i - 1);
+		quickSort(a, i + 1, derecha);
+	}
+
+	/**
+	 * Realiza la particion del array para hacer el QuickSort. Va desde
+	 * partition a[left] hasta a[right], asumiendo que left < right.
+	 */
+	private int particion(Individuo[] a, int izquierda, int derecha) {
+		int i = izquierda - 1;
+		int j = derecha;
+		while (true) {
+
+			while (menor(a[++i], a[derecha]))
+				// Encuentra el elemento por la izquierda a intercambiar
+				; // a[derecha] actua como centinela
+			while (menor(a[derecha], a[--j]))
+				// Encuentra el elemento por la derecha a intercambiar
+				if (j == izquierda)
+					break; // Para no salirnos del array
+			if (i >= j)
+				break; // Comprueba si se cruzan los indices
+
+			intercambio(a, i, j);
+		}
+
+		intercambio(a, i, derecha);
+
+		return i;
+	}
+
+	/**
+	 * Comprueba si x < y.
+	 * 
+	 * @param x
+	 *            Individuo x.
+	 * @param y
+	 *            Individuo y.
+	 * 
+	 * @return Verdadero si x < y y falso en caso contrario.
+	 */
+	private boolean menor(Individuo x, Individuo y) {
+		return (x.getAptitud() < y.getAptitud());
+	}
+
+	/**
+	 * Intercambia a[i] y a[j].
+	 * 
+	 * @param a
+	 *            Array
+	 * @param i
+	 *            Posicion 1 a intercambiar.
+	 * @param j
+	 *            Posicion 2 a intercambiar.
+	 */
+	private void intercambio(Individuo[] a, int i, int j) {
+		Individuo swap = a[i];
+		a[i] = a[j];
+		a[j] = swap;
+	}
+	
 	/**
 	 * Realiza la reproduccion de individuos de la poblacion.
 	 */
@@ -236,32 +492,7 @@ public class AG {
 	 */
 	private void cruce(Individuo padre, Individuo madre) {
 
-		ArrayList<Individuo> hijos;
-		Individuo hijo1 = new Individuo(padre);
-		Individuo hijo2 = new Individuo(madre);
-
-		int puntoCruce1;
-		int puntoCruce2;
-
-		puntoCruce1 = 2 + Aleatorio.intRandom(0, hijo1.getArbol()
-				.getNumInstrucciones() - 1);
-		puntoCruce2 = 2 + Aleatorio.intRandom(0, hijo2.getArbol()
-				.getNumInstrucciones() - 1);
-
-		corta(puntoCruce1, puntoCruce2, hijo1.getArbol(), hijo2.getArbol());
-
-		// Calculamos el valor de los nuevos hijos.
-		hijo1.setAdaptacion(2);
-		hijo2.setAdaptacion(2);
-
-		padre.setArbol(hijo1.getArbol());
-		madre.setArbol(hijo2.getArbol());
-	}
-
-	private void corta(int puntoCruce1, int puntoCruce2, Arbol arbol,
-			Arbol arbol2) {
-		// TODO Auto-generated method stub
-
+		// TODO
 	}
 
 	// ------------------- METODOS DE MUTACION --------------------//
@@ -297,22 +528,7 @@ public class AG {
 	}
 
 	private void mutacionTerminalSimple() {
-		String[] terminales = { "A0", "A1", "D0", "D1", "D2", "D3" };
-
-		for (int i = 0; i < _tamPoblacion; i++) {
-			Individuo c = _poblacion[i];
-
-			double numAle = Math.random();
-
-			if (numAle < _probMutacion) {
-
-				int numAle2 = (int) (Math.random() * 4);
-
-				// TODO
-				// Simbolo s = getTerminalAleatorio(c);
-				// s.setTerminal(terminales[numAle2]);
-			}
-		}
+		//TODO
 	}
 
 	/**
@@ -330,25 +546,24 @@ public class AG {
 		// Escalamos la adaptacion segun la formula f(x)=a*g()+b
 		if (_escaladoSimple)
 			for (int i = 0; i < _tamPoblacion; i++)
-				_poblacion[i].setAdaptacion(a() * _poblacion[i].getAptitud()
+				_poblacion[i].setAptitud(a() * _poblacion[i].getAptitud()
 						+ b());
 
 		// Obtenemos el cromosoma con mejor aptitud y la suma de adaptacion
 		for (int i = 0; i < _tamPoblacion; i++) {
 
-			sumadaptacion = sumadaptacion + _poblacion[i].getAdaptacion();
+			sumadaptacion = sumadaptacion + _poblacion[i].getAptitud();
 
 			if (_poblacion[i].getAptitud() > aptitud_mejor) {
 				_posMejor = i;
 				aptitud_mejor = _poblacion[i].getAptitud();
 				_elMejorLocal = (Individuo) _poblacion[_posMejor].clone();
-
 			}
 		}
 
 		// Actualizamos los valores de puntuacion
 		for (int i = 0; i < _tamPoblacion; i++) {
-			_poblacion[i].setPuntuacion(_poblacion[i].getAdaptacion()
+			_poblacion[i].setPuntuacion(_poblacion[i].getAptitud()
 					/ sumadaptacion);
 			_poblacion[i].setPuntAcumulada(_poblacion[i].getPuntuacion()
 					+ punt_acu);
@@ -373,7 +588,7 @@ public class AG {
 
 			// La adapacion del mejor debe ser P * Media
 			if (_escaladoSimple)
-				_poblacion[_posMejor].setAdaptacion(_numEstimadoCopiasMejor
+				_poblacion[_posMejor].setAptitud(_numEstimadoCopiasMejor
 						* getAptitudMedia());
 		}
 	}
@@ -416,7 +631,7 @@ public class AG {
 
 		// Hacemos el ajuste a la adaptacion segun la formula f(x) = g(x) + Fmin
 		for (int i = 0; i < _tamPoblacion; i++) {
-			_poblacion[i].setAdaptacion(fmin + _poblacion[i].getAptitud());
+			_poblacion[i].setAptitud(fmin + _poblacion[i].getAptitud());
 		}
 	}
 
@@ -436,26 +651,6 @@ public class AG {
 	public void aumentarGeneracion() {
 
 		_numGeneracion++;
-	}
-
-	/**
-	 * Inicializa la poblacion a evaluar. Crea los cromosomas y los inicializa
-	 * aleatoriamente.
-	 */
-	public void inicializa() {
-
-		// Creamos la poblacion del tamanio especificado
-		_poblacion = new Individuo[_tamPoblacion];
-
-		// Establecemos el tipo de inicializacion
-		Individuo.setTipoInicializacion(_tipoInicializacion);
-
-		for (int j = 0; j < _tamPoblacion; j++) {
-
-			_poblacion[j] = new Individuo();
-			_poblacion[j].inicializaIndividuo();
-			_poblacion[j].setAptitud(_poblacion[j].evalua());
-		}
 	}
 
 	/**
