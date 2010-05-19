@@ -329,11 +329,6 @@ public class Ventana extends JFrame {
 		_panelAptitud
 				.imprimeDatosGraficas(_validadorDatos.getNumGeneraciones());
 
-		// Mostramos el resultado en el cuadro de texto de informe.
-		if (_AG.getElMejorGlobal().getAptitud() > 500) {
-			
-			System.out.println("Trwkerw");
-		}
 		_panelResultados.imprimeResultadoConsola(_AG.getElMejorGlobal()
 				.toString(), _AG.getElMejorGlobal().getAptitud());
 

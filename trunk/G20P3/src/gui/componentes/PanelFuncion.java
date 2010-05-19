@@ -96,9 +96,10 @@ public class PanelFuncion extends Plot2DPanel{
 		// Eje de abscisas (Numero de Generacion)
 		// fuente para el nombre del eje
 		getAxis(0).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));
+		getAxis(0).setLabelPosition(0.75, -0.10);
 		// fuente para la numeracion del eje
 		getAxis(0).setLightLabelFont(new Font(Font.SANS_SERIF,Font.BOLD,14));
- 
+		
 		// Eje de ordenadas (Aptitud)
 		// fuente para el nombre del eje
 		getAxis(1).setLabelFont(new Font(Font.SANS_SERIF,Font.PLAIN,20));

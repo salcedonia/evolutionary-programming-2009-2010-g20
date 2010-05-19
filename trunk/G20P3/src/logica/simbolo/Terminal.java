@@ -17,7 +17,6 @@ public class Terminal extends Simbolo{
 		_aridad = 0;
 		_valor = _conjuntoTerminales[Aleatorio.intRandom(_conjuntoTerminales.length)];	
 		_tipo = TipoSimbolo.TERMINAL;
-		_valorPrueba = false;
 	}
 	
 	/**
@@ -30,7 +29,6 @@ public class Terminal extends Simbolo{
 		_aridad = 0;
 		_valor = valor;
 		_tipo = TipoSimbolo.TERMINAL;
-		_valorPrueba = false;
 	}
 	
 	@Override
@@ -45,7 +43,6 @@ public class Terminal extends Simbolo{
 		n._aridad = _aridad;
 		n._valor = _valor;
 		n._tipo = _tipo;
-		n._valorPrueba = _valorPrueba;
 		
 		return n;
 	}

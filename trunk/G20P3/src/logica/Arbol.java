@@ -1,7 +1,5 @@
 package logica;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
 
 import gui.tipos.TipoInicializacion;
@@ -21,10 +19,6 @@ import utils.Aleatorio;
  */
 public class Arbol {
 
-	/**
-	 * Individuo al que pertenece el arbol.
-	 */
-	private Individuo _individuo;
 	/**
 	 * Simbolo del arbol.
 	 */
@@ -56,17 +50,7 @@ public class Arbol {
 	/**
 	 * Profundidad total del arbol.
 	 */
-	private int _profundidadMaxima;
-	/**
-	 * Raiz del arbol.
-	 */
-	@SuppressWarnings("unused")
-	private Arbol _raiz;
-	
-	/**
-	 * Tabla de casos de prueba para la evaluacion.
-	 */
-	private static boolean[][] _casos;
+	private int _profundidadMaxima;	
 
 	/**
 	 * Constructora por defecto de la clase Arbol.
@@ -79,7 +63,6 @@ public class Arbol {
 		_esRaiz = true;
 		_simbolo = null;
 		_hijos = new ArrayList<Arbol>();
-		_individuo = null;
 	}
 
 	/**
@@ -93,10 +76,8 @@ public class Arbol {
 	 *            Profundidad del arbol.
 	 * @param profundidadMaxima
 	 *            Profundidad maxima del arbol.
-	 * @param raiz
-	 *            Raiz del arbol.
 	 */
-	public Arbol(Arbol padre, int profundidad, int profundidadMaxima, Arbol raiz) {
+	public Arbol(Arbol padre, int profundidad, int profundidadMaxima) {
 
 		_padre = padre;
 		if (padre == null)
@@ -105,12 +86,8 @@ public class Arbol {
 			_esRaiz = false;
 		_profundidad = profundidad;
 		_profundidadMaxima = profundidadMaxima;
-		_raiz = raiz;
 		_hijos = new ArrayList<Arbol>();
 		_numNodos = 1;
-		
-		if(padre != null)
-			_individuo = padre._individuo;
 	}
 
 	/**
@@ -126,80 +103,86 @@ public class Arbol {
 	 * 
 	 * @return El arbol inicializado.
 	 */
-	public static Arbol inicializaArbol(Individuo individuo, TipoInicializacion tipoInicializacion,
+	public static Arbol inicializaArbol(TipoInicializacion tipoInicializacion,
 			int profundidadMaxima, boolean ifSeleccionado) {
 
-		Arbol nodo = new Arbol(null, 0, profundidadMaxima, null);
+		Arbol nodo = new Arbol(null, 0, profundidadMaxima);
 		nodo._simbolo = new Funcion(ifSeleccionado);
 		nodo._esRaiz = true;
 		nodo._esHoja = false;
-		nodo._raiz = nodo;
-		nodo._individuo = individuo;
 
 		switch (tipoInicializacion) {
 
 		case CRECIENTE:
 
 			nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
-					ifSeleccionado, 1, profundidadMaxima, nodo));
+					ifSeleccionado, 1, profundidadMaxima));
 
 			// Si la funcion es OR o AND tiene un arbol como hijo derecho
 			if (nodo._simbolo.getValor().matches("OR")
 					|| nodo._simbolo.getValor().matches("AND"))
 				nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima, nodo));
+						ifSeleccionado, 1, profundidadMaxima));
 			else
-			// Si es IF creo otros dos hijos mas
-			if (nodo._simbolo.getValor().matches("IF")) {
-
-				nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima, nodo));
-				nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima, nodo));
-			}
-			// Si es NOT no aniadimos ninguno mas
-
-			// Calculamos el numero de nodos
-			for (int i = 0; i < nodo._hijos.size(); i++)
-				nodo._numNodos += nodo._hijos.get(i)._numNodos;
+				// Si es IF creo otros dos hijos mas
+				if (nodo._simbolo.getValor().matches("IF")) {
+	
+					nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
+							ifSeleccionado, 1, profundidadMaxima));
+					nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
+							ifSeleccionado, 1, profundidadMaxima));
+				}
 			
-			nodo._individuo.getNodosFuncion().add(nodo);
-
 			break;
 
 		case COMPLETA:
 
 			nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-					ifSeleccionado, 1, profundidadMaxima, nodo));
+					ifSeleccionado, 1, profundidadMaxima));
 
 			// Si la funcion es OR o AND tiene un arbol como hijo derecho
 			if (nodo._simbolo.getValor().matches("OR")
 					|| nodo._simbolo.getValor().matches("AND"))
 				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima, nodo));
-			else if (nodo._simbolo.getValor().matches("IF")) {
+						ifSeleccionado, 1, profundidadMaxima));
+			else 
+				// Si es IF creo otros dos hijos mas
+				if (nodo._simbolo.getValor().matches("IF")) {
 
 				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima, nodo));
+						ifSeleccionado, 1, profundidadMaxima));
 				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima, nodo));
+						ifSeleccionado, 1, profundidadMaxima));
 			}
-
-			// Calculamos el numero de nodos
-			for (int i = 0; i < nodo._hijos.size(); i++)
-				nodo._numNodos += nodo._hijos.get(i)._numNodos;
 			
-			nodo._individuo.getNodosFuncion().add(nodo);
-
 			break;
+			
 		case RAMPED_AND_HALF:
+			
 			nodo._hijos.add(nodo.inicializaRampedAndHalfRecursivo(nodo,
-					ifSeleccionado, 1, profundidadMaxima, nodo));
-			// Calculamos el numero de nodos
-			for (int i = 0; i < nodo._hijos.size(); i++)
-				nodo._numNodos += nodo._hijos.get(i)._numNodos;
+					ifSeleccionado, 1, profundidadMaxima));
+			
+			// Si la funcion es OR o AND tiene un arbol como hijo derecho
+			if (nodo._simbolo.getValor().matches("OR")
+					|| nodo._simbolo.getValor().matches("AND"))
+				nodo._hijos.add(nodo.inicializaRampedAndHalfRecursivo(nodo,
+						ifSeleccionado, 1, profundidadMaxima));
+			else 
+				// Si es IF creo otros dos hijos mas
+				if (nodo._simbolo.getValor().matches("IF")) {
+
+				nodo._hijos.add(nodo.inicializaRampedAndHalfRecursivo(nodo,
+						ifSeleccionado, 1, profundidadMaxima));
+				nodo._hijos.add(nodo.inicializaRampedAndHalfRecursivo(nodo,
+						ifSeleccionado, 1, profundidadMaxima));
+			}
+			
 			break;
 		}
+		
+		// Calculamos el numero de nodos
+		for (int i = 0; i < nodo._hijos.size(); i++)
+			nodo._numNodos += nodo._hijos.get(i)._numNodos;
 
 		return nodo;
 	}
@@ -217,16 +200,13 @@ public class Arbol {
 	 *            Profundidad actual del arbol.
 	 * @param profundidadMaxima
 	 *            Profundidad maxima del arbol.
-	 * @param raiz
-	 *            nodo raiz del nodo.
 	 * 
 	 * @return El arbol iniciado recursiva de forma completa.
 	 */
 	public Arbol inicializaCompletaRecursivo(Arbol padre,
-			boolean ifSeleccionado, int profundidad, int profundidadMaxima,
-			Arbol raiz) {
+			boolean ifSeleccionado, int profundidad, int profundidadMaxima) {
 
-		Arbol nodo = new Arbol(padre, profundidad, profundidadMaxima, raiz);
+		Arbol nodo = new Arbol(padre, profundidad, profundidadMaxima);
 
 		if (nodo._profundidad < nodo._profundidadMaxima) {
 
@@ -235,37 +215,31 @@ public class Arbol {
 			nodo._esHoja = false;
 
 			nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-					ifSeleccionado, profundidad + 1, profundidadMaxima, raiz));
+					ifSeleccionado, profundidad + 1, profundidadMaxima));
 
 			// Si la funcion es OR o AND tiene un arbol como hijo derecho
 			if (nodo._simbolo.getValor().matches("OR")
 					|| nodo._simbolo.getValor().matches("AND"))
 				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, profundidad + 1, profundidadMaxima,
-						nodo));
+						ifSeleccionado, profundidad + 1, profundidadMaxima));
 			else if (nodo._simbolo.getValor().matches("IF")) {
 
 				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, profundidad + 1, profundidadMaxima,
-						nodo));
+						ifSeleccionado, profundidad + 1, profundidadMaxima));
 
 				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, profundidad + 1, profundidadMaxima,
-						nodo));
+						ifSeleccionado, profundidad + 1, profundidadMaxima));
 			}
 
 			// Calculamos el numero de nodos
 			for (int i = 0; i < nodo._hijos.size(); i++)
 				nodo._numNodos += nodo._hijos.get(i)._numNodos;
 			
-			nodo._individuo.getNodosFuncion().add(nodo);
-
 		} else {
 
 			nodo._simbolo = new Terminal();
 			nodo._esHoja = true;
 			nodo._numNodos = 1;
-			nodo._individuo.getNodosTerminales().add(nodo);
 		}
 
 		return nodo;
@@ -284,16 +258,13 @@ public class Arbol {
 	 *            Profundidad actual del arbol.
 	 * @param profundidadMaxima
 	 *            Profundidad maxima del arbol.
-	 * @param raiz
-	 *            nodo raiz del nodo.
 	 * 
 	 * @return El arbol iniciado recursiva de forma creciente.
 	 */
 	public Arbol inicializaCrecienteRecursivo(Arbol padre,
-			boolean ifSeleccionado, int profundidad, int profundidadMaxima,
-			Arbol raiz) {
+			boolean ifSeleccionado, int profundidad, int profundidadMaxima) {
 
-		Arbol nodo = new Arbol(padre, profundidad, profundidadMaxima, raiz);
+		Arbol nodo = new Arbol(padre, profundidad, profundidadMaxima);
 
 		if (nodo._profundidad < nodo._profundidadMaxima) {
 
@@ -306,30 +277,25 @@ public class Arbol {
 				nodo._esHoja = false;
 
 				nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
-						ifSeleccionado, profundidad + 1, profundidadMaxima,
-						raiz));
+						ifSeleccionado, profundidad + 1, profundidadMaxima));
 
 				// Si la funcion es OR o AND tiene un arbol como hijo derecho
 				if (nodo._simbolo.getValor().matches("OR")
 						|| nodo._simbolo.getValor().matches("AND"))
 					nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
-							ifSeleccionado, profundidad + 1, profundidadMaxima,
-							nodo));
+							ifSeleccionado, profundidad + 1, profundidadMaxima));
 				else if (nodo._simbolo.getValor().matches("IF")) {
 
 					nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
-							ifSeleccionado, profundidad + 1, profundidadMaxima,
-							nodo));
+							ifSeleccionado, profundidad + 1, profundidadMaxima));
 
 					nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
-							ifSeleccionado, profundidad + 1, profundidadMaxima,
-							nodo));
+							ifSeleccionado, profundidad + 1, profundidadMaxima));
 				}
 
 				// Calculamos el numero de nodos
 				for (int i = 0; i < nodo._hijos.size(); i++)
 					nodo._numNodos += nodo._hijos.get(i)._numNodos;
-				nodo._individuo.getNodosFuncion().add(nodo);
 
 			} else {
 
@@ -337,14 +303,12 @@ public class Arbol {
 				nodo._simbolo = new Terminal();
 				nodo._esHoja = true;
 				nodo._numNodos = 1;
-				nodo._individuo.getNodosTerminales().add(nodo);
 			}
 		} else {
 
 			nodo._simbolo = new Terminal();
 			nodo._esHoja = true;
 			nodo._numNodos = 1;
-			nodo._individuo.getNodosTerminales().add(nodo);
 		}
 		return nodo;
 	}
@@ -368,51 +332,12 @@ public class Arbol {
 	 * @return El arbol iniciado recursiva de forma Ramped and Half.
 	 */
 	public Arbol inicializaRampedAndHalfRecursivo(Arbol padre,
-			boolean ifSeleccionado, int profundidad, int profundidadMaxima,
-			Arbol raiz) {
+			boolean ifSeleccionado, int profundidad, int profundidadMaxima) {
 
-		// TODO
+		// TODO: Por hacer
 
-		Arbol nodo = new Arbol(padre, profundidad, profundidadMaxima, raiz);
+		Arbol nodo = new Arbol(padre, profundidad, profundidadMaxima);
 		return nodo;
-	}
-
-	/**
-	 * Devuelve un nodo aleatorio del arbol.
-	 * 
-	 * @return Un nodo aleatorio del arbol.
-	 */
-	public Arbol nodoAleatorio() {
-
-		return buscarNodo(Aleatorio.intRandom(1, getNumNodos()));
-	}
-
-	/**
-	 * Devuelve el nodo n-esimo del arbol.
-	 * 
-	 * @return El nodo n-esimo del arbol.
-	 */
-	private Arbol buscarNodo(int n) {
-
-		/*int medio;
-
-		if (_esHoja && (n == 1))
-			return this;
-		else 
-			if (!esHoja()) {
-
-			medio = (_hijoIzquierdo.getNumNodos() + 1);
-
-			if (n < medio)
-				return _hijoIzquierdo.buscarNodo(n);
-			else if (n == medio)
-				return this;
-			else
-				return _hijoDerecho.buscarNodo(n - medio);
-		} else {
-			return null;
-		}*/
-		return null;
 	}
 
 	/**
@@ -528,6 +453,24 @@ public class Arbol {
 	public void setNumNodos(int numNodos) {
 		_numNodos = numNodos;
 	}
+	
+	/**
+	 * Devuelve el simbolo del arbol.
+	 * 
+	 * @return El simbolo del arbol.
+	 */
+	public Simbolo getSimbolo() {
+		return _simbolo;
+	}
+	
+	/**
+	 * Establece el valor del simbolo del arbol a valor simbolo.
+	 * 
+	 * @param simbolo Nuevo valor a establecer.
+	 */
+	public void setSimbolo(Simbolo simbolo){
+		_simbolo = simbolo;
+	}
 
 	@Override
 	protected Arbol clone() {
@@ -539,7 +482,6 @@ public class Arbol {
 		a._numNodos = _numNodos;
 		a._profundidad = _profundidad;
 		a._profundidadMaxima = _profundidadMaxima;
-		a._raiz = a;
 		a._padre = null;
 		a._hijos = new ArrayList<Arbol>();
 
@@ -568,7 +510,6 @@ public class Arbol {
 		a._numNodos = _numNodos;
 		a._profundidad = _profundidad;
 		a._profundidadMaxima = _profundidadMaxima;
-		a._raiz = raiz;
 		a._padre = padre;
 		a._hijos = new ArrayList<Arbol>();
 
@@ -581,7 +522,6 @@ public class Arbol {
 
 	@Override
 	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
 		return super.equals(obj);
 	}
 
@@ -595,10 +535,8 @@ public class Arbol {
 
 			cadena = cadena + "(" + _hijos.get(0).toString();
 
-			for (int i = 1; i < _hijos.size(); i++) {
-
+			for (int i = 1; i < _hijos.size(); i++)
 				cadena = cadena + "," + _hijos.get(i).toString();
-			}
 
 			cadena += ")";
 		}
@@ -614,18 +552,14 @@ public class Arbol {
 	 * 
 	 * @return La evaluacion del arbol con los casos de prueba correspondientes.
 	 */
-	public double evalua() {
+	public double evalua(boolean[] caso, boolean salida) {
 
 		double evaluacion = 0;
 
-		// Probamos con todos los casos de prueba
-		for (int i = 0; i < _casos.length; i++) {
-
-			// Si se corresponde con la salida del multiplexor (_casos[i][6])
-			if (evaluaRecursivo(_casos[i]) == _casos[i][6])
-				// Sumamos un acierto
-				evaluacion++;
-		}
+		// Si se corresponde con la salida del multiplexor
+		if (evaluaRecursivo(caso) == salida)
+			// Sumamos un acierto
+			evaluacion++;
 
 		return evaluacion;
 	}
@@ -688,42 +622,36 @@ public class Arbol {
 	}
 
 	/**
-	 * Carga los casos de prueba desde un fichero con formato de "1" y "0"
-	 * traduciendolo a false y true de forma estatica. El fichero viene separado
-	 * por comas de tal forma que siga el orden "A1,A0,D3,D2,D1,D0,S".
+	 * Obtiene los nodos Funcion de un arbol.
+	 * 
+	 * @param nodosFuncion Los nodos funcion de un arbol.
 	 */
-	public static void cargaCasosPrueba() {
-
-		BufferedReader br;
-		try {
-			br = new BufferedReader(
-					new FileReader("ficheros/CasosDePrueba.txt"));
-
-			String linea = "";
-			int numLinea = 0;
-
-			_casos = new boolean[Integer.parseInt(br.readLine())][];
-
-			while ((linea = br.readLine()) != null) {
-
-				String[] caso = linea.split(",");
-
-				_casos[numLinea] = new boolean[caso.length];
-
-				for (int i = 0; i < caso.length; i++)
-					_casos[numLinea][i] = caso[i].matches("1");
-
-				numLinea++;
-			}
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void extraerNodosFuncion(ArrayList<Arbol> nodosFuncion){
+		
+		if (!_esHoja){
+			
+			_hijos.get(0).extraerNodosFuncion(nodosFuncion);
+			
+			if (getSimbolo().getValor().matches("AND") || getSimbolo().getValor().matches("OR"))
+				_hijos.get(1).extraerNodosFuncion(nodosFuncion);
+			else
+				if(getSimbolo().getValor().matches("IF")){
+					_hijos.get(1).extraerNodosFuncion(nodosFuncion);
+					_hijos.get(2).extraerNodosFuncion(nodosFuncion);
+				}
 		}
 	}
-
-	public Simbolo getSimbolo() {
-		// TODO Auto-generated method stub
-		return _simbolo;
+	
+	/**
+	 * Obtiene los nodos terminales del arbol.
+	 * 
+	 * @param terminales Nodos terminales del arbol.
+	 */
+	public void extraerNodosTerminales(ArrayList<Arbol> terminales){
+		
+		if (_esHoja)
+			terminales.add(this);
+		else
+			extraerNodosTerminales(terminales);
 	}
 }

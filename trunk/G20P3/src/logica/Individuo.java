@@ -1,12 +1,19 @@
 package logica;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
+
+import logica.simbolo.Funcion;
+import logica.simbolo.Simbolo;
+import logica.simbolo.Terminal;
+import utils.Aleatorio;
 
 import gui.tipos.TipoInicializacion;
 
 /**
- * Clase que implementa los metodos necesarios para gestionar los individuos de la poblacion en el
- * Algoritmo Genetico Simple.
+ * Clase que implementa los metodos necesarios para gestionar los individuos de
+ * la poblacion en el Algoritmo Genetico Simple.
  * 
  * @author Grupo20
  */
@@ -54,9 +61,18 @@ public class Individuo implements Comparable<Object> {
 	 */
 	@SuppressWarnings("unused")
 	private double _porcentajeCruceTerminal;
-	
+	/**
+	 * Nodos funcion del arbol.
+	 */
 	private ArrayList<Arbol> _nodosFuncion;
+	/**
+	 * Nodos terminales del arbol.
+	 */
 	private ArrayList<Arbol> _nodosTerminales;
+	/**
+	 * Tabla de casos de prueba para la evaluacion.
+	 */
+	private static boolean[][] _casos;
 	
 	/**
 	 * Constructora por defecto de la clase Individuo.
@@ -64,15 +80,20 @@ public class Individuo implements Comparable<Object> {
 	public Individuo() {
 
 	}
-	
+
 	/**
 	 * Constructora por defecto de la clase Individuo.
 	 * 
-	 * @param ifSeleccionado Indica si se selecciona el if para los individuos o no.
-	 * @param tipoInicializacion Indica el tipo de inicializacion a usar.
-	 * @param alturaMaxima Altura maxima del arbol.
-	 * @param porcentajeCruceFuncion Porcentaje para las funciones en los cruces.
-	 * @param porcentajeCruceTerminal Porcentaje para los terminales en los cruces.
+	 * @param ifSeleccionado
+	 *            Indica si se selecciona el if para los individuos o no.
+	 * @param tipoInicializacion
+	 *            Indica el tipo de inicializacion a usar.
+	 * @param alturaMaxima
+	 *            Altura maxima del arbol.
+	 * @param porcentajeCruceFuncion
+	 *            Porcentaje para las funciones en los cruces.
+	 * @param porcentajeCruceTerminal
+	 *            Porcentaje para los terminales en los cruces.
 	 * 
 	 */
 	public Individuo(TipoInicializacion tipoInicializacion,
@@ -89,13 +110,15 @@ public class Individuo implements Comparable<Object> {
 		_porcentajeCruceTerminal = porcentajeCruceTerminal;
 		_nodosFuncion = new ArrayList<Arbol>();
 		_nodosTerminales = new ArrayList<Arbol>();
-		_arbol = Arbol.inicializaArbol(this, tipoInicializacion, alturaMaxima, ifSeleccionado);
+		_arbol = Arbol.inicializaArbol(tipoInicializacion, alturaMaxima,
+				ifSeleccionado);
 	}
-		
+
 	/**
 	 * Constructora por copia de la clase Individuo.
 	 * 
-	 * @param individuo Inidividuo a copiar.
+	 * @param individuo
+	 *            Inidividuo a copiar.
 	 */
 	public Individuo(Individuo individuo) {
 
@@ -123,7 +146,74 @@ public class Individuo implements Comparable<Object> {
 	 */
 	public void cruce(Individuo padre2, Individuo hijo1, Individuo hijo2,
 			int alturaMax, int iter, int nmax) {
-		//TODO
+		// TODO
+	}
+
+	/**
+	 * Muta siguiendo el metodo terminal simple.
+	 */
+	public void mutacionTerminalSimple() {
+
+		// Volvemos a calcular los nodos funcion
+		_nodosTerminales.clear();
+		_arbol.extraerNodosFuncion(_nodosTerminales);
+		
+		// Elegimos un nodo terminal al azar
+		int posAMutar = Aleatorio.intRandom(_nodosTerminales.size());
+		Terminal nodoAMutar = (Terminal) _nodosTerminales.get(posAMutar)
+				.getSimbolo();
+
+		// Elegimos un nuevo valor para el terminal de forma aleatoria y
+		// distinto
+		Simbolo nuevoValor = nodoAMutar.getTerminalAleatorio();
+		nodoAMutar.setValor(nuevoValor.getValor());
+
+	}
+
+	/**
+	 * Muta siguiendo el metodo funcional simple.
+	 */
+	public void mutacionFuncionalSimple() {
+
+		// Volvemos a calcular los nodos funcion
+		_nodosFuncion.clear();
+		_arbol.extraerNodosFuncion(_nodosFuncion);
+		
+		// Elegimos un funcion nodo al azar
+		int nodoSeleccionado = Aleatorio.intRandom(_nodosFuncion.size());
+		Funcion nodoAMutar = (Funcion) _nodosFuncion.get(nodoSeleccionado)
+				.getSimbolo();
+
+		// Elegimos un nuevo valor de la misma aridad
+		Simbolo nuevoValor = nodoAMutar.getFuncionAleatoria();
+		nodoAMutar.setValor(nuevoValor.getValor());
+	}
+
+	/**
+	 * Muta siguiendo el metodo de arbol.
+	 */
+	public void mutacionArbol() {
+
+		// Volvemos a calcular los nodos funcion
+		_nodosFuncion.clear();
+		_arbol.extraerNodosFuncion(_nodosFuncion);
+		
+		// Elegimos al azar un nodo funcion del arbol
+		int indice = Aleatorio.intRandom(_nodosFuncion.size());
+		Arbol elementoAMutar = _nodosFuncion.get(indice);
+
+		if (_arbol.getProfundidadMaxima() - elementoAMutar.getProfundidad() > 0) {
+				
+			// Generamos el nuevo árbol
+			Arbol a = Arbol.inicializaArbol(_tipoInicializacion, _arbol.getProfundidadMaxima()
+					- elementoAMutar.getProfundidad() - 1, _ifSeleccionado);
+
+			// Colocamos sus parámetros correctamente
+			a.setEsRaiz(false);
+			a.setPadre(elementoAMutar.getPadre());
+				
+			elementoAMutar = a;
+		}
 	}
 
 	/**
@@ -132,14 +222,21 @@ public class Individuo implements Comparable<Object> {
 	 * @return La calidad del individuo.
 	 */
 	public double evalua() {
+
+		double evaluacion = 0;
 		
-		return _arbol.evalua();
+		// Probamos con todos los casos de prueba
+		for (int i = 0; i < _casos.length; i++)
+			evaluacion += _arbol.evalua(_casos[i], _casos[i][6]);
+			
+		return evaluacion;
 	}
 
 	/**
 	 * Establece la aptitud del individuo a valor aptitud.
 	 * 
-	 * @param aptitud Nuevo valor a establecer.
+	 * @param aptitud
+	 *            Nuevo valor a establecer.
 	 */
 	public void setAptitud(double aptitud) {
 		_aptitud = aptitud;
@@ -157,7 +254,8 @@ public class Individuo implements Comparable<Object> {
 	/**
 	 * Establece el arbol del individuo a valor arbol.
 	 * 
-	 * @param arbol Nuevo valor a establecer.
+	 * @param arbol
+	 *            Nuevo valor a establecer.
 	 */
 	void setArbol(Arbol arbol) {
 		_arbol = arbol;
@@ -175,7 +273,8 @@ public class Individuo implements Comparable<Object> {
 	/**
 	 * Establece la puntuacion a valor puntuacion.
 	 * 
-	 * @param puntuacion Nuevo valor a establecer.
+	 * @param puntuacion
+	 *            Nuevo valor a establecer.
 	 */
 	public void setPuntuacion(double puntuacion) {
 		_puntuacion = puntuacion;
@@ -193,7 +292,8 @@ public class Individuo implements Comparable<Object> {
 	/**
 	 * Establece la puntuacion acumulada a valor puntuacionAcumulada.
 	 * 
-	 * @param puntuacionAcumulada Nuevo valor a establecer.
+	 * @param puntuacionAcumulada
+	 *            Nuevo valor a establecer.
 	 */
 	public void setPuntAcumulada(double puntuacionAcumulada) {
 		_puntuacionAcumulada = puntuacionAcumulada;
@@ -204,58 +304,106 @@ public class Individuo implements Comparable<Object> {
 	 * 
 	 * @return La puntuacion acumulada del individuo.
 	 */
-	public double getPuntuacionAcumulada(){
+	public double getPuntuacionAcumulada() {
 		return _puntuacionAcumulada;
+	}
+
+	/**
+	 * Devuelve la lista de nodos terminales del arbol.
+	 * 
+	 * @return La lista de nodos terminales del arbol.
+	 */
+	public ArrayList<Arbol> getNodosTerminales() {
+		return _nodosTerminales;
+	}
+
+	/**
+	 * Devuelve la lista de nodos funcion del arbol.
+	 * 
+	 * @return La lista de nodos funcion del arbol.
+	 */
+	public ArrayList<Arbol> getNodosFuncion() {
+		return _nodosFuncion;
+	}
+
+	/**
+	 * Carga los casos de prueba desde un fichero con formato de "1" y "0"
+	 * traduciendolo a false y true de forma estatica. El fichero viene separado
+	 * por comas de tal forma que siga el orden "A1,A0,D3,D2,D1,D0,S".
+	 */
+	public static void cargaCasosPrueba() {
+
+		BufferedReader br;
+		try {
+			br = new BufferedReader(
+					new FileReader("ficheros/CasosDePrueba.txt"));
+
+			String linea = "";
+			int numLinea = 0;
+
+			_casos = new boolean[Integer.parseInt(br.readLine())][];
+
+			while ((linea = br.readLine()) != null) {
+
+				String[] caso = linea.split(",");
+
+				_casos[numLinea] = new boolean[caso.length];
+
+				for (int i = 0; i < caso.length; i++)
+					_casos[numLinea][i] = caso[i].matches("1");
+
+				numLinea++;
+			}
+
+		} catch (Exception e) {
+
+			System.err.println("Error al cargar los casos de prueba del fichero");
+		}
 	}
 	
 	@Override
 	public Object clone() {
 		Individuo individuo = new Individuo();
-		
+
 		individuo._arbol = _arbol.clone();
 		individuo._alturaMaxima = _alturaMaxima;
 		individuo._aptitud = _aptitud;
 		individuo._evaluacion = _evaluacion;
 		individuo._puntuacion = _puntuacion;
-		individuo._puntuacionAcumulada = _puntuacionAcumulada;		
+		individuo._puntuacionAcumulada = _puntuacionAcumulada;
 		individuo._tipoInicializacion = _tipoInicializacion;
 		individuo._ifSeleccionado = _ifSeleccionado;
-		
+
 		return individuo;
 	}
-	
+
 	@Override
 	public int compareTo(Object obj) {
 		Individuo individuo = (Individuo) obj;
-		
-		if (this == individuo) return 0;
-		
-		if (_aptitud < individuo._aptitud) return -1;
-		else if (_aptitud > individuo._aptitud) return 1;
-		else return 1;
+
+		if (this == individuo)
+			return 0;
+
+		if (_aptitud < individuo._aptitud)
+			return -1;
+		else if (_aptitud > individuo._aptitud)
+			return 1;
+		else
+			return 1;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
+		if (obj == null)
+			return false;
 		Individuo individuo = (Individuo) obj;
-		
+
 		return individuo == this;
 	}
 
 	@Override
 	public String toString() {
-		
-		return _arbol.toString();
-	}
 
-	public ArrayList<Arbol> getNodosTerminales() {
-		// TODO Auto-generated method stub
-		return _nodosTerminales;
-	}
-	
-	public ArrayList<Arbol> getNodosFuncion() {
-		// TODO Auto-generated method stub
-		return _nodosFuncion;
+		return _arbol.toString();
 	}
 }
