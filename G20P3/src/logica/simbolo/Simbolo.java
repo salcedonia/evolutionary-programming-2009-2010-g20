@@ -19,12 +19,7 @@ public abstract class Simbolo {
 	/**
 	 * Tipo del simbolo.
 	 */
-	protected TipoSimbolo _tipo;
-	/**
-	 * Valor de prueba del simbolo con los casos de prueba.
-	 */
-	protected boolean _valorPrueba;
-	
+	protected TipoSimbolo _tipo;	
 	/**
 	 * Funciones disponibles.
 	 */
@@ -89,14 +84,6 @@ public abstract class Simbolo {
 	 */
 	public void setTipo(TipoSimbolo tipo) {
 		_tipo = tipo;
-	}
-	
-	public boolean getValorPrueba() {
-		return _valorPrueba;
-	}
-
-	public void setValorPrueba(boolean prueba) {
-		_valorPrueba = prueba;
 	}
 	
 	/**

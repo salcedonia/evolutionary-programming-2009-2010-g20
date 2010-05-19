@@ -6,12 +6,6 @@ import gui.tipos.TipoSeleccion;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
-
-import logica.simbolo.Funcion;
-import logica.simbolo.Simbolo;
-import logica.simbolo.Terminal;
-
-import utils.Aleatorio;
 import utils.ListaOrdenada;
 
 /**
@@ -53,7 +47,6 @@ public class AG {
 	/**
 	 * Probabilidad de mutacion.
 	 */
-	@SuppressWarnings("unused")
 	private double _probMutacion;
 
 	/**
@@ -187,7 +180,7 @@ public class AG {
 		calculaTamanioElite(tamElite);
 
 		// Inicializamos los casos de prueba para la evaluacion
-		Arbol.cargaCasosPrueba();
+		Individuo.cargaCasosPrueba();
 	}
 
 	/**
@@ -209,6 +202,11 @@ public class AG {
 			System.out.println(_poblacion[j].toString());
 			System.out.println();
 		}
+		
+		// El mejor es el primero
+		_posMejor = 0;
+		_elMejorGlobal = (Individuo) _poblacion[_posMejor].clone();
+		_elMejorLocal = (Individuo) _poblacion[_posMejor].clone();
 	}
 
 	/**
@@ -509,81 +507,59 @@ public class AG {
 	 */
 	public void mutacion() {
 
-		switch (_tipoMutacion) {
-
-		case TERMINAL_SIMPLE:
-			mutacionTerminalSimple();
-			break;
-		case FUNCIONAL_SIMPLE:
-			mutacionFuncionalSimple();
-			break;
-		case ARBOL:
-			mutacionArbol();
-			break;
-		}
-	}
-
-	private void mutacionArbol() {
-		
 		for (int i = 0; i < _poblacion.length; i++) {
 
 			Random random = new Random();
-			
 			double numAle = random.nextDouble();
-			
+
 			if (numAle < _probMutacion) {
-				
-				_poblacion[i] = new Individuo(_tipoInicializacion, _ifSeleccionado,
-						_profundidadMaxima, _porcentajeCruceFuncion,
-						_porcentajeCruceTerminal);
+
+				switch (_tipoMutacion) {
+
+				case TERMINAL_SIMPLE:
+					mutacionTerminalSimple(_poblacion[i]);
+					break;
+				case FUNCIONAL_SIMPLE:
+					mutacionFuncionalSimple(_poblacion[i]);
+					break;
+				case ARBOL:
+					mutacionArbol(_poblacion[i]);
+					break;
+				}
+
 				_poblacion[i].setAptitud(_poblacion[i].evalua());
 			}
 		}
-
 	}
 
-	private void mutacionFuncionalSimple() {
-		
-		for (int i = 0; i < _poblacion.length; i++) {
-			
-			Individuo individuo = (Individuo) _poblacion[i];
-			Random random = new Random();
-			
-			double numAle =random.nextDouble();
-			
-			if (numAle < _probMutacion) {
-				
-				int numAle2 = Aleatorio.intRandom(individuo.getNodosFuncion().size());
-				
-				Funcion funcion = (Funcion)individuo.getNodosFuncion().get(numAle2).getSimbolo();
-				
-				Simbolo s = funcion.getFuncionAleatoria();
-				
-				funcion.setValor(s.getValor());
-			}
-		}
+	/**
+	 * Selecciona al azar un nodo funcion y le asigna un nuevo subarbol.
+	 * 
+	 * @param individuo Individuo a mutar.
+	 */
+	private void mutacionArbol(Individuo individuo) {
+
+		individuo.mutacionArbol();
 	}
 
-	private void mutacionTerminalSimple() {
+	/**
+	 * Selecciona al azar un nodo funcion y le asigna otra funcion de la misma aridad.
+	 * 
+	 * @param individuo Individuo a mutar.
+	 */
+	private void mutacionFuncionalSimple(Individuo individuo) {
 
-		for (int i = 0; i < _poblacion.length; i++) {
-			
-			Individuo individuo = (Individuo) _poblacion[i];
-			Random random = new Random();
-			
-			double numAle =random.nextDouble();
-			
-			if (numAle < _probMutacion) {
-				
-				int numAle2 = Aleatorio.intRandom(individuo.getNodosTerminales().size());
-				
-				Terminal terminal = (Terminal)individuo.getNodosTerminales().get(numAle2).getSimbolo();
-				
-				Simbolo s = terminal.getTerminalAleatorio();
-				
-				terminal.setValor(s.getValor());
-			}
-		}
+		individuo.mutacionFuncionalSimple();
+	}
+
+	/**
+	 * Selecciona al azar un nodo terminal y le asigna otro terminal distinto.
+	 * 
+	 * @param individuo Individuo a mutar.
+	 */
+	private void mutacionTerminalSimple(Individuo individuo) {
+
+		individuo.mutacionTerminalSimple();
 	}
 
 	/**
@@ -624,25 +600,8 @@ public class AG {
 		}
 
 		// Calculamos el mejor individuo
-		calculoElMejor(aptitud_mejor);
-	}
-
-	/**
-	 * Calcula el mejor individuo y su posicion.
-	 * 
-	 * @param aptitud_mejor
-	 *            La mejor aptitud.
-	 */
-	private void calculoElMejor(double aptitud_mejor) {
-
-		if ((_elMejorGlobal == null)
-				|| (aptitud_mejor > _elMejorGlobal.getAptitud())) {
+		if (aptitud_mejor > _elMejorGlobal.getAptitud()) {
 			_elMejorGlobal = (Individuo) _poblacion[_posMejor].clone();
-
-			if (_elMejorGlobal.getAptitud() > 500) {
-
-				System.out.println("Trwkerw");
-			}
 
 			// La adapacion del mejor debe ser P * Media
 			if (_escaladoSimple)

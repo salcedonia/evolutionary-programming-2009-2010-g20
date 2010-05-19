@@ -18,7 +18,6 @@ public class Funcion extends Simbolo{
 		_valor = "";
 		_aridad = 0;
 		_tipo = TipoSimbolo.FUNCION;
-		_valorPrueba = false;
 	}
 	
 	/**
@@ -36,7 +35,6 @@ public class Funcion extends Simbolo{
 		
 		calculaAridad(_valor);	
 		_tipo = TipoSimbolo.FUNCION;
-		_valorPrueba = false;
 	}
 	
 	/**
@@ -49,7 +47,6 @@ public class Funcion extends Simbolo{
 		calculaAridad(valor);
 		_valor = valor;
 		_tipo = TipoSimbolo.FUNCION;
-		_valorPrueba = false;
 	}
 	
 	/**
@@ -83,7 +80,6 @@ public class Funcion extends Simbolo{
 		n._aridad = _aridad;
 		n._valor = _valor;
 		n._tipo = _tipo;
-		n._valorPrueba = _valorPrueba;
 		
 		return n;
 	}
