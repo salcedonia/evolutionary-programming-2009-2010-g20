@@ -472,79 +472,24 @@ public class Arbol {
 		_simbolo = simbolo;
 	}
 
-	@Override
-	protected Arbol clone() {
-
-		Arbol a = new Arbol();
-		a._simbolo = _simbolo.clone();
-		a._esHoja = _esHoja;
-		a._esRaiz = _esRaiz;
-		a._numNodos = _numNodos;
-		a._profundidad = _profundidad;
-		a._profundidadMaxima = _profundidadMaxima;
-		a._padre = null;
-		a._hijos = new ArrayList<Arbol>();
-
-		for (int i = 0; i < _hijos.size(); i++)
-			a._hijos.add(_hijos.get(i).cloneRecursivo(a, a));
-
-		return a;
-	}
-
 	/**
-	 * Metodo para clonar recursivamente los subarboles.
+	 * Devuelve los hijos del arbol.
 	 * 
-	 * @param raiz
-	 *            Nodo raiz.
-	 * @param padre
-	 *            Nodo padre del subarbol.
-	 * 
-	 * @return El arbol clonado recursivamente.
+	 * @return Los hijos del arbol.
 	 */
-	public Arbol cloneRecursivo(Arbol raiz, Arbol padre) {
-
-		Arbol a = new Arbol();
-		a._simbolo = _simbolo.clone();
-		a._esHoja = _esHoja;
-		a._esRaiz = _esRaiz;
-		a._numNodos = _numNodos;
-		a._profundidad = _profundidad;
-		a._profundidadMaxima = _profundidadMaxima;
-		a._padre = padre;
-		a._hijos = new ArrayList<Arbol>();
-
-		for (int i = 0; i < _hijos.size(); i++)
-			if (a._simbolo.getTipo() == TipoSimbolo.FUNCION)
-				a._hijos.add(_hijos.get(i).cloneRecursivo(raiz, a));
-
-		return a;
+	public ArrayList<Arbol> getHijos() {		
+		return _hijos;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
+	
+	/**
+	 * Establece los hijos a valor hijos.
+	 * 
+	 * @param hijos Nuevo valor a establecer.
+	 */
+	public void setHijos(ArrayList<Arbol> hijos){
+		_hijos = hijos;
 	}
-
-	@Override
-	public String toString() {
-
-		String cadena = "";
-		cadena = "" + _simbolo.getValor();
-
-		if (!esHoja()) {
-
-			cadena = cadena + "(" + _hijos.get(0).toString();
-
-			for (int i = 1; i < _hijos.size(); i++)
-				cadena = cadena + "," + _hijos.get(i).toString();
-
-			cadena += ")";
-		}
-
-		return cadena;
-
-	}
-
+	
 	/**
 	 * Evalua el arbol con los casos de prueba correspondientes. Se evaluan los
 	 * nodos terminales con los valores de cada caso de prueba y se comprueban
@@ -622,36 +567,188 @@ public class Arbol {
 	}
 
 	/**
-	 * Obtiene los nodos Funcion de un arbol.
+	 * Obtiene los nodos Funcion de un arbol menos la raiz del arbol.
 	 * 
 	 * @param nodosFuncion Los nodos funcion de un arbol.
 	 */
-	public void extraerNodosFuncion(ArrayList<Arbol> nodosFuncion){
+	public void extraerNodos(ArrayList<Arbol> nodosFuncion, ArrayList<Arbol> nodosTerminales){
 		
-		if (!_esHoja){
+		// Si es una hoja extraigo el terminal
+		if (_esHoja)
+			nodosTerminales.add(this);
+		else{
 			
-			_hijos.get(0).extraerNodosFuncion(nodosFuncion);
+			//  Miramos por el primer hijo
+			_hijos.get(0).extraerNodos(nodosFuncion, nodosTerminales);
 			
+			// Si es AND o OR miramos su segundo hijo
 			if (getSimbolo().getValor().matches("AND") || getSimbolo().getValor().matches("OR"))
-				_hijos.get(1).extraerNodosFuncion(nodosFuncion);
+				_hijos.get(1).extraerNodos(nodosFuncion, nodosTerminales);
 			else
+				// Si es IF miramos sus otros dos hijos
 				if(getSimbolo().getValor().matches("IF")){
-					_hijos.get(1).extraerNodosFuncion(nodosFuncion);
-					_hijos.get(2).extraerNodosFuncion(nodosFuncion);
+					_hijos.get(1).extraerNodos(nodosFuncion,nodosTerminales);
+					_hijos.get(2).extraerNodos(nodosFuncion,nodosTerminales);
 				}
+			
+			// Lo metemos en los nodos funcion pero la raiz no
+			if(!esRaiz())
+				nodosFuncion.add(this);
+		}
+	}
+
+	/**
+	 * Realiza el cruce entre el arbol del primer progenitor y el arbol del padre2.
+	 * 
+	 * @param padre2 Segundo progenitor seleccionado pora el cruce.
+	 * @param nodosTerminales Nodos terminales del arbol del primer progenitor.
+	 * @param nodosFuncion Nodos funcion del arbol del primer progenitor.
+	 */
+	public void cruce(Individuo padre2, ArrayList<Arbol> nodosTerminales,
+			ArrayList<Arbol> nodosFuncion) {
+		
+		// Volvemos a calcular los nodos funcion y terminales de los progenitores
+		nodosFuncion.clear();
+		nodosFuncion.clear();
+		padre2.getNodosTerminales().clear();
+		padre2.getNodosFuncion().clear();
+		extraerNodos(nodosTerminales, nodosFuncion);
+		padre2.getArbol().extraerNodos(padre2.getNodosTerminales(), padre2.getNodosFuncion());
+		
+		// Si hay algun nodo aparte del raiz que no se cuenta hacemos el cruce
+		if((nodosFuncion.size() != 0) && (padre2.getNodosFuncion().size() != 0)){
+		
+			// Escogemos una funcion al azar del primer progenitor
+			int indice = Aleatorio.intRandom(nodosFuncion.size());
+			Arbol puntoCruce1 = nodosFuncion.get(indice);
+
+			// Elegimos una funcion al azar del segundo progenitor
+			indice = Aleatorio.intRandom(padre2.getNodosFuncion().size());
+			Arbol puntoCruce2 = padre2.getNodosFuncion().get(indice);
+		
+			//Comprobamos si es hijo izquierdo
+			if (puntoCruce1.getPadre().getHijos().get(0).equals(puntoCruce1)){
+				
+				//Comprobamos que no nos pasamos de la profundidad maxima
+				if((_profundidadMaxima - puntoCruce2.getProfundidad()) + puntoCruce1.getPadre().getProfundidad() <= _profundidadMaxima)
+					puntoCruce1.getPadre().getHijos().set(0, puntoCruce2);
+			}
+			else // Si es hijo central
+				if (puntoCruce1.getPadre().getHijos().get(1).equals(puntoCruce1)){
+					
+					//Comprobamos que no nos pasamos de la profundidad maxima
+					if((_profundidadMaxima - puntoCruce2.getProfundidad()) + puntoCruce1.getPadre().getProfundidad() <= _profundidadMaxima)
+						puntoCruce1.getPadre().getHijos().set(1, puntoCruce2);
+				}
+				else
+					// Si es hijo derecho
+					if (puntoCruce1.getPadre().getHijos().get(2).equals(puntoCruce1)){
+						
+						//Comprobamos que no nos pasamos de la profundidad maxima
+						if((_profundidadMaxima - puntoCruce2.getProfundidad()) + puntoCruce1.getPadre().getProfundidad() <= _profundidadMaxima)
+							puntoCruce1.getPadre().getHijos().set(2, puntoCruce2);
+					}
+			
+			//Comprobamos si es hijo izquierdo
+			if (puntoCruce2.getPadre().getHijos().get(0).equals(puntoCruce2)){
+				
+				//Comprobamos que no nos pasamos de la profundidad maxima
+				if((_profundidadMaxima - puntoCruce1.getProfundidad()) + puntoCruce2.getPadre().getProfundidad() <= _profundidadMaxima)
+					puntoCruce2.getPadre().getHijos().set(0, puntoCruce1);
+			}
+			else // Si es hijo central
+				if (puntoCruce2.getPadre().getHijos().get(1).equals(puntoCruce2)){
+				
+					//Comprobamos que no nos pasamos de la profundidad maxima
+					if((_profundidadMaxima - puntoCruce1.getProfundidad()) + puntoCruce2.getPadre().getProfundidad() <= _profundidadMaxima)
+						puntoCruce2.getPadre().getHijos().set(1, puntoCruce1);
+				}
+				else
+					// Si es hijo derecho
+					if (puntoCruce2.getPadre().getHijos().get(2).equals(puntoCruce2)){
+						
+						//Comprobamos que no nos pasamos de la profundidad maxima
+						if((_profundidadMaxima - puntoCruce1.getProfundidad()) + puntoCruce2.getPadre().getProfundidad() <= _profundidadMaxima)
+							puntoCruce2.getPadre().getHijos().set(2, puntoCruce1);
+					}
+						
+			// Actualizamos los padres de los puntos de cruce para fijarlos al arbol
+			Arbol padre1 = puntoCruce1.getPadre();
+			puntoCruce1.setPadre(puntoCruce2.getPadre());
+			puntoCruce2.setPadre(padre1);
 		}
 	}
 	
+	@Override
+	protected Arbol clone() {
+
+		Arbol a = new Arbol();
+		a._simbolo = _simbolo.clone();
+		a._esHoja = _esHoja;
+		a._esRaiz = _esRaiz;
+		a._numNodos = _numNodos;
+		a._profundidad = _profundidad;
+		a._profundidadMaxima = _profundidadMaxima;
+		a._padre = null;
+		a._hijos = new ArrayList<Arbol>();
+
+		for (int i = 0; i < _hijos.size(); i++)
+			a._hijos.add(_hijos.get(i).cloneRecursivo(a, a));
+
+		return a;
+	}
+
 	/**
-	 * Obtiene los nodos terminales del arbol.
+	 * Metodo para clonar recursivamente los subarboles.
 	 * 
-	 * @param terminales Nodos terminales del arbol.
+	 * @param raiz
+	 *            Nodo raiz.
+	 * @param padre
+	 *            Nodo padre del subarbol.
+	 * 
+	 * @return El arbol clonado recursivamente.
 	 */
-	public void extraerNodosTerminales(ArrayList<Arbol> terminales){
-		
-		if (_esHoja)
-			terminales.add(this);
-		else
-			extraerNodosTerminales(terminales);
+	public Arbol cloneRecursivo(Arbol raiz, Arbol padre) {
+
+		Arbol a = new Arbol();
+		a._simbolo = _simbolo.clone();
+		a._esHoja = _esHoja;
+		a._esRaiz = _esRaiz;
+		a._numNodos = _numNodos;
+		a._profundidad = _profundidad;
+		a._profundidadMaxima = _profundidadMaxima;
+		a._padre = padre;
+		a._hijos = new ArrayList<Arbol>();
+
+		for (int i = 0; i < _hijos.size(); i++)
+			if (a._simbolo.getTipo() == TipoSimbolo.FUNCION)
+				a._hijos.add(_hijos.get(i).cloneRecursivo(raiz, a));
+
+		return a;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+
+	@Override
+	public String toString() {
+
+		String cadena = "";
+		cadena = "" + _simbolo.getValor();
+
+		if (!esHoja()) {
+
+			cadena = cadena + "(" + _hijos.get(0).toString();
+
+			for (int i = 1; i < _hijos.size(); i++)
+				cadena = cadena + "," + _hijos.get(i).toString();
+
+			cadena += ")";
+		}
+
+		return cadena;
+
 	}
 }

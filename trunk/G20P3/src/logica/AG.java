@@ -479,24 +479,8 @@ public class AG {
 
 		// Cruzamos los indiduos seleccionados
 		for (int i = 0; i < num_sel_cruce; i += 2) {
-			cruce(_poblacion[sel_cruce[i]], _poblacion[sel_cruce[i + 1]]);
+			_poblacion[sel_cruce[i]].cruce(_poblacion[sel_cruce[i + 1]]);
 		}
-	}
-
-	/**
-	 * Cruza los cromosomas padre y madre por el punto de cruce segun el metodo
-	 * elegido.
-	 * 
-	 * @param padre
-	 *            Uno de los cromosomas a cruzar.
-	 * @param madre
-	 *            Uno de los cromosomas a cruzar.
-	 * @param generador
-	 *            Generador de numeros aleatorios.
-	 */
-	private void cruce(Individuo padre, Individuo madre) {
-
-		// TODO
 	}
 
 	// ------------------- METODOS DE MUTACION --------------------//

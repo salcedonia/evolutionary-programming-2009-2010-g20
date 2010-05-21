@@ -54,12 +54,10 @@ public class Individuo implements Comparable<Object> {
 	/**
 	 * Porcentaje para el cruce en las funciones.
 	 */
-	@SuppressWarnings("unused")
 	private double _porcentajeCruceFuncion;
 	/**
 	 * Porcentaje para el cruce en los terminales.
 	 */
-	@SuppressWarnings("unused")
 	private double _porcentajeCruceTerminal;
 	/**
 	 * Nodos funcion del arbol.
@@ -73,7 +71,7 @@ public class Individuo implements Comparable<Object> {
 	 * Tabla de casos de prueba para la evaluacion.
 	 */
 	private static boolean[][] _casos;
-	
+
 	/**
 	 * Constructora por defecto de la clase Individuo.
 	 */
@@ -137,16 +135,11 @@ public class Individuo implements Comparable<Object> {
 	/**
 	 * Metodo de cruce del individuo.
 	 * 
-	 * @param padre2
-	 * @param hijo1
-	 * @param hijo2
-	 * @param alturaMax
-	 * @param iter
-	 * @param nmax
+	 * @param padre2 Otro padre seleccionado para el cruce.
 	 */
-	public void cruce(Individuo padre2, Individuo hijo1, Individuo hijo2,
-			int alturaMax, int iter, int nmax) {
-		// TODO
+	public void cruce(Individuo padre2) {
+		
+		_arbol.cruce(padre2, _nodosTerminales, _nodosFuncion);
 	}
 
 	/**
@@ -154,10 +147,11 @@ public class Individuo implements Comparable<Object> {
 	 */
 	public void mutacionTerminalSimple() {
 
-		// Volvemos a calcular los nodos funcion
+		// Recalculamos los nodos Funcion y los nodos Terminales
+		_nodosFuncion.clear();
 		_nodosTerminales.clear();
-		_arbol.extraerNodosFuncion(_nodosTerminales);
-		
+		_arbol.extraerNodos(_nodosFuncion, _nodosTerminales);
+
 		// Elegimos un nodo terminal al azar
 		int posAMutar = Aleatorio.intRandom(_nodosTerminales.size());
 		Terminal nodoAMutar = (Terminal) _nodosTerminales.get(posAMutar)
@@ -175,18 +169,22 @@ public class Individuo implements Comparable<Object> {
 	 */
 	public void mutacionFuncionalSimple() {
 
-		// Volvemos a calcular los nodos funcion
+		// Recalculamos los nodos Funcion y los nodos Terminales
 		_nodosFuncion.clear();
-		_arbol.extraerNodosFuncion(_nodosFuncion);
+		_nodosTerminales.clear();
+		_arbol.extraerNodos(_nodosFuncion, _nodosTerminales);
 		
-		// Elegimos un funcion nodo al azar
-		int nodoSeleccionado = Aleatorio.intRandom(_nodosFuncion.size());
-		Funcion nodoAMutar = (Funcion) _nodosFuncion.get(nodoSeleccionado)
-				.getSimbolo();
+		if (_nodosFuncion.size() > 0) {
 
-		// Elegimos un nuevo valor de la misma aridad
-		Simbolo nuevoValor = nodoAMutar.getFuncionAleatoria();
-		nodoAMutar.setValor(nuevoValor.getValor());
+			// Elegimos un funcion nodo al azar
+			int nodoSeleccionado = Aleatorio.intRandom(_nodosFuncion.size());
+			Funcion nodoAMutar = (Funcion) _nodosFuncion.get(nodoSeleccionado)
+					.getSimbolo();
+
+			// Elegimos un nuevo valor de la misma aridad
+			Simbolo nuevoValor = nodoAMutar.getFuncionAleatoria();
+			nodoAMutar.setValor(nuevoValor.getValor());
+		}
 	}
 
 	/**
@@ -194,25 +192,44 @@ public class Individuo implements Comparable<Object> {
 	 */
 	public void mutacionArbol() {
 
-		// Volvemos a calcular los nodos funcion
+		// Recalculamos los nodos Funcion y los nodos Terminales
 		_nodosFuncion.clear();
-		_arbol.extraerNodosFuncion(_nodosFuncion);
+		_nodosTerminales.clear();
+		_arbol.extraerNodos(_nodosFuncion, _nodosTerminales);
 		
-		// Elegimos al azar un nodo funcion del arbol
-		int indice = Aleatorio.intRandom(_nodosFuncion.size());
-		Arbol elementoAMutar = _nodosFuncion.get(indice);
+		// No contamos la raiz
+		if (_nodosFuncion.size() > 0) {
 
-		if (_arbol.getProfundidadMaxima() - elementoAMutar.getProfundidad() > 0) {
-				
-			// Generamos el nuevo árbol
-			Arbol a = Arbol.inicializaArbol(_tipoInicializacion, _arbol.getProfundidadMaxima()
-					- elementoAMutar.getProfundidad() - 1, _ifSeleccionado);
+			// Elegimos al azar un nodo funcion del arbol
+			int indice = Aleatorio.intRandom(_nodosFuncion.size());
+			Arbol elementoAMutar = _nodosFuncion.get(indice);
 
-			// Colocamos sus parámetros correctamente
-			a.setEsRaiz(false);
-			a.setPadre(elementoAMutar.getPadre());
-				
-			elementoAMutar = a;
+			if (_arbol.getProfundidadMaxima() - elementoAMutar.getProfundidad() > 0) {
+
+				// Generamos el nuevo árbol
+				Arbol a = Arbol.inicializaArbol(_tipoInicializacion, _arbol
+						.getProfundidadMaxima()
+						- elementoAMutar.getProfundidad() - 1, _ifSeleccionado);
+
+				// Colocamos sus parámetros correctamente
+				a.setEsRaiz(elementoAMutar.esRaiz());
+				a.setEsHoja(elementoAMutar.esHoja());
+				a.setProfundidadMaxima(elementoAMutar.getProfundidadMaxima());
+				a.setPadre(elementoAMutar.getPadre());
+
+				// Lo insetamos en el hijo izquierdo, central o derecho segun corresponda
+				if (elementoAMutar.getPadre().getHijos().get(0).equals(elementoAMutar))
+					elementoAMutar.getPadre().getHijos().set(0, a);
+				else
+					if (elementoAMutar.getPadre().getHijos().get(1).equals(elementoAMutar))
+						elementoAMutar.getPadre().getHijos().set(1, a);
+					else
+						if (elementoAMutar.getPadre().getHijos().get(2).equals(elementoAMutar))
+							elementoAMutar.getPadre().getHijos().set(2, a);
+										
+				// Sustituimos el arbol
+				elementoAMutar = a;
+			}
 		}
 	}
 
@@ -224,11 +241,11 @@ public class Individuo implements Comparable<Object> {
 	public double evalua() {
 
 		double evaluacion = 0;
-		
+
 		// Probamos con todos los casos de prueba
 		for (int i = 0; i < _casos.length; i++)
 			evaluacion += _arbol.evalua(_casos[i], _casos[i][6]);
-			
+
 		return evaluacion;
 	}
 
@@ -357,10 +374,11 @@ public class Individuo implements Comparable<Object> {
 
 		} catch (Exception e) {
 
-			System.err.println("Error al cargar los casos de prueba del fichero");
+			System.err
+					.println("Error al cargar los casos de prueba del fichero");
 		}
 	}
-	
+
 	@Override
 	public Object clone() {
 		Individuo individuo = new Individuo();
@@ -373,6 +391,16 @@ public class Individuo implements Comparable<Object> {
 		individuo._puntuacionAcumulada = _puntuacionAcumulada;
 		individuo._tipoInicializacion = _tipoInicializacion;
 		individuo._ifSeleccionado = _ifSeleccionado;
+		individuo._porcentajeCruceFuncion = _porcentajeCruceFuncion;
+		individuo._porcentajeCruceTerminal = _porcentajeCruceTerminal;
+		
+		individuo._nodosFuncion = new ArrayList<Arbol>();
+		for(int i = 0; i < _nodosFuncion.size(); i++)
+			individuo._nodosFuncion.add(_nodosFuncion.get(i));
+		
+		individuo._nodosTerminales = new ArrayList<Arbol>();
+		for(int i = 0; i < _nodosTerminales.size(); i++)
+			individuo._nodosTerminales.add(_nodosTerminales.get(i));
 
 		return individuo;
 	}

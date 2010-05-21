@@ -88,7 +88,9 @@ public class ValidadorDatos {
 	 */
 	public boolean parametrosOk(TipoVariacion variacion) {
 
-		return numGeneracionesOk() && tamPoblacionOk() && profundidadMaximaOk()
+		return numGeneracionesOk() && tamPoblacionOk() 
+					&& probCruceOk() && probMutacionOk() 
+					&& profundidadMaximaOk()
 					&& porcentajeEliteOk() && pasoVariacionOk()
 					&& limiteVariacionOk() && VariacionOk(variacion)
 					&& NumEstimadoCopiasMejorOk();
