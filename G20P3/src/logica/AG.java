@@ -191,12 +191,29 @@ public class AG {
 
 		// Creamos la poblacion del tamanio especificado
 		_poblacion = new Individuo[_tamPoblacion];
+		
+		// Calcula el tamaño de un grupo para la inicialización Ramped half and half
+		int tamGrupo = _tamPoblacion / (_profundidadMaxima - 1);
 
 		for (int j = 0; j < _tamPoblacion; j++) {
 
-			_poblacion[j] = new Individuo(_tipoInicializacion, _ifSeleccionado,
-					_profundidadMaxima, _porcentajeCruceFuncion,
-					_porcentajeCruceTerminal);
+			// Si el tipo de inicializacion es Ramped half and half
+			// se crea el mismo número de individuos para cada profundidad
+			// desde 2 a _profundidadMaxima
+			if (_tipoInicializacion == TipoInicializacion.RAMPED_AND_HALF) {
+				
+				// Obtiene la profundidad a partir del grupo al que pertenece el individuo
+				// sumándole 2 para establecer 2 como la mínima profundidad posible.
+				int profundidad = (j / tamGrupo) + 2;
+				
+				_poblacion[j] = new Individuo(_tipoInicializacion, _ifSeleccionado,
+						profundidad, _porcentajeCruceFuncion,
+						_porcentajeCruceTerminal);
+			}
+			else
+				_poblacion[j] = new Individuo(_tipoInicializacion, _ifSeleccionado,
+						_profundidadMaxima, _porcentajeCruceFuncion,
+						_porcentajeCruceTerminal);
 			_poblacion[j].setAptitud(_poblacion[j].evalua());
 
 			System.out.println(_poblacion[j].toString());
