@@ -159,21 +159,21 @@ public class Arbol {
 			
 		case RAMPED_AND_HALF:
 			
-			nodo._hijos.add(nodo.inicializaRampedAndHalfRecursivo(nodo,
+			nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
 					ifSeleccionado, 1, profundidadMaxima));
 			
 			// Si la funcion es OR o AND tiene un arbol como hijo derecho
 			if (nodo._simbolo.getValor().matches("OR")
 					|| nodo._simbolo.getValor().matches("AND"))
-				nodo._hijos.add(nodo.inicializaRampedAndHalfRecursivo(nodo,
+				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
 						ifSeleccionado, 1, profundidadMaxima));
 			else 
 				// Si es IF creo otros dos hijos mas
 				if (nodo._simbolo.getValor().matches("IF")) {
 
-				nodo._hijos.add(nodo.inicializaRampedAndHalfRecursivo(nodo,
+				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
 						ifSeleccionado, 1, profundidadMaxima));
-				nodo._hijos.add(nodo.inicializaRampedAndHalfRecursivo(nodo,
+				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
 						ifSeleccionado, 1, profundidadMaxima));
 			}
 			
@@ -310,33 +310,6 @@ public class Arbol {
 			nodo._esHoja = true;
 			nodo._numNodos = 1;
 		}
-		return nodo;
-	}
-
-	/**
-	 * Inicia de forma Ramped and Half recursiva el arbol.
-	 * 
-	 * @param padre
-	 *            Nodo padre.
-	 * @param ifSeleccionado
-	 *            Indica si se selecciona el if o no.
-	 * @param esHijoIzquierdo
-	 *            Indica si es hijo izquierdo o no.
-	 * @param profundidad
-	 *            Profundidad actual del arbol.
-	 * @param profundidadMaxima
-	 *            Profundidad maxima del arbol.
-	 * @param raiz
-	 *            nodo raiz del nodo.
-	 * 
-	 * @return El arbol iniciado recursiva de forma Ramped and Half.
-	 */
-	public Arbol inicializaRampedAndHalfRecursivo(Arbol padre,
-			boolean ifSeleccionado, int profundidad, int profundidadMaxima) {
-
-		// TODO: Por hacer
-
-		Arbol nodo = new Arbol(padre, profundidad, profundidadMaxima);
 		return nodo;
 	}
 
