@@ -140,6 +140,8 @@ public class Individuo implements Comparable<Object> {
 	public void cruce(Individuo padre2) {
 		
 		_arbol.cruce(padre2, _nodosTerminales, _nodosFuncion);
+		setAptitud(evalua());
+		padre2.setAptitud(padre2.evalua());
 	}
 
 	/**

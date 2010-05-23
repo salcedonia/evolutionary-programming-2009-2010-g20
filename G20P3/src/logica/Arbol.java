@@ -136,32 +136,11 @@ public class Arbol {
 			break;
 
 		case COMPLETA:
-
-			nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-					ifSeleccionado, 1, profundidadMaxima));
-
-			// Si la funcion es OR o AND tiene un arbol como hijo derecho
-			if (nodo._simbolo.getValor().matches("OR")
-					|| nodo._simbolo.getValor().matches("AND"))
-				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima));
-			else 
-				// Si es IF creo otros dos hijos mas
-				if (nodo._simbolo.getValor().matches("IF")) {
-
-				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima));
-				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima));
-			}
-			
-			break;
-			
 		case RAMPED_AND_HALF:
 			
 			nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
 					ifSeleccionado, 1, profundidadMaxima));
-			
+
 			// Si la funcion es OR o AND tiene un arbol como hijo derecho
 			if (nodo._simbolo.getValor().matches("OR")
 					|| nodo._simbolo.getValor().matches("AND"))

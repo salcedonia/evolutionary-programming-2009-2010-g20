@@ -67,7 +67,9 @@ public class PanelBotones extends JPanel {
 		_btnComenzar.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 
-				if (_validadorDatos.parametrosOk(_ventana.getTipoVariacion())) {
+				if (_validadorDatos.parametrosOk(_ventana.getTipoVariacion(),
+												 (Double)_ventana.getSpiProbCruce().getValue(),
+												 (Double)_ventana.getSpiProbMutacion().getValue())) {
 
 					// Hacemos la ejecucion del algoritmo en otro hilo de
 					// ejecucion

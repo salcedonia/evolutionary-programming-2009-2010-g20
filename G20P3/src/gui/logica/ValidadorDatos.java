@@ -29,16 +29,6 @@ public class ValidadorDatos {
 	private int _tamPoblacion;
 
 	/**
-	 * Probabilidad de cruce.
-	 */
-	private double _probCruce;
-
-	/**
-	 * Probabilidad de Mutacion.
-	 */
-	private double _probMutacion;
-
-	/**
 	 * Porcentage de la elite respecto a la poblacion.
 	 */
 	private double _porcentajeElite;
@@ -64,6 +54,16 @@ public class ValidadorDatos {
 	private int _profundidadMaxima;
 
 	/**
+	 * Probabilidad de cruce.
+	 */
+	private double _probCruce;
+
+	/**
+	 * Probabilidad de mutacion.
+	 */
+	private double _probMutacion;
+
+	/**
 	 * Constructor de la clase Validador de Datos.
 	 * 
 	 * @param ventana
@@ -81,22 +81,33 @@ public class ValidadorDatos {
 	 * 
 	 * @param variacion
 	 *            El tipo de parametro a variar.
-	 * @param tipoVista
-	 *            El tipo de vista de la interfaz.
+	 * @param probCruce
+	 *            Probabilidad de cruce.
+	 * @param probMutacion
+	 *            Probabilidad de mutacion.
+	 *            
 	 * @return Verdadero si todos los parametros son validos y falso en caso
 	 *         contrario.
 	 */
-	public boolean parametrosOk(TipoVariacion variacion) {
+	public boolean parametrosOk(TipoVariacion variacion, double probCruce, double probMutacion) {
 
+		_probCruce = probCruce;
+		_probMutacion = probMutacion;
+		
 		return numGeneracionesOk() && tamPoblacionOk() 
-					&& probCruceOk() && probMutacionOk() 
 					&& profundidadMaximaOk()
 					&& porcentajeEliteOk() && pasoVariacionOk()
 					&& limiteVariacionOk() && VariacionOk(variacion)
 					&& NumEstimadoCopiasMejorOk();
-
 	}
 
+	/**
+	 * Evalua la validez de los datos introducidos en el cuadro de texto de
+	 * profundidad maxima. Cuando ha comprobado que el resultado es optimo
+	 * entonces guarda el valor en la variable entera correspondiente.
+	 * 
+	 * @return Verdadero si el dato introducido es correcto.
+	 */
 	private boolean profundidadMaximaOk() {
 		int profundidadMaxima;
 
@@ -220,106 +231,6 @@ public class ValidadorDatos {
 					.showMessageDialog(
 							_ventana,
 							"!El Tamanio de la Poblacion tiene que ser un numero entero!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-
-			return false;
-		}
-
-		return true;
-	}
-	
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de
-	 * Probablidad de Cruce. Cuando ha comprobado que el resultado es optimo
-	 * entonces guarda el valor en la variable real correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	public boolean probCruceOk() {
-
-		double probCruce;
-
-		try {
-
-			String valor = _ventana.getSpiProbCruce().getModel().getValue().toString();
-			
-			if (valor.matches("")) {
-				JOptionPane.showMessageDialog(_ventana,
-						"!Debe introducir la Probabilidad de Cruce!",
-						"Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			} else {
-				probCruce = Double.parseDouble(valor);
-
-				if (probCruce >= 0 && probCruce <= 1) {
-					// Guardamos el resultado de la validacion
-					_probCruce = probCruce;
-				} else {
-					JOptionPane
-							.showMessageDialog(
-									_ventana,
-									"!La Probabilidad de Cruce tiene que ser un numero entero positivo entre 0 y 1!",
-									"Error en los datos",
-									JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-			}
-		} catch (NumberFormatException e) {
-
-			JOptionPane
-					.showMessageDialog(
-							_ventana,
-							"!La Probabilidad de Cruce tiene que ser un numero entero!",
-							"Error en los datos", JOptionPane.ERROR_MESSAGE);
-
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Evalua la validez de los datos introducidos en el cuadro de texto de
-	 * Probablidad de Mutacion. Cuando ha comprobado que el resultado es optimo
-	 * entonces guarda el valor en la variable real correspondiente.
-	 * 
-	 * @return Verdadero si el dato introducido es correcto.
-	 */
-	public boolean probMutacionOk() {
-
-		double probMutacion;
-
-		try {
-
-			String valor = _ventana.getSpiProbMutacion().getModel().getValue().toString();
-			
-			if (valor.matches("")) {
-				JOptionPane.showMessageDialog(_ventana,
-						"!Debe introducir la Probabilidad de Mutacion!",
-						"Error en los datos", JOptionPane.ERROR_MESSAGE);
-				return false;
-			} else {
-				probMutacion = Double.parseDouble(valor);
-
-				if (probMutacion >= 0 && probMutacion <= 1) {
-					// Guardamos el resultado de la validacion
-					_probMutacion = probMutacion;
-				} else {
-					JOptionPane
-							.showMessageDialog(
-									_ventana,
-									"!La Probabilidad de Mutacion tiene que ser un numero entero positivo entre 0 y 1!",
-									"Error en los datos",
-									JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
-			}
-		} catch (NumberFormatException e) {
-
-			JOptionPane
-					.showMessageDialog(
-							_ventana,
-							"!La Probabilidad de Mutacion tiene que ser un numero entero!",
 							"Error en los datos", JOptionPane.ERROR_MESSAGE);
 
 			return false;
@@ -488,11 +399,11 @@ public class ValidadorDatos {
 		case NUM_POBLACION:
 			varCorrecta = _tamPoblacion < _limiteVariacion;
 			break;
-		case PROB_CRUCE:
-			varCorrecta = _probCruce < _limiteVariacion;
+		case PROB_CRUCE: 
+			varCorrecta = _probCruce < _limiteVariacion; 
 			break;
-		case PROB_MUTACION:
-			varCorrecta = _probMutacion < _limiteVariacion;
+		case PROB_MUTACION: 
+			varCorrecta = _probMutacion < _limiteVariacion; 
 			break;
 		case ELITISMO:
 			varCorrecta = _porcentajeElite < _limiteVariacion;
@@ -594,42 +505,6 @@ public class ValidadorDatos {
 	}
 
 	/**
-	 * Devuelve la probabilidad de cruce.
-	 * 
-	 * @return La probabilidad de cruce.
-	 */
-	public double getProbCruce() {
-		return _probCruce;
-	}
-
-	/**
-	 * Establece la probabilidad de cruce a valor probCruce.
-	 * 
-	 * @param probCruce Nuevo valor a establecer.
-	 */
-	public void setProbCruce(double probCruce) {
-		_probCruce = probCruce;
-	}
-
-	/**
-	 * Devuelve la probabilidad de mutacion.
-	 * 
-	 * @return La probabilidad de mutacion.
-	 */
-	public double getProbMutacion() {
-		return _probMutacion;
-	}
-
-	/**
-	 * Establece la probabilidad de mutacion a valor probMutacion.
-	 * 
-	 * @param probMutacion Nuevo valor a establecer.
-	 */
-	public void setProbMutacion(double probMutacion) {
-		_probMutacion = probMutacion;
-	}
-
-	/**
 	 * Devuelve el porcentaje de la elite.
 	 * 
 	 * @return El porcentaje de la elite.
@@ -700,4 +575,40 @@ public class ValidadorDatos {
 	public int getProfundidadMaxima() {
 		return _profundidadMaxima;
 	}
+
+	/**
+	 * Devuelve la probabilidad de cruce.
+	 * 
+	 * @return La probabilidad de cruce.
+	 */
+	public double getProbCruce() {
+		return _probCruce;
+	}
+
+	/**
+	 * Establece la probabilidad de cruce a valor probCruce.
+	 * 
+	 * @param probCruce Nuevo valor a establecer.
+	 */
+	public void setProbCruce(double probCruce) {
+		_probCruce = probCruce;
+	}
+	
+	/**
+	 * Devuelve la probabilidad de mutacion.
+	 * 
+	 * @return La probabilidad de mutacion.
+	 */
+	public double getProbMutacion() {
+		return _probMutacion;
+	}
+
+	/**
+	 * Establece la probabilidad de mutacion a valor probmutacion.
+	 * 
+	 * @param probMutacion Nuevo valor a establecer.
+	 */
+	public void setProbMutacion(double probMutacion) {
+		_probMutacion = probMutacion;
+	}	
 }

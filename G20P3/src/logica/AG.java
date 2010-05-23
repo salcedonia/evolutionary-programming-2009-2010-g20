@@ -87,12 +87,12 @@ public class AG {
 	/**
 	 * Porcentaje de cruce para los nodos funcion.
 	 */
-	private double _porcentajeCruceFuncion = 0.9;
+	private double _porcentajeCruceFuncion;
 
 	/**
 	 * Porcentaje de cruce para los nodos terminales.
 	 */
-	private double _porcentajeCruceTerminal = 0.1;
+	private double _porcentajeCruceTerminal;
 
 	/**
 	 * Profundidad maxima del arbol.
@@ -135,6 +135,8 @@ public class AG {
 	 *            Probabilidad de Cruce.
 	 * @param probMutacion
 	 *            Probabilidad de Mutacion.
+	 * @param double2 
+	 * @param porcentaje 
 	 * @param tipoInicializacion
 	 *            Tipo de Inicializacion.
 	 * @param tipoMutacion
@@ -157,7 +159,8 @@ public class AG {
 	 *            Numero estimado de copias del mejor individuo de la poblacion.
 	 */
 	public AG(int numMaxGeneraciones, int tamPoblacion, double probCruce,
-			double probMutacion, TipoSeleccion tipoSeleccion,
+			double probMutacion, double porcentajeCruceFuncion, 
+			double porcentajeCruceTerminal, TipoSeleccion tipoSeleccion,
 			TipoInicializacion tipoInicializacion, TipoMutacion tipoMutacion,
 			boolean ifSeleccionado, int profundidadMaxima, boolean elitismo,
 			boolean escaladoSimple, double tamElite, int numEstimadoCopiasMejor) {
@@ -166,6 +169,8 @@ public class AG {
 		_numMaxGeneraciones = numMaxGeneraciones;
 		_tamPoblacion = tamPoblacion;
 		_probCruce = probCruce;
+		_porcentajeCruceFuncion = porcentajeCruceFuncion;
+		_porcentajeCruceTerminal = porcentajeCruceTerminal;
 		_probMutacion = probMutacion;
 		_tipoSeleccion = tipoSeleccion;
 		_tipoInicializacion = tipoInicializacion;
@@ -197,6 +202,30 @@ public class AG {
 
 		for (int j = 0; j < _tamPoblacion; j++) {
 
+			// Calcula el tama–o de un grupo para la inicializaci—n Ramped half
+			// and half
+			tamGrupo = _tamPoblacion / (_profundidadMaxima - 1);
+
+			// Si el tipo de inicializacion es Ramped half and half
+			// se crea el mismo nœmero de individuos para cada profundidad
+			// desde 2 a _profundidadMaxima
+			if (_tipoInicializacion == TipoInicializacion.RAMPED_AND_HALF) {
+
+				// Obtiene la profundidad a partir del grupo al que pertenece el
+				// individuo
+				// sum‡ndole 2 para establecer 2 como la m’nima profundidad
+				// posible.
+				int profundidad = (j / tamGrupo) + 2;
+
+				_poblacion[j] = new Individuo(_tipoInicializacion,
+						_ifSeleccionado, profundidad, _porcentajeCruceFuncion,
+						_porcentajeCruceTerminal);
+			} else
+
+				_poblacion[j] = new Individuo(_tipoInicializacion,
+						_ifSeleccionado, _profundidadMaxima,
+						_porcentajeCruceFuncion, _porcentajeCruceTerminal);
+			
 			// Si el tipo de inicializacion es Ramped half and half
 			// se crea el mismo número de individuos para cada profundidad
 			// desde 2 a _profundidadMaxima
@@ -214,12 +243,12 @@ public class AG {
 				_poblacion[j] = new Individuo(_tipoInicializacion, _ifSeleccionado,
 						_profundidadMaxima, _porcentajeCruceFuncion,
 						_porcentajeCruceTerminal);
-			_poblacion[j].setAptitud(_poblacion[j].evalua());
 
+			_poblacion[j].setAptitud(_poblacion[j].evalua());
 			System.out.println(_poblacion[j].toString());
 			System.out.println();
 		}
-		
+
 		// El mejor es el primero
 		_posMejor = 0;
 		_elMejorGlobal = (Individuo) _poblacion[_posMejor].clone();
@@ -536,7 +565,8 @@ public class AG {
 	/**
 	 * Selecciona al azar un nodo funcion y le asigna un nuevo subarbol.
 	 * 
-	 * @param individuo Individuo a mutar.
+	 * @param individuo
+	 *            Individuo a mutar.
 	 */
 	private void mutacionArbol(Individuo individuo) {
 
@@ -544,9 +574,11 @@ public class AG {
 	}
 
 	/**
-	 * Selecciona al azar un nodo funcion y le asigna otra funcion de la misma aridad.
+	 * Selecciona al azar un nodo funcion y le asigna otra funcion de la misma
+	 * aridad.
 	 * 
-	 * @param individuo Individuo a mutar.
+	 * @param individuo
+	 *            Individuo a mutar.
 	 */
 	private void mutacionFuncionalSimple(Individuo individuo) {
 
@@ -556,7 +588,8 @@ public class AG {
 	/**
 	 * Selecciona al azar un nodo terminal y le asigna otro terminal distinto.
 	 * 
-	 * @param individuo Individuo a mutar.
+	 * @param individuo
+	 *            Individuo a mutar.
 	 */
 	private void mutacionTerminalSimple(Individuo individuo) {
 

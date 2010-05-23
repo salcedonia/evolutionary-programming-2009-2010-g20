@@ -34,7 +34,7 @@ public class Ventana extends JFrame {
 	// CONSTANTES
 	private static final long serialVersionUID = 1L;
 	private static final int ALTO = 700;
-	private static final int ANCHO = 550;
+	private static final int ANCHO = 600;
 	private static final String TITULO = "Practica 3: Programacion Genetica";
 	private static final String ICONO = "AGSIcono.gif";
 
@@ -62,7 +62,7 @@ public class Ventana extends JFrame {
 	/**
 	 * Panel de cuerpo del panel de opciones.
 	 */
-	private JPanel _panelBodyOpciones;
+	private PanelOpciones _panelBodyOpciones;
 
 	/**
 	 * Panel de botones del panel de opciones.
@@ -284,9 +284,11 @@ public class Ventana extends JFrame {
 	private void comienzaAGSNormal() {
 
 		// Creamos el objeto encargado del algoritmo genetico simple
-		_AG = new AG(_validadorDatos.getNumGeneraciones(), _validadorDatos
-				.getTamPoblacion(), _validadorDatos.getProbCruce(),
-				_validadorDatos.getProbMutacion(), _tipoSeleccion,
+		_AG = new AG(_validadorDatos.getNumGeneraciones(), _validadorDatos.getTamPoblacion(), 
+				(Double)_panelBodyOpciones.getSpiProbCruce().getValue(),
+				(Double)_panelBodyOpciones.getSpiPorcentajeCruceFunciones().getValue(),
+				(Double)_panelBodyOpciones.getSpiPorcentajeCruceTerminales().getValue(),
+				(Double)_panelBodyOpciones.getSpiProbMutacion().getValue(), _tipoSeleccion,
 				_tipoInicializacion, _tipoMutacion, _ifSeleccionado, 
 				_validadorDatos.getProfundidadMaxima(), _elitismo,
 				_escaladoSimple, _validadorDatos.getPorcentajeElite(),
@@ -376,9 +378,12 @@ public class Ventana extends JFrame {
 			case NUM_GENERACION:
 				// Creamos el objeto encargado del algoritmo genetico simple
 				_AG = new AG((int) i, _validadorDatos.getTamPoblacion(),
-						_validadorDatos.getProbCruce(), _validadorDatos
-								.getProbMutacion(), _tipoSeleccion, _tipoInicializacion,
-						_tipoMutacion, _ifSeleccionado,_validadorDatos.getProfundidadMaxima(),
+						(Double)_panelBodyOpciones.getSpiProbCruce().getValue(),
+						(Double)_panelBodyOpciones.getSpiPorcentajeCruceFunciones().getValue(),
+						(Double)_panelBodyOpciones.getSpiPorcentajeCruceTerminales().getValue(),
+						(Double)_panelBodyOpciones.getSpiProbMutacion().getValue(), _tipoSeleccion, 
+						_tipoInicializacion,_tipoMutacion, _ifSeleccionado,
+						_validadorDatos.getProfundidadMaxima(),
 						_elitismo, _escaladoSimple, _validadorDatos
 								.getPorcentajeElite(), _validadorDatos
 								.getNumEstimadoCopiasMejor());
@@ -386,8 +391,10 @@ public class Ventana extends JFrame {
 			case NUM_POBLACION:
 				// Creamos el objeto encargado del algoritmo genetico simple
 				_AG = new AG(_validadorDatos.getNumGeneraciones(), (int) i,
-						_validadorDatos.getProbCruce(), _validadorDatos
-								.getProbMutacion(), _tipoSeleccion, _tipoInicializacion,
+						(Double)_panelBodyOpciones.getSpiProbCruce().getValue(),
+						(Double)_panelBodyOpciones.getSpiPorcentajeCruceFunciones().getValue(),
+						(Double)_panelBodyOpciones.getSpiPorcentajeCruceTerminales().getValue(),
+						(Double)_panelBodyOpciones.getSpiProbMutacion().getValue(), _tipoSeleccion, _tipoInicializacion,
 						_tipoMutacion, _ifSeleccionado,_validadorDatos.getProfundidadMaxima(),
 						_elitismo, _escaladoSimple, _validadorDatos
 								.getPorcentajeElite(), _validadorDatos
@@ -396,8 +403,10 @@ public class Ventana extends JFrame {
 			case PROB_CRUCE:
 				// Creamos el objeto encargado del algoritmo genetico simple
 				_AG = new AG(_validadorDatos.getNumGeneraciones(),
-						_validadorDatos.getTamPoblacion(), i, _validadorDatos
-								.getProbMutacion(), _tipoSeleccion, _tipoInicializacion,
+						_validadorDatos.getTamPoblacion(), i,
+						(Double)_panelBodyOpciones.getSpiPorcentajeCruceFunciones().getValue(),
+						(Double)_panelBodyOpciones.getSpiPorcentajeCruceTerminales().getValue(),
+						(Double)_panelBodyOpciones.getSpiProbMutacion().getValue(), _tipoSeleccion, _tipoInicializacion,
 						_tipoMutacion, _ifSeleccionado,_validadorDatos.getProfundidadMaxima(),
 						_elitismo, _escaladoSimple, _validadorDatos
 								.getPorcentajeElite(), _validadorDatos
@@ -406,8 +415,9 @@ public class Ventana extends JFrame {
 			case PROB_MUTACION:
 				// Creamos el objeto encargado del algoritmo genetico simple
 				_AG = new AG(_validadorDatos.getNumGeneraciones(),
-						_validadorDatos.getTamPoblacion(), _validadorDatos
-								.getProbCruce(), i, _tipoSeleccion, _tipoInicializacion,
+						_validadorDatos.getTamPoblacion(),(Double)_panelBodyOpciones.getSpiProbCruce().getValue(),
+						(Double)_panelBodyOpciones.getSpiPorcentajeCruceFunciones().getValue(),
+						(Double)_panelBodyOpciones.getSpiPorcentajeCruceTerminales().getValue(), i, _tipoSeleccion, _tipoInicializacion,
 						_tipoMutacion, _ifSeleccionado,_validadorDatos.getProfundidadMaxima(),
 						_elitismo, _escaladoSimple, _validadorDatos
 								.getPorcentajeElite(), _validadorDatos
@@ -416,9 +426,10 @@ public class Ventana extends JFrame {
 			case ELITISMO:
 				// Creamos el objeto encargado del algoritmo genetico simple
 				_AG = new AG(_validadorDatos.getNumGeneraciones(),
-						_validadorDatos.getTamPoblacion(), _validadorDatos
-								.getProbCruce(), _validadorDatos
-								.getProbMutacion(), _tipoSeleccion, _tipoInicializacion,
+						_validadorDatos.getTamPoblacion(), (Double)_panelBodyOpciones.getSpiProbCruce().getValue(),
+						(Double)_panelBodyOpciones.getSpiPorcentajeCruceFunciones().getValue(),
+						(Double)_panelBodyOpciones.getSpiPorcentajeCruceTerminales().getValue(),
+						(Double)_panelBodyOpciones.getSpiProbMutacion().getValue(), _tipoSeleccion, _tipoInicializacion,
 						_tipoMutacion, _ifSeleccionado,_validadorDatos.getProfundidadMaxima(),
 						_elitismo, _escaladoSimple, i, _validadorDatos
 								.getNumEstimadoCopiasMejor());
@@ -677,5 +688,23 @@ public class Ventana extends JFrame {
 	public JTextField getTxtProfundidadMaxima() {
 		return ((PanelOpciones) _panelBodyOpciones)
 		.getTxtProfundidadMaxima();
+	}
+	
+	/**
+	 * Devuelve el porcentaje de cruce para las funciones.
+	 * 
+	 * @return El porcentaje de cruce para las funciones.
+	 */
+	public JSpinner getSpiPorcentajeCruceFunciones(){
+		return ((PanelOpciones) _panelBodyOpciones).getSpiPorcentajeCruceFunciones();
+	}
+	
+	/**
+	 * Devuelve el porcentaje de cruce para los terminales.
+	 * 
+	 * @return El porcentaje de cruce para los terminales.
+	 */
+	public JSpinner getSpiPorcentajeCruceTerminales(){
+		return ((PanelOpciones) _panelBodyOpciones).getSpiPorcentajeCruceTerminales();
 	}
 }
