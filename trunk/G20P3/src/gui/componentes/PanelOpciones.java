@@ -38,6 +38,8 @@ public class PanelOpciones extends JPanel{
 	private static final String NUM_POBLACION_DEF = "100";
 	private static final double PROB_CRUCE_DEF = 0.7;
 	private static final double PROB_MUTACION_DEF = 0.1;
+	private static final double PORCENTAJE_CRUCE_FUNCIONES = 0.9;
+	private static final double PORCENTAJE_CRUCE_TERMINALES = 0.1;
 	private static final String PROFUNDIDAD_MAXIMA_DEF = "5";
 	private static final String NUM_ESTIMADO_COPIAS_MEJOR_DEF = "1";
 	private static final String NUM_ELITE_DEF = "0.1";
@@ -59,6 +61,9 @@ public class PanelOpciones extends JPanel{
 	private JLabel _lblPasoVariacion;
 	private JLabel _lblLimiteVariacion;
 	private JLabel _lblProfundidadMaxima;
+	private JLabel _lblPorcentajeCrucesFunciones;
+	private JLabel _lblPorcentajeCrucesTerminales;
+	
 	private JTextField _txtNumGeneraciones;
 	private JTextField _txtTamPoblacion;
 	private JTextField _txtNumEstimadoCopiasMejor;
@@ -68,6 +73,8 @@ public class PanelOpciones extends JPanel{
 	private JTextField _txtProfundidadMaxima;
 	private JSpinner _spiProbCruce;
 	private JSpinner _spiProbMutacion;
+	private JSpinner _spiPorcentajeCruceFunciones;
+	private JSpinner _spiPorcentajeCruceTerminales;
 	private JCheckBox _chkSeleccionIf;
 	private JCheckBox _chkSeleccionElitismo;
 	private JCheckBox _chkSeleccionEscaladoSimple;
@@ -126,10 +133,25 @@ public class PanelOpciones extends JPanel{
 		constraints.gridy = 2;
 		add(_lblProbCruce, constraints);
 
+		_lblPorcentajeCrucesFunciones = new JLabel("% de Cruce Funciones:");
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		constraints.insets = new Insets(-25,75,0,0);
+		add(_lblPorcentajeCrucesFunciones, constraints);
+
+		_lblPorcentajeCrucesTerminales = new JLabel("% de Cruce Terminales:");
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		constraints.insets = new Insets(25,75,0,0);
+		add(_lblPorcentajeCrucesTerminales, constraints);
+		
 		_lblProbMutacion = new JLabel("Probabilidad de Mutacion:");
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.gridx = 0;
 		constraints.gridy = 3;
+		constraints.insets = new Insets(0,0,0,0);
 		add(_lblProbMutacion, constraints);
 
 		_lblSeleccionTipoSeleccion = new JLabel("Metodo de Seleccion:");
@@ -236,12 +258,31 @@ public class PanelOpciones extends JPanel{
 		constraints.ipadx = 10;
 		add(_spiProbCruce, constraints);
 
+		SpinnerNumberModel modelPorcentajeCruceFunciones = new SpinnerNumberModel(PORCENTAJE_CRUCE_FUNCIONES, 0.0, 1.0, 0.1); 
+		_spiPorcentajeCruceFunciones = new JSpinner(modelPorcentajeCruceFunciones); 
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		constraints.ipadx = 10;
+		constraints.insets = new Insets(-25,230,0,0);
+		add(_spiPorcentajeCruceFunciones, constraints);
+		
+		SpinnerNumberModel modelPorcentajeCruceTerminales = new SpinnerNumberModel(PORCENTAJE_CRUCE_TERMINALES, 0.0, 1.0, 0.1); 
+		_spiPorcentajeCruceTerminales = new JSpinner(modelPorcentajeCruceTerminales); 
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		constraints.ipadx = 10;
+		constraints.insets = new Insets(25,230,0,0);
+		add(_spiPorcentajeCruceTerminales, constraints);
+		
 		SpinnerNumberModel modelProbMutacion = new SpinnerNumberModel(PROB_MUTACION_DEF, 0.0, 1.0, 0.1); 
 		_spiProbMutacion = new JSpinner(modelProbMutacion); 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
 		constraints.gridy = 3;
 		constraints.ipadx = 10;
+		constraints.insets = new Insets(0,0,0,0);
 		add(_spiProbMutacion, constraints);
 
 		_cmbSeleccionTipoSeleccion = new JComboBox(_seleccionStrings);
@@ -555,5 +596,23 @@ public class PanelOpciones extends JPanel{
 	 */
 	public JTextField getTxtProfundidadMaxima() {
 		return _txtProfundidadMaxima;
+	}
+
+	/**
+	 * Devuelve el spinner que contiene el porcentaje de cruce de las funciones.
+	 * 
+	 * @return El spinner que contiene el porcentaje de cruce de las funciones.
+	 */
+	public JSpinner getSpiPorcentajeCruceFunciones() {
+		return _spiPorcentajeCruceFunciones;
+	}
+
+	/**
+	 * Devuelve el spinner que contiene el porcentaje de cruce de los terminales.
+	 * 
+	 * @return El spinner que contiene el porcentaje de cruce de los terminales.
+	 */
+	public JSpinner getSpiPorcentajeCruceTerminales() {
+		return _spiPorcentajeCruceTerminales;
 	}
 }
