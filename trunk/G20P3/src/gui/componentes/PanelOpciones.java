@@ -250,7 +250,7 @@ public class PanelOpciones extends JPanel{
 		constraints.ipadx = 20;
 		add(_txtTamPoblacion, constraints);
 
-		SpinnerNumberModel modelProbCruce = new SpinnerNumberModel(PROB_CRUCE_DEF, 0.0, 1.0, 0.1); 
+		SpinnerNumberModel modelProbCruce = new SpinnerNumberModel(PROB_CRUCE_DEF, 0.0, 1.0, 0.05); 
 		_spiProbCruce = new JSpinner(modelProbCruce); 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
@@ -258,7 +258,7 @@ public class PanelOpciones extends JPanel{
 		constraints.ipadx = 10;
 		add(_spiProbCruce, constraints);
 
-		SpinnerNumberModel modelPorcentajeCruceFunciones = new SpinnerNumberModel(PORCENTAJE_CRUCE_FUNCIONES, 0.0, 1.0, 0.1); 
+		SpinnerNumberModel modelPorcentajeCruceFunciones = new SpinnerNumberModel(PORCENTAJE_CRUCE_FUNCIONES, 0.0, 1.0, 0.05); 
 		_spiPorcentajeCruceFunciones = new JSpinner(modelPorcentajeCruceFunciones); 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
@@ -267,7 +267,7 @@ public class PanelOpciones extends JPanel{
 		constraints.insets = new Insets(-25,230,0,0);
 		add(_spiPorcentajeCruceFunciones, constraints);
 		
-		SpinnerNumberModel modelPorcentajeCruceTerminales = new SpinnerNumberModel(PORCENTAJE_CRUCE_TERMINALES, 0.0, 1.0, 0.1); 
+		SpinnerNumberModel modelPorcentajeCruceTerminales = new SpinnerNumberModel(PORCENTAJE_CRUCE_TERMINALES, 0.0, 1.0, 0.05); 
 		_spiPorcentajeCruceTerminales = new JSpinner(modelPorcentajeCruceTerminales); 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;
@@ -276,7 +276,7 @@ public class PanelOpciones extends JPanel{
 		constraints.insets = new Insets(25,230,0,0);
 		add(_spiPorcentajeCruceTerminales, constraints);
 		
-		SpinnerNumberModel modelProbMutacion = new SpinnerNumberModel(PROB_MUTACION_DEF, 0.0, 1.0, 0.1); 
+		SpinnerNumberModel modelProbMutacion = new SpinnerNumberModel(PROB_MUTACION_DEF, 0.0, 1.0, 0.05); 
 		_spiProbMutacion = new JSpinner(modelProbMutacion); 
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 1;

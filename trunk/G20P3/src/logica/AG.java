@@ -39,7 +39,7 @@ public class AG {
 	/**
 	 * Posicion del mejor cromosoma.
 	 */
-	private int _posMejor;
+	private int _posMejor = 0;
 	/**
 	 * Probabilidad de cruce.
 	 */
@@ -193,7 +193,7 @@ public class AG {
 	 * aleatoriamente.
 	 */
 	public void inicializa() {
-
+	
 		// Creamos la poblacion del tamanio especificado
 		_poblacion = new Individuo[_tamPoblacion];
 		
@@ -245,14 +245,15 @@ public class AG {
 						_porcentajeCruceTerminal);
 
 			_poblacion[j].setAptitud(_poblacion[j].evalua());
+			
+			if(_poblacion[_posMejor].getAptitud() < _poblacion[j].getAptitud()){
+				_posMejor = j;
+				_elMejorGlobal = (Individuo) _poblacion[_posMejor].clone();
+			}
+			
 			System.out.println(_poblacion[j].toString());
 			System.out.println();
 		}
-
-		// El mejor es el primero
-		_posMejor = 0;
-		_elMejorGlobal = (Individuo) _poblacion[_posMejor].clone();
-		_elMejorLocal = (Individuo) _poblacion[_posMejor].clone();
 	}
 
 	/**
@@ -303,9 +304,14 @@ public class AG {
 			prob = generador.nextDouble();
 			pos_super = 0;
 
-			while ((prob > _poblacion[pos_super].getPuntuacionAcumulada())
-					&& (pos_super < _tamPoblacion))
-				pos_super++;
+			if (_escaladoSimple)
+				while ((prob > _poblacion[pos_super].getPuntuacionAcumuladaEscaladoSimple())
+						&& (pos_super < _tamPoblacion))
+					pos_super++;
+			else
+				while ((prob > _poblacion[pos_super].getPuntuacionAcumulada())
+						&& (pos_super < _tamPoblacion))
+					pos_super++;
 			sel_super[i] = pos_super;
 		}
 
@@ -331,6 +337,7 @@ public class AG {
 
 		// int tamTorneo = valorNtorneo;
 		random = new int[_tamTorneo];
+		
 		for (int i = 0; i < _tamPoblacion; i++) {
 
 			for (int j = 0; j < _tamTorneo; j++)
@@ -339,10 +346,14 @@ public class AG {
 			int mejor = random[0];
 			for (int j = 1; j < _tamTorneo; j++) {
 
-				if (_poblacion[random[j]].getAptitud() < _poblacion[mejor]
-						.getAptitud()) {
-					mejor = random[j];
-				}
+				if(_escaladoSimple)
+					if (_poblacion[random[j]].getPuntuacionEscaladoSimple() > _poblacion[mejor].getPuntuacionEscaladoSimple()) {
+						mejor = random[j];
+					}
+				else
+					if (_poblacion[random[j]].getAptitud() > _poblacion[mejor].getAptitud()) {
+						mejor = random[j];
+					}
 			}
 
 			nuevo[i] = (Individuo) _poblacion[mejor].clone();
@@ -475,6 +486,10 @@ public class AG {
 	 * @return Verdadero si x < y y falso en caso contrario.
 	 */
 	private boolean menor(Individuo x, Individuo y) {
+		
+		if(_escaladoSimple)
+			return (x.getPuntuacionEscaladoSimple() < y.getPuntuacionEscaladoSimple());
+		
 		return (x.getAptitud() < y.getAptitud());
 	}
 
@@ -606,12 +621,6 @@ public class AG {
 		double aptitud_mejor = 0;
 		double sumadaptacion = 0; // suma de la adaptacion
 
-		// Escalamos la adaptacion segun la formula f(x)=a*g()+b
-		if (_escaladoSimple)
-			for (int i = 0; i < _tamPoblacion; i++)
-				_poblacion[i]
-						.setAptitud(a() * _poblacion[i].getAptitud() + b());
-
 		// Obtenemos el cromosoma con mejor aptitud y la suma de adaptacion
 		for (int i = 0; i < _tamPoblacion; i++) {
 
@@ -634,13 +643,28 @@ public class AG {
 		}
 
 		// Calculamos el mejor individuo
-		if (aptitud_mejor > _elMejorGlobal.getAptitud()) {
+		if (aptitud_mejor > _elMejorGlobal.getAptitud())
 			_elMejorGlobal = (Individuo) _poblacion[_posMejor].clone();
-
-			// La adapacion del mejor debe ser P * Media
-			if (_escaladoSimple)
-				_poblacion[_posMejor].setAptitud(_numEstimadoCopiasMejor
-						* getAptitudMedia());
+		
+		// Aplicamos el escalado simple si procede
+		if (_escaladoSimple){
+			
+			// Hacemos para cada uno f(x) = a*g() + b
+			for(int i = 0 ; i < _poblacion.length; i++)
+				_poblacion[i].setPuntuacionEscaladoSimple(a() * _poblacion[i].getAptitud() + b());
+			
+			// La adaptacion del mejor debe ser P * Media
+			_poblacion[_posMejor].setPuntuacionEscaladoSimple(_numEstimadoCopiasMejor
+					* getAptitudMedia());
+			
+			double puntAcumulada = 0;
+			
+			// Calcula el f acumulado
+			for(int i = 0 ; i < _poblacion.length; i++){
+				
+				puntAcumulada += _poblacion[i].getPuntuacionEscaladoSimple();
+				_poblacion[i].setPuntuacionAcumuladaEscaladoSimple(puntAcumulada);
+			}
 		}
 	}
 
@@ -651,7 +675,7 @@ public class AG {
 	 */
 	private double a() {
 
-		// ((P-1) * Media) / (fmax - Media)
+		// ((P-1) * Media) / (gmax() - Media)
 		return ((_numEstimadoCopiasMejor - 1) * getAptitudMedia())
 				/ (_poblacion[_posMejor].getAptitud() - getAptitudMedia());
 	}
