@@ -525,7 +525,7 @@ public class AG {
 
 		// Cruzamos los indiduos seleccionados
 		for (int i = 0; i < num_sel_cruce; i += 2) {
-			_poblacion[sel_cruce[i]].cruce(_poblacion[sel_cruce[i + 1]]);
+			_poblacion[sel_cruce[i]].cruce(_poblacion[sel_cruce[i + 1]], _porcentajeCruceFuncion);
 		}
 	}
 

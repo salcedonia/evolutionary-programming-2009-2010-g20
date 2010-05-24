@@ -51,4 +51,14 @@ public class Aleatorio {
 		Random generador = new Random();
 		return generador.nextInt(max);
 	}
+	
+	/**
+	 * Genera un numero real aleatorio entre 0 y 1.
+	 * @return Un numero aleatorio entre 0 y 1.
+	 */
+	public static double doubleRandom() {
+		
+		Random generador = new Random();
+		return generador.nextDouble();
+	}
 }

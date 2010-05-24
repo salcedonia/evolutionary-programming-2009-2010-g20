@@ -604,6 +604,8 @@ public class PanelOpciones extends JPanel{
 	 * @return El spinner que contiene el porcentaje de cruce de las funciones.
 	 */
 	public JSpinner getSpiPorcentajeCruceFunciones() {
+		
+		
 		return _spiPorcentajeCruceFunciones;
 	}
 
