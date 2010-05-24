@@ -137,9 +137,9 @@ public class Individuo implements Comparable<Object> {
 	 * 
 	 * @param padre2 Otro padre seleccionado para el cruce.
 	 */
-	public void cruce(Individuo padre2) {
+	public void cruce(Individuo padre2, double porcentajeCruceFuncion) {
 		
-		_arbol.cruce(padre2, _nodosTerminales, _nodosFuncion);
+		_arbol.cruce(padre2, _nodosTerminales, _nodosFuncion, porcentajeCruceFuncion);
 		setAptitud(evalua());
 		padre2.setAptitud(padre2.evalua());
 	}
@@ -219,7 +219,7 @@ public class Individuo implements Comparable<Object> {
 				a.setProfundidadMaxima(elementoAMutar.getProfundidadMaxima());
 				a.setPadre(elementoAMutar.getPadre());
 
-				// Lo insetamos en el hijo izquierdo, central o derecho segun corresponda
+				// Lo insertamos en el hijo izquierdo, central o derecho segun corresponda
 				if (elementoAMutar.getPadre().getHijos().get(0).equals(elementoAMutar))
 					elementoAMutar.getPadre().getHijos().set(0, a);
 				else

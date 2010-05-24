@@ -126,18 +126,19 @@ public class Arbol {
 			else
 				// Si es IF creo otros dos hijos mas
 				if (nodo._simbolo.getValor().matches("IF")) {
-	
+
 					nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
 							ifSeleccionado, 1, profundidadMaxima));
 					nodo._hijos.add(nodo.inicializaCrecienteRecursivo(nodo,
 							ifSeleccionado, 1, profundidadMaxima));
 				}
-			
+
 			break;
 
+			// Emplean el mismo método pero con diferentes profundidades
 		case COMPLETA:
 		case RAMPED_AND_HALF:
-			
+
 			nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
 					ifSeleccionado, 1, profundidadMaxima));
 
@@ -150,15 +151,15 @@ public class Arbol {
 				// Si es IF creo otros dos hijos mas
 				if (nodo._simbolo.getValor().matches("IF")) {
 
-				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima));
-				nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
-						ifSeleccionado, 1, profundidadMaxima));
-			}
-			
+					nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
+							ifSeleccionado, 1, profundidadMaxima));
+					nodo._hijos.add(nodo.inicializaCompletaRecursivo(nodo,
+							ifSeleccionado, 1, profundidadMaxima));
+				}
+
 			break;
 		}
-		
+
 		// Calculamos el numero de nodos
 		for (int i = 0; i < nodo._hijos.size(); i++)
 			nodo._numNodos += nodo._hijos.get(i)._numNodos;
@@ -213,7 +214,7 @@ public class Arbol {
 			// Calculamos el numero de nodos
 			for (int i = 0; i < nodo._hijos.size(); i++)
 				nodo._numNodos += nodo._hijos.get(i)._numNodos;
-			
+
 		} else {
 
 			nodo._simbolo = new Terminal();
@@ -405,7 +406,7 @@ public class Arbol {
 	public void setNumNodos(int numNodos) {
 		_numNodos = numNodos;
 	}
-	
+
 	/**
 	 * Devuelve el simbolo del arbol.
 	 * 
@@ -414,7 +415,7 @@ public class Arbol {
 	public Simbolo getSimbolo() {
 		return _simbolo;
 	}
-	
+
 	/**
 	 * Establece el valor del simbolo del arbol a valor simbolo.
 	 * 
@@ -432,7 +433,7 @@ public class Arbol {
 	public ArrayList<Arbol> getHijos() {		
 		return _hijos;
 	}
-	
+
 	/**
 	 * Establece los hijos a valor hijos.
 	 * 
@@ -441,7 +442,7 @@ public class Arbol {
 	public void setHijos(ArrayList<Arbol> hijos){
 		_hijos = hijos;
 	}
-	
+
 	/**
 	 * Evalua el arbol con los casos de prueba correspondientes. Se evaluan los
 	 * nodos terminales con los valores de cada caso de prueba y se comprueban
@@ -490,30 +491,30 @@ public class Arbol {
 				// izquierda
 				evaluacion = !_hijos.get(0).evaluaRecursivo(caso);
 			} else
-			// Si es la funcion OR
-			if (_simbolo.getValor().matches("OR")) {
-				// Devolvemos la OR de sus dos hijos
-				evaluacion = _hijos.get(0).evaluaRecursivo(caso)
-						|| _hijos.get(1).evaluaRecursivo(caso);
+				// Si es la funcion OR
+				if (_simbolo.getValor().matches("OR")) {
+					// Devolvemos la OR de sus dos hijos
+					evaluacion = _hijos.get(0).evaluaRecursivo(caso)
+					|| _hijos.get(1).evaluaRecursivo(caso);
 
-			} else
-			// Si es la funcion AND
-			if (_simbolo.getValor().matches("AND")) {
-				// Devolvemos la AND de sus dos hijos
-				evaluacion = _hijos.get(0).evaluaRecursivo(caso)
+				} else
+					// Si es la funcion AND
+					if (_simbolo.getValor().matches("AND")) {
+						// Devolvemos la AND de sus dos hijos
+						evaluacion = _hijos.get(0).evaluaRecursivo(caso)
 						&& _hijos.get(1).evaluaRecursivo(caso);
-			} else
-			// Si es un IF
-			if (_simbolo.getValor().matches("IF")) {
+					} else
+						// Si es un IF
+						if (_simbolo.getValor().matches("IF")) {
 
-				// Si el primer hijo es true
-				if (_hijos.get(0).evaluaRecursivo(caso))
-					// Evaluamos el segundo hijo
-					evaluacion = _hijos.get(1).evaluaRecursivo(caso);
-				else
-					// Y si no evaluamos el tercer hijo
-					evaluacion = _hijos.get(2).evaluaRecursivo(caso);
-			}
+							// Si el primer hijo es true
+							if (_hijos.get(0).evaluaRecursivo(caso))
+								// Evaluamos el segundo hijo
+								evaluacion = _hijos.get(1).evaluaRecursivo(caso);
+							else
+								// Y si no evaluamos el tercer hijo
+								evaluacion = _hijos.get(2).evaluaRecursivo(caso);
+						}
 		}
 		return evaluacion;
 	}
@@ -524,25 +525,16 @@ public class Arbol {
 	 * @param nodosFuncion Los nodos funcion de un arbol.
 	 */
 	public void extraerNodos(ArrayList<Arbol> nodosFuncion, ArrayList<Arbol> nodosTerminales){
-		
+
 		// Si es una hoja extraigo el terminal
 		if (_esHoja)
 			nodosTerminales.add(this);
 		else{
-			
-			//  Miramos por el primer hijo
-			_hijos.get(0).extraerNodos(nodosFuncion, nodosTerminales);
-			
-			// Si es AND o OR miramos su segundo hijo
-			if (getSimbolo().getValor().matches("AND") || getSimbolo().getValor().matches("OR"))
-				_hijos.get(1).extraerNodos(nodosFuncion, nodosTerminales);
-			else
-				// Si es IF miramos sus otros dos hijos
-				if(getSimbolo().getValor().matches("IF")){
-					_hijos.get(1).extraerNodos(nodosFuncion,nodosTerminales);
-					_hijos.get(2).extraerNodos(nodosFuncion,nodosTerminales);
-				}
-			
+
+			//  Miramos por los hijos del nodo funci
+			for (int i = 0; i < _hijos.size(); i++)
+				_hijos.get(i).extraerNodos(nodosFuncion, nodosTerminales);
+
 			// Lo metemos en los nodos funcion pero la raiz no
 			if(!esRaiz())
 				nodosFuncion.add(this);
@@ -557,80 +549,96 @@ public class Arbol {
 	 * @param nodosFuncion Nodos funcion del arbol del primer progenitor.
 	 */
 	public void cruce(Individuo padre2, ArrayList<Arbol> nodosTerminales,
-			ArrayList<Arbol> nodosFuncion) {
-		
+			ArrayList<Arbol> nodosFuncion, double porcentajeCruceFuncion) {
+
 		// Volvemos a calcular los nodos funcion y terminales de los progenitores
 		nodosFuncion.clear();
-		nodosFuncion.clear();
+		nodosTerminales.clear();
 		padre2.getNodosTerminales().clear();
 		padre2.getNodosFuncion().clear();
-		extraerNodos(nodosTerminales, nodosFuncion);
-		padre2.getArbol().extraerNodos(padre2.getNodosTerminales(), padre2.getNodosFuncion());
-		
-		// Si hay algun nodo aparte del raiz que no se cuenta hacemos el cruce
-		if((nodosFuncion.size() != 0) && (padre2.getNodosFuncion().size() != 0)){
-		
-			// Escogemos una funcion al azar del primer progenitor
-			int indice = Aleatorio.intRandom(nodosFuncion.size());
-			Arbol puntoCruce1 = nodosFuncion.get(indice);
+		extraerNodos(nodosFuncion,nodosTerminales);
+		padre2.getArbol().extraerNodos(padre2.getNodosFuncion(),padre2.getNodosTerminales());
 
-			// Elegimos una funcion al azar del segundo progenitor
-			indice = Aleatorio.intRandom(padre2.getNodosFuncion().size());
-			Arbol puntoCruce2 = padre2.getNodosFuncion().get(indice);
-		
-			//Comprobamos si es hijo izquierdo
-			if (puntoCruce1.getPadre().getHijos().get(0).equals(puntoCruce1)){
-				
-				//Comprobamos que no nos pasamos de la profundidad maxima
-				if((_profundidadMaxima - puntoCruce2.getProfundidad()) + puntoCruce1.getPadre().getProfundidad() <= _profundidadMaxima)
-					puntoCruce1.getPadre().getHijos().set(0, puntoCruce2);
+		double random = Aleatorio.doubleRandom();
+		Arbol puntoCruce1 = null;
+		Arbol puntoCruce2 = null;
+
+
+		if (random < porcentajeCruceFuncion) {
+
+			// Si hay algun nodo aparte del raiz que no se cuenta hacemos el cruce
+			if((nodosFuncion.size() != 0) && (padre2.getNodosFuncion().size() != 0)) {
+
+				// Escogemos una funcion al azar del primer progenitor
+				int indice = Aleatorio.intRandom(nodosFuncion.size());
+				puntoCruce1 = nodosFuncion.get(indice);
+
+				// Elegimos una funcion al azar del segundo progenitor
+				indice = Aleatorio.intRandom(padre2.getNodosFuncion().size());
+				puntoCruce2 = padre2.getNodosFuncion().get(indice);
+
+				cruzaNodos(puntoCruce1, puntoCruce2);
 			}
-			else // Si es hijo central
-				if (puntoCruce1.getPadre().getHijos().get(1).equals(puntoCruce1)){
-					
-					//Comprobamos que no nos pasamos de la profundidad maxima
-					if((_profundidadMaxima - puntoCruce2.getProfundidad()) + puntoCruce1.getPadre().getProfundidad() <= _profundidadMaxima)
-						puntoCruce1.getPadre().getHijos().set(1, puntoCruce2);
-				}
-				else
-					// Si es hijo derecho
-					if (puntoCruce1.getPadre().getHijos().get(2).equals(puntoCruce1)){
-						
-						//Comprobamos que no nos pasamos de la profundidad maxima
-						if((_profundidadMaxima - puntoCruce2.getProfundidad()) + puntoCruce1.getPadre().getProfundidad() <= _profundidadMaxima)
-							puntoCruce1.getPadre().getHijos().set(2, puntoCruce2);
-					}
-			
-			//Comprobamos si es hijo izquierdo
-			if (puntoCruce2.getPadre().getHijos().get(0).equals(puntoCruce2)){
-				
-				//Comprobamos que no nos pasamos de la profundidad maxima
-				if((_profundidadMaxima - puntoCruce1.getProfundidad()) + puntoCruce2.getPadre().getProfundidad() <= _profundidadMaxima)
-					puntoCruce2.getPadre().getHijos().set(0, puntoCruce1);
-			}
-			else // Si es hijo central
-				if (puntoCruce2.getPadre().getHijos().get(1).equals(puntoCruce2)){
-				
-					//Comprobamos que no nos pasamos de la profundidad maxima
-					if((_profundidadMaxima - puntoCruce1.getProfundidad()) + puntoCruce2.getPadre().getProfundidad() <= _profundidadMaxima)
-						puntoCruce2.getPadre().getHijos().set(1, puntoCruce1);
-				}
-				else
-					// Si es hijo derecho
-					if (puntoCruce2.getPadre().getHijos().get(2).equals(puntoCruce2)){
-						
-						//Comprobamos que no nos pasamos de la profundidad maxima
-						if((_profundidadMaxima - puntoCruce1.getProfundidad()) + puntoCruce2.getPadre().getProfundidad() <= _profundidadMaxima)
-							puntoCruce2.getPadre().getHijos().set(2, puntoCruce1);
-					}
-						
-			// Actualizamos los padres de los puntos de cruce para fijarlos al arbol
-			Arbol padre1 = puntoCruce1.getPadre();
-			puntoCruce1.setPadre(puntoCruce2.getPadre());
-			puntoCruce2.setPadre(padre1);
 		}
+		else {
+
+			if((nodosTerminales.size() != 0) && (padre2.getNodosTerminales().size() != 0)) {
+				// Escogemos una funcion al azar del primer progenitor
+				int indice = Aleatorio.intRandom(nodosTerminales.size());
+				puntoCruce1 = nodosTerminales.get(indice);
+
+				// Elegimos una funcion al azar del segundo progenitor
+				indice = Aleatorio.intRandom(padre2.getNodosTerminales().size());
+				puntoCruce2 = padre2.getNodosTerminales().get(indice);
+
+				cruzaNodos(puntoCruce1, puntoCruce2);
+			}
+		}
+		
+		// Necesario actualizarlos para los metodos de mutacion
+		extraerNodos(nodosFuncion, nodosTerminales);
+		padre2.getArbol().extraerNodos(padre2.getNodosFuncion(), padre2.getNodosTerminales());
 	}
-	
+
+	/**
+	 * Intercambia los nodos puntoCruce1 y puntoCruce2 en sus respectivos 
+	 * arboles si no se supera la maxima profundidad permitida.
+	 * 
+	 * @param puntoCruce1 Nodo a intercambiar por el nodo puntoCruce2.
+	 * @param puntoCruce2 Nodo a intercambiar por el nodo puntoCruce1.
+	 */
+	private void cruzaNodos(Arbol puntoCruce1, Arbol puntoCruce2) {
+
+		for (int i = 0; i < puntoCruce1.getPadre().getHijos().size(); i++) {
+
+			for (int j = 0; j < puntoCruce2.getPadre().getHijos().size(); j++) {
+
+				if ( (puntoCruce1.getPadre().getHijos().get(i).equals(puntoCruce1)) 
+						&& 
+						(puntoCruce2.getPadre().getHijos().get(j).equals(puntoCruce2)) ){
+
+					//Comprobamos que no nos pasamos de la profundidad maxima
+					if ( ((_profundidadMaxima - puntoCruce2.getProfundidad()) + puntoCruce1.getPadre().getProfundidad() <= _profundidadMaxima) 
+							&&
+							((_profundidadMaxima - puntoCruce1.getProfundidad()) + puntoCruce2.getPadre().getProfundidad() <= _profundidadMaxima))
+					{
+
+						// Intercambia las referencias de los hijos
+						puntoCruce1.getPadre().getHijos().set(i, puntoCruce2);
+						puntoCruce2.getPadre().getHijos().set(j, puntoCruce1);
+
+						// Actualizamos los padres de los puntos de cruce para fijarlos al arbol
+						Arbol padre1 = puntoCruce1.getPadre();
+						puntoCruce1.setPadre(puntoCruce2.getPadre());
+						puntoCruce2.setPadre(padre1);
+						return;
+					}
+				}
+			}
+		}
+
+	}
+
 	@Override
 	protected Arbol clone() {
 

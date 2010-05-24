@@ -286,9 +286,10 @@ public class Ventana extends JFrame {
 		// Creamos el objeto encargado del algoritmo genetico simple
 		_AG = new AG(_validadorDatos.getNumGeneraciones(), _validadorDatos.getTamPoblacion(), 
 				(Double)_panelBodyOpciones.getSpiProbCruce().getValue(),
+				(Double)_panelBodyOpciones.getSpiProbMutacion().getValue(),
 				(Double)_panelBodyOpciones.getSpiPorcentajeCruceFunciones().getValue(),
 				(Double)_panelBodyOpciones.getSpiPorcentajeCruceTerminales().getValue(),
-				(Double)_panelBodyOpciones.getSpiProbMutacion().getValue(), _tipoSeleccion,
+				 _tipoSeleccion,
 				_tipoInicializacion, _tipoMutacion, _ifSeleccionado, 
 				_validadorDatos.getProfundidadMaxima(), _elitismo,
 				_escaladoSimple, _validadorDatos.getPorcentajeElite(),
