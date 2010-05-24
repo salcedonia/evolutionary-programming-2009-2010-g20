@@ -71,7 +71,15 @@ public class Individuo implements Comparable<Object> {
 	 * Tabla de casos de prueba para la evaluacion.
 	 */
 	private static boolean[][] _casos;
-
+	/**
+	 * Puntuacion f() para el escalado simple.
+	 */
+	private double _puntuacionEscaladoSimple;
+	/**
+	 * Puntuacion acumulada de f() para el escalado simple.
+	 */
+	private double _puntuacionAcumuladaEscaladoSimple;
+	
 	/**
 	 * Constructora por defecto de la clase Individuo.
 	 */
@@ -346,6 +354,41 @@ public class Individuo implements Comparable<Object> {
 	}
 
 	/**
+	 * Devuelve la puntuacion del escalado simple.
+	 * 
+	 * @return La puntuacion del escalado simple.
+	 */
+	public double getPuntuacionEscaladoSimple() {
+		return _puntuacionEscaladoSimple;
+	}
+
+	/**
+	 * Establece la puntuacion del escalado simple.
+	 * 
+	 * @param escaladoSimple Nuevo valor a establecer.
+	 */
+	public void setPuntuacionEscaladoSimple(double escaladoSimple) {
+		_puntuacionEscaladoSimple = escaladoSimple;
+	}
+
+	/**
+	 * Devuelve la puntuacion acumulada del escalado simple.
+	 * 
+	 * @return La puntuacion acumulada del escalado simple.
+	 */
+	public double getPuntuacionAcumuladaEscaladoSimple() {
+		return _puntuacionAcumuladaEscaladoSimple;
+	}
+
+	/**
+	 * 
+	 * @param acumuladaEscaladoSimple
+	 */
+	public void setPuntuacionAcumuladaEscaladoSimple(double acumuladaEscaladoSimple) {
+		_puntuacionAcumuladaEscaladoSimple = acumuladaEscaladoSimple;
+	}
+
+	/**
 	 * Carga los casos de prueba desde un fichero con formato de "1" y "0"
 	 * traduciendolo a false y true de forma estatica. El fichero viene separado
 	 * por comas de tal forma que siga el orden "A1,A0,D3,D2,D1,D0,S".
@@ -353,6 +396,7 @@ public class Individuo implements Comparable<Object> {
 	public static void cargaCasosPrueba() {
 
 		BufferedReader br;
+		
 		try {
 			br = new BufferedReader(
 					new FileReader("ficheros/CasosDePrueba.txt"));
@@ -434,6 +478,6 @@ public class Individuo implements Comparable<Object> {
 	@Override
 	public String toString() {
 
-		return _arbol.toString();
+		return "Aptitud: " + _aptitud + ", " + _arbol.toString();
 	}
 }
